@@ -1,9 +1,10 @@
+import 'package:haruhabit_app/models/habit_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 
 class DatabaseHandler {
-  Future<Database> initializeDB() async {
+  Future<Database> initializeHabitsDB() async {
     String path = await getDatabasesPath();
 
     return openDatabase(
@@ -13,10 +14,27 @@ class DatabaseHandler {
       ),
       onCreate: (database, version) async {
         await database.execute(
-            'create table habits (id integer primary key autoincrement, title text, content text, startDate datetime, endDate datetime)');
+            'CREATE TABLE IF NOT EXISTS habits (hId INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, habit TEXT, startDate TEXT, endDate TEXT)');
       },
       version: 1,
     );
+  }
+
+  Future addHabit(HabitModel habitModel) async {
+    int result = 0;
+    final db = await initializeHabitsDB();
+    result = await db.rawInsert(
+      'INSERT INTO habits (hId, category, habit, startDate, endDate) VALUES (?,?,?,?,?)',
+      [
+        habitModel.hId,
+        habitModel.category,
+        habitModel.habit,
+        habitModel.startDate,
+        habitModel.endDate
+      ],
+      // conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return result;
   }
 
   // Future<int> insertStudents(Students student) async {

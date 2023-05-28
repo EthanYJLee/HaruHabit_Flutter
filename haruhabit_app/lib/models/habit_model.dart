@@ -1,33 +1,29 @@
 class HabitModel {
-  final int? id;
-  final String title;
+  final int? hId;
   final String category;
-  final String content;
+  final String habit;
   final String startDate;
-  final String endDate;
+  final String? endDate;
 
   HabitModel(
-      {this.id,
-      required this.title,
+      {this.hId,
       required this.category,
-      required this.content,
+      required this.habit,
       required this.startDate,
-      required this.endDate});
+      this.endDate});
 
   HabitModel.fromMap(Map<String, dynamic> res)
-      : id = res['id'],
-        title = res['title'],
+      : hId = res['hId'],
         category = res['category'],
-        content = res['content'],
+        habit = res['habit'],
         startDate = res['startDate'],
         endDate = res['endDate'];
 
   Map<String, Object?> toMap() {
     return {
-      'id': id,
-      'title': title,
+      'hId': hId,
       'category': category,
-      'content': content,
+      'habit': habit,
       'startDate': startDate,
       'endDate': endDate
     };
