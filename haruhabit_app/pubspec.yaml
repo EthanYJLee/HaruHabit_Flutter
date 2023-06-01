@@ -42,6 +42,8 @@ dependencies:
   # SQLite (Database)
   sqflite: ^2.2.8+4
   path: ^1.8.2
+  # Speed Dial
+  flutter_speed_dial: ^7.0.0
 
   device_info_plus: ^8.2.2
   intl: ^0.17.0
@@ -49,6 +51,7 @@ dependencies:
     sdk: flutter
   rename: ^2.1.1
   calendar_timeline: ^1.1.2
+  table_calendar: ^3.0.8
 
 dev_dependencies:
   flutter_test:
@@ -88,7 +91,14 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+  fonts:
+    - family: text
+      fonts:
+        - asset: fonts/NanumSquareRoundR.ttf
+        - asset: fonts/NanumSquareRoundEB.ttf
+          weight: 700
+        - asset: fonts/NanumSquareRoundL.ttf
+          weight: 300
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

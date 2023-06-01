@@ -54,12 +54,6 @@ class _TabbarState extends State<Tabbar> {
                 : const Icon(CupertinoIcons.calendar_circle),
             label: "달력",
           ),
-          // BottomNavigationBarItem(
-          //   icon: onSelected[1]
-          //       ? const Icon(CupertinoIcons.square_list_fill)
-          //       : const Icon(CupertinoIcons.square_list),
-          //   label: "일정 만들기",
-          // ),
           BottomNavigationBarItem(
             icon: onSelected[1]
                 ? const Icon(CupertinoIcons.house_fill)

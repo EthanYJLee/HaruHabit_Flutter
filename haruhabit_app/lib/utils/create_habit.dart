@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:haruhabit_app/utils/date_picker_item.dart';
 import 'package:haruhabit_app/view_models/habit_viewmodel.dart';
 import 'package:intl/intl.dart';
 
@@ -143,10 +144,10 @@ class _CreateHabitState extends State<CreateHabit> {
                                     print(_category);
                                     print(_startDate);
                                     print(_habit);
-                                    _habitViewModel.addStudents(
+                                    _habitViewModel.addHabit(
                                         _category, _habit, _startDate);
 
-                                    // Navigator.pop(context);
+                                    Navigator.pop(context);
                                   }
                                 }
                               },
@@ -168,13 +169,16 @@ class _CreateHabitState extends State<CreateHabit> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _DatePickerItem(
+        DatePickerItem(
           children: <Widget>[
             const Text("시작일"),
             CupertinoButton(
+              // disabledColor: Color.fromARGB(255, 164, 158, 255),
+              // color: Color.fromARGB(255, 164, 158, 255),
               // Display a CupertinoDatePicker in date picker mode.
               onPressed: () => _showDialog(
                 CupertinoDatePicker(
+                  // backgroundColor: Color.fromARGB(255, 164, 158, 255),
                   initialDateTime: date,
                   mode: CupertinoDatePickerMode.date,
                   use24hFormat: true,
@@ -190,8 +194,9 @@ class _CreateHabitState extends State<CreateHabit> {
               // user's locale settings.
               child: Text(
                 '${date.year}-${date.month}-${date.day}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18.0,
+                  color: Colors.redAccent[100],
                 ),
               ),
             ),
@@ -242,39 +247,6 @@ class _CreateHabitState extends State<CreateHabit> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Desc : 시작일 선택하는 Cupertino Date Picker
-/// Date : 2023.05.25
-class _DatePickerItem extends StatelessWidget {
-  const _DatePickerItem({required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-          // border: Border(
-          //   top: BorderSide(
-          //     color: CupertinoColors.inactiveGray,
-          //     width: 0.0,
-          //   ),
-          //   bottom: BorderSide(
-          //     color: CupertinoColors.inactiveGray,
-          //     width: 0.0,
-          //   ),
-          // ),
-          ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: children,
-        ),
       ),
     );
   }

@@ -1,23 +1,31 @@
 class ScheduleModel {
   final int? sId;
-  final String? schedule;
   final String? date;
-  final DateTime? time;
+  final String? schedule;
+  final String? place;
+  final String? hour;
+  final String? minute;
 
-  ScheduleModel({this.sId, this.schedule, this.date, this.time});
+  ScheduleModel(
+      {this.sId, this.date, this.schedule, this.place, this.hour, this.minute});
+  
 
   ScheduleModel.fromMap(Map<String, dynamic> res)
       : sId = res['sId'],
+        date = res['date'],
         schedule = res['schedule'],
-        date = res['res'],
-        time = res['time'];
+        place = res['place'],
+        hour = res['hour'],
+        minute = res['minute'];
 
   Map<String, Object?> toMap() {
     return {
       'sId': sId,
-      'schedule': schedule,
       'date': date,
-      'time': time,
+      'schedule': schedule,
+      'place': place,
+      'hour': hour,
+      'minute': minute,
     };
   }
 }

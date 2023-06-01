@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:haruhabit_app/views/home.dart';
 import 'package:haruhabit_app/views/tabbar.dart';
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -28,10 +29,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color.fromARGB(255, 164, 158, 255),
         canvasColor: Color.fromRGBO(223, 221, 255, 1),
-        appBarTheme: const AppBarTheme(color: Color.fromRGBO(223, 221, 255, 1)),
+        appBarTheme: AppBarTheme(
+            color: Color.fromRGBO(223, 221, 255, 1),
+            actionsIconTheme: IconThemeData(color: Colors.redAccent[100]),
+            foregroundColor: Colors.redAccent[100]),
+        tabBarTheme: TabBarTheme(),
+        fontFamily: 'text',
       ),
       debugShowCheckedModeBanner: false,
-      home: const Tabbar(),
+      // home: const Tabbar(),
+      home: const Home(),
     );
   }
 }
