@@ -1,38 +1,52 @@
 import 'dart:async';
 
-import 'package:haruhabit_app/models/habit_model.dart';
-import 'package:haruhabit_app/models/schedule_model.dart';
-import 'package:haruhabit_app/utils/calendar_utils.dart';
+import 'package:haruhabit_app/src/models/habit_model.dart';
+import 'package:haruhabit_app/src/models/schedule_model.dart';
+import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 
 class DatabaseHandler {
-  /// Desc : "habits" Database
-  /// Date : 2023.06.01
 
-  // initialize habits DB
-  Future<Database> initializeHabitsDB() async {
+  Future<Database> initializeDB(String db) async {
     String path = await getDatabasesPath();
 
-    return openDatabase(
-      join(
-        path,
-        'habits.db',
-      ),
-      onCreate: (database, version) async {
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS habits (hId INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, habit TEXT, startDate TEXT, endDate TEXT)');
-      },
-      version: 1,
-    );
+    switch (db) {
+      case 'habits':
+        return openDatabase(
+          join(
+            path,
+            'habits.db',
+          ),
+          onCreate: (database, version) async {
+            await database.execute(
+                'CREATE TABLE IF NOT EXISTS habits (hId INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, habit TEXT, startDate TEXT, endDate TEXT)');
+          },
+          version: 1,
+        );
+
+      default:
+        return openDatabase(
+          join(
+            path,
+            'schedules.db',
+          ),
+          onCreate: (database, version) async {
+            await database.execute(
+                'CREATE TABLE IF NOT EXISTS schedules (sId INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, schedule TEXT, place TEXT, hour TEXT, minute TEXT)');
+          },
+          version: 1,
+        );
+    }
   }
+
 
   // insert new habit into DB
   Future insertHabit(HabitModel habitModel) async {
     int result = 0;
-    final db = await initializeHabitsDB();
+    final db = await initializeDB('habits');
     result = await db.rawInsert(
       'INSERT INTO habits (hId, category, habit, startDate, endDate) VALUES (?,?,?,?,?)',
       [
@@ -49,36 +63,17 @@ class DatabaseHandler {
 
   // read habits
   Future<List<HabitModel>> queryHabits() async {
-    final Database db = await initializeHabitsDB();
+    final Database db = await initializeDB('habits');
     final List<Map<String, Object?>> queryResult =
         await db.rawQuery('SELECT * FROM habits');
     return queryResult.map((e) => HabitModel.fromMap(e)).toList();
   }
 
-  /// Desc : "schedule" Database
-  /// Date : 2023.06.01
-
-  // initialize schedules DB
-  Future<Database> initializeSchedulesDB() async {
-    String path = await getDatabasesPath();
-
-    return openDatabase(
-      join(
-        path,
-        'schedules.db',
-      ),
-      onCreate: (database, version) async {
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS schedules (sId INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, schedule TEXT, place TEXT, hour TEXT, minute TEXT)');
-      },
-      version: 1,
-    );
-  }
 
   // insert new schedule into DB
   Future insertSchedule(ScheduleModel scheduleModel) async {
     int result = 0;
-    final db = await initializeSchedulesDB();
+    final db = await initializeDB('schedules');
     result = await db.rawInsert(
       'INSERT INTO schedules (sId, date, schedule, place, hour, minute) VALUES (?,?,?,?,?,?)',
       [
@@ -96,27 +91,21 @@ class DatabaseHandler {
 
   // read schedules
   Future<List<ScheduleModel>> querySchedules() async {
-    final Database db = await initializeSchedulesDB();
+    final Database db = await initializeDB('schedules');
     final List<Map<String, Object?>> queryResult =
         await db.rawQuery('SELECT * FROM schedules');
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 
-  // Map<DateTime, dynamic> 형식으로 정제하기
-  // ex. DateTime(2023, 6, 1): [
-  //   Event('5분 기도하기'),
-  //   Event('교회 가서 인증샷 찍기'),
-  //   Event('QT하기'),
-  //   Event('셀 모임하기'),
-  // ],
+  /// Desc : Event (일정) 달력에 보여주도록 형식 변경
+  /// Date : 2023.06.02
   Future<Map<DateTime, dynamic>> eventLists() async {
-    final Database db = await initializeSchedulesDB();
+    final Database db = await initializeDB('schedules');
 
     // 스케쥴 List
     final List<Map<String, Object?>> scheduleResult = await db.rawQuery(
         // "SELECT date, schedule, place, hour, minute FROM schedules ORDER BY date, hour, minute");
         "SELECT * FROM schedules ORDER BY date, hour, minute");
-
     List<ScheduleModel> models =
         scheduleResult.map((e) => ScheduleModel.fromMap(e)).toList();
 
@@ -127,11 +116,12 @@ class DatabaseHandler {
     // 빈 배열 생성
     final Map<DateTime, List<Event>> eventSource = Map<DateTime, List<Event>>();
 
+    // uniqueDate를 key로 지정 (추가)
     for (String date in uniqueDate) {
-      // print(date);
       eventSource.addAll({DateTime.parse(date): []});
     }
 
+    // 각 uniqueDate에 해당하는 일정 할당
     for (int i = 0; i < eventSource.length; i++) {
       for (ScheduleModel model in models) {
         if (DateTime.parse(model.date.toString()) ==
@@ -144,7 +134,6 @@ class DatabaseHandler {
         }
       }
     }
-    print(eventSource);
     return eventSource;
   }
 

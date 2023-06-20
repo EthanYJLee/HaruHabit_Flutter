@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:haruhabit_app/models/schedule_model.dart';
-import 'package:haruhabit_app/utils/card_dialog.dart';
-import 'package:haruhabit_app/utils/create_habit.dart';
-import 'package:haruhabit_app/utils/create_schedule.dart';
-import 'package:haruhabit_app/utils/database_handler.dart';
-import 'package:haruhabit_app/views/calendar.dart';
-import 'package:haruhabit_app/views/history.dart';
-import 'package:haruhabit_app/views/tabbar.dart';
+import 'package:haruhabit_app/src/models/schedule_model.dart';
+import 'package:haruhabit_app/src/utils/card_dialog.dart';
+import 'package:haruhabit_app/src/utils/create_habit.dart';
+import 'package:haruhabit_app/src/utils/create_schedule.dart';
+import 'package:haruhabit_app/src/utils/database_handler.dart';
+import 'package:haruhabit_app/src/views/calendar.dart';
+import 'package:haruhabit_app/src/views/history.dart';
+import 'package:haruhabit_app/src/views/tabbar.dart';
 import 'package:health/health.dart';
 import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
@@ -24,34 +24,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-enum AppState {
-  DATA_NOT_FETCHED,
-  FETCHING_DATA,
-  DATA_READY,
-  NO_DATA,
-  AUTHORIZED,
-  AUTH_NOT_GRANTED,
-  DATA_ADDED,
-  DATA_DELETED,
-  DATA_NOT_ADDED,
-  DATA_NOT_DELETED,
-  STEPS_READY,
-}
-
 class _HomeState extends State<Home> {
-  /// Desc : Apple Health 관련
-  /// Date : 2023.05.15
-  List<HealthDataPoint> _healthDataList = [];
-  late AppState _state = AppState.DATA_NOT_FETCHED;
-  // 접근 권한 범위 (Read, Write)
-  final permissions =
-      dataTypes.map((e) => HealthDataAccess.READ_WRITE).toList();
-  HealthFactory health = HealthFactory(useHealthConnectIfAvailable: true);
-  int _noOfSteps = 0;
-  // 접근 권한 요청할 Data Type (걸음 수)
-  // static final dataTypes = [HealthDataType.STEPS];
-  static final dataTypes = [HealthDataType.STEPS, HealthDataType.WORKOUT];
-
   /// Desc : Calendar Timeline 관련
   /// Date : 2023.05.26
   late DateTime _selectedDate;
@@ -71,15 +44,19 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    authorize().then((_) => fetchStepData());
-    // _resetSelectedDate();
     // Database Handler 초기화
     handler = DatabaseHandler();
     // DB 시작
-    handler.initializeHabitsDB().whenComplete(() {
+    // handler.initializeHabitsDB().whenComplete(() {
+    //   setState(() {});
+    // });
+    // handler.initializeSchedulesDB().whenComplete(() {
+    //   setState(() {});
+    // });
+    handler.initializeDB('habits').whenComplete(() {
       setState(() {});
     });
-    handler.initializeSchedulesDB().whenComplete(() {
+    handler.initializeDB('schedules').whenComplete(() {
       setState(() {});
     });
   }
@@ -97,21 +74,11 @@ class _HomeState extends State<Home> {
           elevation: 0,
         ),
         drawer: _drawer(),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {},
-        //   backgroundColor: Colors.redAccent[100],
-        //   child: Icon(CupertinoIcons.add),
-        // ),
         body: SingleChildScrollView(
           child: Center(
             child: Column(
               children: [
                 _calendarTimeline(),
-                // const SizedBox(height: 20),
-                // _state != AppState.AUTHORIZED
-                //     ? Text(_state.toString())
-                //     : Text(_state.toString()),
-                _gridCard("오늘 걸음 수", _noOfSteps.toString()),
                 Padding(
                   padding: const EdgeInsets.only(left: 30, right: 20),
                   child: Row(
@@ -122,19 +89,6 @@ class _HomeState extends State<Home> {
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
-                      // IconButton(
-                      //   onPressed: () {
-                      //     Navigator.of(context)
-                      //         .push(CardDialog(builder: (context) {
-                      //       return CreateSchedule();
-                      //     })).then((_) {
-                      //       setState(() {});
-                      //     });
-                      //   },
-                      //   icon: Icon(
-                      //     CupertinoIcons.add,
-                      //   ),
-                      // )
                       TextButton(
                         onPressed: () {},
                         child: const Text(
@@ -151,7 +105,7 @@ class _HomeState extends State<Home> {
                 _gridCard("dd", ""),
                 ElevatedButton(
                     onPressed: () {
-                      fetchStepData();
+                      //-
                     },
                     child: const Text("fetch step data")),
               ],
@@ -176,7 +130,7 @@ class _HomeState extends State<Home> {
           children: [
             SpeedDialChild(
               child: const Icon(CupertinoIcons.calendar),
-              label: "습관 추가",
+              label: "add habit",
               labelBackgroundColor: Colors.transparent,
               labelStyle: const TextStyle(color: Colors.white),
               backgroundColor: Colors.white,
@@ -192,19 +146,19 @@ class _HomeState extends State<Home> {
             ),
             SpeedDialChild(
                 child: const Icon(CupertinoIcons.clock),
-                label: "일정 추가",
+                label: "add todo",
                 labelBackgroundColor: Colors.transparent,
                 labelStyle: const TextStyle(color: Colors.white),
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 // onTap: () => showSortDialog(),
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Calendar()));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const Calendar()));
                 }),
             SpeedDialChild(
               child: const Icon(CupertinoIcons.list_bullet),
-              label: "목록 보기",
+              label: "all lists",
               labelBackgroundColor: Colors.transparent,
               labelStyle: const TextStyle(color: Colors.white),
               backgroundColor: Colors.white,
@@ -220,89 +174,6 @@ class _HomeState extends State<Home> {
     );
   }
   // ---------------------Functions---------------------
-
-  /// Desc : 애플 건강 접근 권한 여부 확인
-  /// Check whether Apple Health Authorization is granted or denied
-  /// Date : 2023.05.16
-  Future authorize() async {
-    // Permission
-    await Permission.activityRecognition.request();
-    await Permission.location.request();
-
-    // Check if we have permission
-    bool? hasPermissions =
-        await health.hasPermissions(dataTypes, permissions: permissions);
-
-    // hasPermissions = false because the hasPermission cannot disclose if WRITE access exists.
-    // Hence, we have to request with WRITE as well.
-    hasPermissions = false;
-
-    bool authorized = false;
-    if (!hasPermissions) {
-      // requesting access to the data types before reading them
-      try {
-        authorized = await health.requestAuthorization(dataTypes,
-            permissions: permissions);
-      } catch (error) {
-        print("Exception in authorize: $error");
-      }
-    }
-
-    setState(() => _state =
-        (authorized) ? AppState.AUTHORIZED : AppState.AUTH_NOT_GRANTED);
-  }
-
-  // /// Add some random health data.
-  // Future addData() async {
-  //   final now = DateTime.now();
-  //   final earlier = now.subtract(Duration(minutes: 20));
-
-  //   // Add data for supported types
-  //   // NOTE: These are only the ones supported on Androids new API Health Connect.
-  //   // Both Android's Google Fit and iOS' HealthKit have more types that we support in the enum list [HealthDataType]
-  //   // Add more - like AUDIOGRAM, HEADACHE_SEVERE etc. to try them.
-  //   bool success = true;
-  //   // 걸음 수 Data 추가
-  //   success &=
-  //       await health.writeHealthData(90, HealthDataType.STEPS, earlier, now);
-
-  //   setState(() {
-  //     _state = success ? AppState.DATA_ADDED : AppState.DATA_NOT_ADDED;
-  //   });
-  // }
-
-  /// Desc : 애플 건강에서 걸음 수 데이터 받기
-  /// Fetch Step Data from Appel Health
-  /// Date : 2023.05.16
-  Future fetchStepData() async {
-    setState(() => _state = AppState.FETCHING_DATA);
-    int? steps;
-
-    // get steps for today (i.e., since midnight)
-    final now = DateTime.now();
-    final midnight = DateTime(now.year, now.month, now.day);
-
-    bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
-    print(requested);
-
-    if (requested) {
-      try {
-        steps = await health.getTotalStepsInInterval(midnight, now);
-      } catch (error) {
-        print("Caught exception in getTotalStepsInInterval: $error");
-      }
-
-      print('Total number of steps: $steps');
-
-      setState(() {
-        _noOfSteps = (steps == null) ? 0 : steps;
-        _state = (steps == null) ? AppState.NO_DATA : AppState.STEPS_READY;
-      });
-    } else {
-      print("Authorization not granted - error in authorization");
-      setState(() => _state = AppState.DATA_NOT_FETCHED);
-    }
-  }
 
   // -------------------------------------------------
 
@@ -404,7 +275,8 @@ class _HomeState extends State<Home> {
             activeDayColor: Colors.white,
             activeBackgroundDayColor: Colors.redAccent[100],
             dotsColor: const Color(0xFF333A47),
-            locale: 'ko',
+            // locale: 'ko',
+            locale: 'en',
           ),
         ),
         Padding(
@@ -417,7 +289,8 @@ class _HomeState extends State<Home> {
                   backgroundColor: MaterialStateProperty.all(Colors.teal[200]),
                 ),
                 child: Text(
-                  '${DateFormat.yMMMMd('ko').format(DateTime.now())}',
+                  // '${DateFormat.yMMMMd('ko').format(DateTime.now())}',
+                  '${DateFormat.yMMMd('en').format(DateTime.now())}',
                   style: const TextStyle(
                       color: Color(0xFF333A47), fontWeight: FontWeight.bold),
                 ),
@@ -504,12 +377,16 @@ class _HomeState extends State<Home> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _gridButton(const Icon(CupertinoIcons.add_circled), "습관 만들기",
+          // _gridButton(const Icon(CupertinoIcons.add_circled), "습관 만들기",
+          //     const CreateHabit()),
+          _gridButton(const Icon(CupertinoIcons.add_circled), "Add",
               const CreateHabit()),
           SizedBox(
             width: MediaQuery.of(context).size.width / 15,
           ),
-          _gridButton(const Icon(CupertinoIcons.chart_bar_circle), "운동 기록하기",
+          // _gridButton(const Icon(CupertinoIcons.chart_bar_circle), "운동 기록하기",
+          //     const CreateHabit())
+          _gridButton(const Icon(CupertinoIcons.chart_bar_circle), "Write",
               const CreateHabit())
         ],
       ),

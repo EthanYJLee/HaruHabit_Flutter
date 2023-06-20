@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:haruhabit_app/models/habit_model.dart';
-import 'package:haruhabit_app/utils/database_handler.dart';
+import 'package:haruhabit_app/src/models/habit_model.dart';
+import 'package:haruhabit_app/src/utils/database_handler.dart';
 
 class HabitHistory extends StatefulWidget {
   const HabitHistory({super.key});
@@ -21,7 +21,7 @@ class _HabitHistoryState extends State<HabitHistory> {
     handler = DatabaseHandler();
     // whenComplete는 hold하는 용도로 쓰임.
 
-    handler.initializeHabitsDB().whenComplete(() async {
+    handler.initializeDB('habits').whenComplete(() async {
       setState(() {});
     });
   }

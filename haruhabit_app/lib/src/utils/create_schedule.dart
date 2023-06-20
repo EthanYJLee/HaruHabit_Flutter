@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:haruhabit_app/utils/calendar_utils.dart';
-import 'package:haruhabit_app/utils/date_picker_item.dart';
-import 'package:haruhabit_app/view_models/schedule_viewmodel.dart';
-import 'package:haruhabit_app/views/calendar.dart';
+import 'package:haruhabit_app/src/utils/calendar_utils.dart';
+import 'package:haruhabit_app/src/utils/date_picker_item.dart';
+import 'package:haruhabit_app/src/view_models/schedule_viewmodel.dart';
+import 'package:haruhabit_app/src/views/calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 

@@ -1,6 +1,6 @@
-import 'package:haruhabit_app/models/habit_model.dart';
-import 'package:haruhabit_app/models/schedule_model.dart';
-import 'package:haruhabit_app/utils/database_handler.dart';
+import 'package:haruhabit_app/src/models/habit_model.dart';
+import 'package:haruhabit_app/src/models/schedule_model.dart';
+import 'package:haruhabit_app/src/utils/database_handler.dart';
 
 class HabitViewModel {
   Future<int> addHabit(String category, String habit, String startDate) async {

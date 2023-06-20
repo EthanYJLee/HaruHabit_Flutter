@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:haruhabit_app/models/schedule_model.dart';
-import 'package:haruhabit_app/utils/database_handler.dart';
+import 'package:haruhabit_app/src/models/schedule_model.dart';
+import 'package:haruhabit_app/src/utils/database_handler.dart';
 
 class ScheduleHistory extends StatefulWidget {
   const ScheduleHistory({super.key});
@@ -21,7 +21,7 @@ class _ScheduleHistoryState extends State<ScheduleHistory> {
     handler = DatabaseHandler();
     // whenComplete는 hold하는 용도로 쓰임.
 
-    handler.initializeSchedulesDB().whenComplete(() async {
+    handler.initializeDB('schedules').whenComplete(() async {
       setState(() {});
     });
   }

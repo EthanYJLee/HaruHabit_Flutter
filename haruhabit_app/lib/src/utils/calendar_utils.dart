@@ -4,11 +4,13 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:haruhabit_app/models/schedule_model.dart';
-import 'package:haruhabit_app/utils/database_handler.dart';
+import 'package:haruhabit_app/src/models/schedule_model.dart';
+import 'package:haruhabit_app/src/utils/database_handler.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+/// Desc : Event 객체 정의
 /// Example event class.
+/// Date : 2023.06.02
 class Event {
   String schedule;
   String place;
@@ -37,27 +39,19 @@ final DatabaseHandler handler = DatabaseHandler();
 //     ],
 //   });
 
-// final Map<DateTime, dynamic> eventSource = {
-//   DateTime(2023, 6, 1): [
-//     Event('5분 기도하기', 'd', 'd', 'd'),
-//     Event('교회 가서 인증샷 찍기', 'd', 'd', 'd'),
-//     Event('QT하기', 'd', 'd', 'd'),
-//     Event('셀 모임하기', 'd', 'd', 'd'),
-//   ],
-//   // DateTime(2023, 6, 2): [
-//   //   Event('5분 기도하기'),
-//   //   Event('치킨 먹기'),
-//   //   Event('QT하기'),
-//   //   Event('셀 모임하기'),
-//   // ],
-// };
-// late Map<DateTime, dynamic> eventSource = {};
-late LinkedHashMap<DateTime, dynamic> kEvents =
-    LinkedHashMap<DateTime, dynamic>();
+LinkedHashMap<DateTime, dynamic> kEvents = LinkedHashMap<DateTime, dynamic>();
 Map<DateTime, dynamic> eventSource = Map<DateTime, dynamic>();
 
 void getEventLists() async {
+  // Event들을 날짜별로 묶은 모델 생성
   eventSource = await handler.eventLists();
+
+  // Map 객체를 LinkedHashMap 객체로 다시 변형
+  //**
+  // LinkedHashMap: == 비교나 hash 값 불러오는 등의 기능을 사용자 정의할 수 있게 해주는 map임.
+  // addAll(eventSource)는 객체 생성과 동시에 addAll 메소드를 실행하라는 뜻임.
+  // equals 파라미터는 isSameDay 함수 실행으로 equal 여부를 판단하도록 사용자 정의한다는 의미임.
+  // */
   kEvents = LinkedHashMap(
     equals: isSameDay,
     hashCode: getHashCode,

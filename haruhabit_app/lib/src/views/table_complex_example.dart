@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:haruhabit_app/utils/calendar_utils.dart';
+import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:haruhabit_app/utils/date_picker_item.dart';
-import 'package:haruhabit_app/view_models/habit_viewmodel.dart';
+import 'package:haruhabit_app/src/utils/date_picker_item.dart';
+import 'package:haruhabit_app/src/view_models/habit_viewmodel.dart';
 import 'package:intl/intl.dart';
 
 class CreateHabit extends StatefulWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:haruhabit_app/views/habit_history.dart';
-import 'package:haruhabit_app/views/schedule_history.dart';
+import 'package:haruhabit_app/src/views/habit_history.dart';
+import 'package:haruhabit_app/src/views/schedule_history.dart';
 
 class History extends StatefulWidget {
   const History({super.key});

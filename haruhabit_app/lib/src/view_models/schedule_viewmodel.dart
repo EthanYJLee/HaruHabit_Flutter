@@ -1,5 +1,5 @@
-import 'package:haruhabit_app/models/schedule_model.dart';
-import 'package:haruhabit_app/utils/database_handler.dart';
+import 'package:haruhabit_app/src/models/schedule_model.dart';
+import 'package:haruhabit_app/src/utils/database_handler.dart';
 
 class ScheduleViewModel {
   Future<int> addSchedule(String date, String schedule, String place,
