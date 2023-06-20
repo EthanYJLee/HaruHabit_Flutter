@@ -39,12 +39,21 @@ final DatabaseHandler handler = DatabaseHandler();
 //     ],
 //   });
 
-LinkedHashMap<DateTime, dynamic> kEvents = LinkedHashMap<DateTime, dynamic>();
-Map<DateTime, dynamic> eventSource = Map<DateTime, dynamic>();
+late LinkedHashMap<DateTime, dynamic> kEvents =
+    LinkedHashMap<DateTime, dynamic>();
+Map<DateTime, dynamic> eventSource = <DateTime, dynamic>{};
 
 void getEventLists() async {
   // Event들을 날짜별로 묶은 모델 생성
   eventSource = await handler.eventLists();
+  // eventSource = await handler.eventLists().whenComplete(
+  //       () => kEvents = LinkedHashMap(
+  //         equals: isSameDay,
+  //         hashCode: getHashCode,
+  //       )..addAll(eventSource),
+  //     );
+  print(eventSource.keys);
+  print(eventSource.keys.toList());
 
   // Map 객체를 LinkedHashMap 객체로 다시 변형
   //**
@@ -59,6 +68,11 @@ void getEventLists() async {
 }
 
 int getHashCode(DateTime key) {
+  // print(DateTime.now().day * 1000000 +
+  //     DateTime.now().month * 10000 +
+  //     DateTime.now().year);
+
+  // ddMMyyyy
   return key.day * 1000000 + key.month * 10000 + key.year;
 }
 
@@ -72,5 +86,5 @@ List<DateTime> daysInRange(DateTime first, DateTime last) {
 }
 
 final kToday = DateTime.now();
-final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day - 7);
-final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day + 7);
+final kFirstDay = DateTime(kToday.year - 3, kToday.month, kToday.day);
+final kLastDay = DateTime(kToday.year + 3, kToday.month, kToday.day);

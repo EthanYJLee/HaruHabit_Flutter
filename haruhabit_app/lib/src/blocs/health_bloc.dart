@@ -45,6 +45,7 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
 
   Observable<StepModel> get healthData => _stepFetcher.stream;
 
+  
   Future<void> onHealthFetched(
       HealthFetched event, Emitter<HealthState> emit) async {
     // 불러올 Apple HealthKit Data가 없으면 종료
@@ -66,8 +67,7 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     }
   }
 
-  // Desc : Check whether permission for Apple HealthKit is granted or not
-
+  // Desc : 접근 권한 (Check whether permission for Apple HealthKit is granted or not)
   Future<bool> authorize() async {
     // Permission
     await Permission.activityRecognition.request();
@@ -78,7 +78,6 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     // hasPermissions = false because the hasPermission cannot disclose if WRITE access exists.
     // Hence, we have to request with WRITE as well.
     hasPermissions = false;
-
     bool authorized = false;
     if (!hasPermissions) {
       // requesting access to the data types before reading them

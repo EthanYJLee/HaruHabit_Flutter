@@ -27,8 +27,8 @@ class _TimelineUtilState extends State<TimelineUtil> {
               stream: scheduleBloc.selectedSchedule,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  print(_selectedDate.toString().substring(0, 10));
-                  print(snapshot.data!.length);
+                  // print(_selectedDate.toString().substring(0, 10));
+                  // print(snapshot.data!.length);
                   return _todoSummary(snapshot.data!.length);
                 } else if (!snapshot.hasData) {
                   return _todoSummary(0);
@@ -53,6 +53,8 @@ class _TimelineUtilState extends State<TimelineUtil> {
       padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
       decoration: const BoxDecoration(),
       child: CalendarTimeline(
+        // shrink: true,
+        // showYears: true,
         initialDate: _selectedDate,
         firstDate: DateTime.now().subtract(const Duration(days: 365)),
         lastDate: DateTime.now().add(const Duration(days: 365)),

@@ -37,6 +37,7 @@ class _TabbarState extends State<Tabbar> {
     return Scaffold(
       body: tabbarItems[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.redAccent[100],
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
         onTap: (value) {

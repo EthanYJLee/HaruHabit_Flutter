@@ -2,16 +2,17 @@ import 'dart:async';
 
 import 'package:haruhabit_app/src/models/habit_model.dart';
 import 'package:haruhabit_app/src/models/schedule_model.dart';
-import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 
+import 'calendar_utils.dart';
+
 class DatabaseHandler {
+  // Initialize SQLite Database
   Future<Database> initializeDB(String db) async {
     String path = await getDatabasesPath();
-
     switch (db) {
       case 'habits':
         return openDatabase(
@@ -25,7 +26,6 @@ class DatabaseHandler {
           },
           version: 1,
         );
-
       default:
         return openDatabase(
           join(
@@ -40,6 +40,7 @@ class DatabaseHandler {
         );
     }
   }
+  // ----------Schedules----------
 
   // read all schedules
   Future<List<ScheduleModel>> queryAllSchedules() async {
@@ -59,8 +60,18 @@ class DatabaseHandler {
             columns: ['sId', 'date', 'schedule', 'place', 'hour', 'minute'],
             where: 'date = ?',
             whereArgs: [selectedDate]);
-    print(queryResult.map((e) => ScheduleModel.fromMap(e)).toList());
+    // print(queryResult.map((e) => ScheduleModel.fromMap(e)).toList());
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
+  }
+
+  // ----------Habits----------
+
+  // read all habits
+  Future<List<HabitModel>> queryAllHabits() async {
+    final Database db = await initializeDB('habits');
+    final List<Map<String, Object?>> queryResult =
+        await db.rawQuery('SELECT * FROM habits');
+    return queryResult.map((e) => HabitModel.fromMap(e)).toList();
   }
 
   // insert new habit into DB
@@ -81,14 +92,6 @@ class DatabaseHandler {
     return result;
   }
 
-  // read habits
-  Future<List<HabitModel>> queryHabits() async {
-    final Database db = await initializeDB('habits');
-    final List<Map<String, Object?>> queryResult =
-        await db.rawQuery('SELECT * FROM habits');
-    return queryResult.map((e) => HabitModel.fromMap(e)).toList();
-  }
-
   // insert new schedule into DB
   Future insertSchedule(ScheduleModel scheduleModel) async {
     int result = 0;
@@ -107,6 +110,8 @@ class DatabaseHandler {
     );
     return result;
   }
+
+  // ----------Calendar (Event)----------
 
   /// Desc : Event (일정) 달력에 보여주도록 형식 변경
   /// Date : 2023.06.02
@@ -147,6 +152,8 @@ class DatabaseHandler {
     }
     return eventSource;
   }
+
+  // --------------------------------------------------------------------------------------------------
 
   // Future<List<String>> queryDates() async {
   //   final Database db = await initializeSchedulesDB();

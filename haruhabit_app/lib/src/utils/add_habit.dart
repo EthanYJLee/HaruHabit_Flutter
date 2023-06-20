@@ -6,14 +6,14 @@ import 'package:haruhabit_app/src/utils/date_picker_item.dart';
 import 'package:haruhabit_app/src/view_models/habit_viewmodel.dart';
 import 'package:intl/intl.dart';
 
-class CreateHabit extends StatefulWidget {
-  const CreateHabit({super.key});
+class AddHabit extends StatefulWidget {
+  const AddHabit({super.key});
 
   @override
-  State<CreateHabit> createState() => _CreateHabitState();
+  State<AddHabit> createState() => _AddHabitState();
 }
 
-class _CreateHabitState extends State<CreateHabit> {
+class _AddHabitState extends State<AddHabit> {
   HabitViewModel _habitViewModel = HabitViewModel();
   late TextEditingController _categoryController = TextEditingController();
   late TextEditingController _habitController = TextEditingController();

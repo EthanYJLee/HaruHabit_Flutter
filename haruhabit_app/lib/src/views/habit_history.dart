@@ -31,7 +31,8 @@ class _HabitHistoryState extends State<HabitHistory> {
     return SafeArea(
         child: Scaffold(
       body: FutureBuilder(
-        future: handler.queryHabits(), // handler가 queryStudents 실행하면서 view 생성
+        future:
+            handler.queryAllHabits(), // handler가 queryStudents 실행하면서 view 생성
         builder:
             (BuildContext context, AsyncSnapshot<List<HabitModel>> snapshot) {
           if (snapshot.hasData) {

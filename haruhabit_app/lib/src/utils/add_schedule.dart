@@ -9,16 +9,16 @@ import 'package:haruhabit_app/src/views/calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CreateSchedule extends StatefulWidget {
-  const CreateSchedule({super.key, required this.selectedDate});
+class AddSchedule extends StatefulWidget {
+  const AddSchedule({super.key, required this.selectedDate});
 
   final DateTime selectedDate;
 
   @override
-  State<CreateSchedule> createState() => _CreateScheduleState();
+  State<AddSchedule> createState() => _AddScheduleState();
 }
 
-class _CreateScheduleState extends State<CreateSchedule> {
+class _AddScheduleState extends State<AddSchedule> {
   ScheduleViewModel _scheduleViewModel = ScheduleViewModel();
   late TextEditingController _scheduleController;
   late TextEditingController _placeController;
@@ -173,7 +173,7 @@ class _CreateScheduleState extends State<CreateSchedule> {
       children: [
         DatePickerItem(
           children: <Widget>[
-            const Text("시간"),
+            const Text("Time"),
             CupertinoButton(
               // disabledColor: Color.fromARGB(255, 164, 158, 255),
               // color: Color.fromARGB(255, 164, 158, 255),
@@ -187,7 +187,7 @@ class _CreateScheduleState extends State<CreateSchedule> {
                   mode: CupertinoDatePickerMode.time,
                   // 분 간격
                   minuteInterval: 5,
-                  use24hFormat: true,
+                  use24hFormat: false,
                   // This is called when the user changes the date.
                   onDateTimeChanged: (DateTime newTime) {
                     setState(() {
@@ -197,11 +197,12 @@ class _CreateScheduleState extends State<CreateSchedule> {
                   },
                 ),
               ),
-              // In this example, the date is formatted manually. You can
+              // The date is formatted manually here. You can
               // use the intl package to format the value based on the
               // user's locale settings.
+              // 기기 설정에 따라 locale 자동 적용
               child: Text(
-                "${hour}시 ${minute}분",
+                "${hour} : ${minute}",
                 style: TextStyle(
                   fontSize: 18.0,
                   color: Colors.redAccent[100],

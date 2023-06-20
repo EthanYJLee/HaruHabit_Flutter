@@ -5,14 +5,14 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:haruhabit_app/src/views/habit_history.dart';
 import 'package:haruhabit_app/src/views/schedule_history.dart';
 
-class History extends StatefulWidget {
-  const History({super.key});
+class HistoryTabbar extends StatefulWidget {
+  const HistoryTabbar({super.key});
 
   @override
-  State<History> createState() => _HistoryState();
+  State<HistoryTabbar> createState() => _HistoryTabbarState();
 }
 
-class _HistoryState extends State<History> {
+class _HistoryTabbarState extends State<HistoryTabbar> {
   late int currentIndex;
 
   final List<Widget> tabbarItems = const [
@@ -61,7 +61,7 @@ class _HistoryState extends State<History> {
                     CupertinoIcons.calendar_circle,
                     color: Colors.redAccent[100],
                   ),
-            label: "습관",
+            label: "Habit",
           ),
           BottomNavigationBarItem(
             icon: onSelected[1]
@@ -73,7 +73,7 @@ class _HistoryState extends State<History> {
                     CupertinoIcons.clock,
                     color: Colors.redAccent[100],
                   ),
-            label: "일정",
+            label: "To-Do",
           ),
         ],
       ),

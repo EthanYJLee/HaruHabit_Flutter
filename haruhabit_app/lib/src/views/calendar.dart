@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:haruhabit_app/src/blocs/calendar_bloc.dart';
 import 'package:haruhabit_app/src/models/schedule_model.dart';
 import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:haruhabit_app/src/utils/card_dialog.dart';
-import 'package:haruhabit_app/src/utils/create_habit.dart';
-import 'package:haruhabit_app/src/utils/create_schedule.dart';
+import 'package:haruhabit_app/src/utils/add_habit.dart';
+import 'package:haruhabit_app/src/utils/add_schedule.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
@@ -27,28 +29,37 @@ class _CalendarState extends State<Calendar> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   // RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
   //     .toggledOff; // Can be toggled on/off by longpressing a date
-  DateTime _focusedDay = DateTime.now();
+  // final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
+  final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
   DateTime? _selectedDay;
   // DateTime? _rangeStart;
   // DateTime? _rangeEnd;
-  // late DatabaseHandler handler = DatabaseHandler();
   late List<ScheduleModel> scheduleModel;
+  final Set<DateTime> _selectedDays = LinkedHashSet<DateTime>(
+    equals: isSameDay,
+    hashCode: getHashCode,
+  );
 
   @override
   void initState() {
     // TODO: implement initState
+    getEventLists();
     super.initState();
-    // handler.initializeSchedulesDB().whenComplete(() async {
-    //   scheduleModel = await handler.querySchedules();
-    // });
-    _selectedDay = _focusedDay;
+    _selectedDay = _focusedDay.value;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    _onDaySelected(_selectedDay!, _focusedDay.value);
+    print(_selectedEvents);
   }
 
   List<Event> _getEventsForDay(DateTime day) {
     // Implementation example
-    getEventLists();
     return kEvents[day] ?? [];
+  }
+
+  List<Event> _getEventsForDays(Iterable<DateTime> days) {
+    return [
+      for (final d in days) ..._getEventsForDay(d),
+    ];
   }
 
   // List<Event> _getEventsForRange(DateTime start, DateTime end) {
@@ -63,15 +74,31 @@ class _CalendarState extends State<Calendar> {
     if (!isSameDay(_selectedDay, selectedDay)) {
       setState(() {
         _selectedDay = selectedDay;
-        _focusedDay = focusedDay;
+        _focusedDay.value = focusedDay;
         // _rangeStart = null; // Important to clean those
         // _rangeEnd = null;
         // _rangeSelectionMode = RangeSelectionMode.toggledOff;
+        _selectedEvents.value = _getEventsForDay(selectedDay);
       });
-
-      _selectedEvents.value = _getEventsForDay(selectedDay);
     }
   }
+
+  // void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+  //   setState(() {
+  //     if (_selectedDays.contains(selectedDay)) {
+  //       _selectedDays.remove(selectedDay);
+  //     } else {
+  //       _selectedDays.add(selectedDay);
+  //     }
+
+  //     _focusedDay = focusedDay;
+  //     // _rangeStart = null;
+  //     // _rangeEnd = null;
+  //     // _rangeSelectionMode = RangeSelectionMode.toggledOff;
+  //   });
+
+  //   _selectedEvents.value = _getEventsForDays(_selectedDays);
+  // }
 
   // void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
   //   setState(() {
@@ -92,6 +119,10 @@ class _CalendarState extends State<Calendar> {
   //   }
   // }
 
+  bool get canClearSelection =>
+      // _selectedDays.isNotEmpty || _rangeStart != null || _rangeEnd != null;
+      _selectedDays.isNotEmpty;
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -107,7 +138,7 @@ class _CalendarState extends State<Calendar> {
           IconButton(
               onPressed: () {
                 Navigator.of(context).push(CardDialog(builder: (context) {
-                  return CreateSchedule(selectedDate: _selectedDay!);
+                  return AddSchedule(selectedDate: _selectedDay!);
                 })).whenComplete(() => _getEventsForDay(_selectedDay!));
               },
               icon: Icon(CupertinoIcons.add_circled))
@@ -124,10 +155,10 @@ class _CalendarState extends State<Calendar> {
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(15)),
                 child: TableCalendar<Event>(
-                  locale: "ko",
+                  locale: "en",
                   firstDay: kFirstDay,
                   lastDay: kLastDay,
-                  focusedDay: _focusedDay,
+                  focusedDay: _focusedDay.value,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   // rangeStartDay: _rangeStart,
                   // rangeEndDay: _rangeEnd,
@@ -153,9 +184,7 @@ class _CalendarState extends State<Calendar> {
                   ),
                   onDaySelected: _onDaySelected,
                   // onRangeSelected: _onRangeSelected,
-                  onPageChanged: (focusedDay) {
-                    _focusedDay = focusedDay;
-                  },
+                  onPageChanged: (focusedDay) => _focusedDay.value = focusedDay,
                 ),
               ),
             ),
@@ -182,7 +211,7 @@ class _CalendarState extends State<Calendar> {
                           title: Text('${value[index]}'),
                           subtitle: Text("${value[index].place}"),
                           trailing: Text(
-                              "${value[index].hour}시 ${value[index].minute}분"),
+                              "${value[index].hour} : ${value[index].minute}"),
                         ),
                       );
                     },
@@ -192,6 +221,66 @@ class _CalendarState extends State<Calendar> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _CalendarHeader extends StatelessWidget {
+  final DateTime focusedDay;
+  final VoidCallback onLeftArrowTap;
+  final VoidCallback onRightArrowTap;
+  final VoidCallback onTodayButtonTap;
+  final VoidCallback onClearButtonTap;
+  final bool clearButtonVisible;
+
+  const _CalendarHeader({
+    Key? key,
+    required this.focusedDay,
+    required this.onLeftArrowTap,
+    required this.onRightArrowTap,
+    required this.onTodayButtonTap,
+    required this.onClearButtonTap,
+    required this.clearButtonVisible,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final headerText = DateFormat.yMMM().format(focusedDay);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          const SizedBox(width: 16.0),
+          SizedBox(
+            width: 120.0,
+            child: Text(
+              headerText,
+              style: TextStyle(fontSize: 26.0),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.calendar_today, size: 20.0),
+            visualDensity: VisualDensity.compact,
+            onPressed: onTodayButtonTap,
+          ),
+          if (clearButtonVisible)
+            IconButton(
+              icon: Icon(Icons.clear, size: 20.0),
+              visualDensity: VisualDensity.compact,
+              onPressed: onClearButtonTap,
+            ),
+          const Spacer(),
+          IconButton(
+            icon: Icon(Icons.chevron_left),
+            onPressed: onLeftArrowTap,
+          ),
+          IconButton(
+            icon: Icon(Icons.chevron_right),
+            onPressed: onRightArrowTap,
+          ),
+        ],
       ),
     );
   }

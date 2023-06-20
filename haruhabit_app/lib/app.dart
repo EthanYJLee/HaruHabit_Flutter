@@ -29,6 +29,9 @@ class App extends StatelessWidget {
             actionsIconTheme: IconThemeData(color: Colors.redAccent[100]),
             foregroundColor: Colors.redAccent[100]),
         tabBarTheme: const TabBarTheme(),
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Color.fromARGB(255, 164, 158, 255),
+        ),
         fontFamily: 'text',
       ),
       debugShowCheckedModeBanner: false,
