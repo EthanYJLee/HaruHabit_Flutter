@@ -1,6 +1,6 @@
 # HaruHabit_Flutter
 ---
-### Tool
+### Tools
 - BLoC
 - RxDart
 - MVVM Pattern
