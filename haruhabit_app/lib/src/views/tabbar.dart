@@ -6,7 +6,6 @@ import 'package:haruhabit_app/src/views/calendar.dart';
 import 'package:haruhabit_app/src/views/health.dart';
 import 'package:haruhabit_app/src/views/home.dart';
 import 'package:haruhabit_app/src/views/mypage.dart';
-import 'package:haruhabit_app/src/views/test.dart';
 
 class Tabbar extends StatefulWidget {
   const Tabbar({super.key});
@@ -20,8 +19,7 @@ class _TabbarState extends State<Tabbar> {
 
   final List<Widget> tabbarItems = const [
     Health(),
-    // Home(),
-    Test(),
+    Home(),
     MyPage(),
   ];
   late List<bool> onSelected;

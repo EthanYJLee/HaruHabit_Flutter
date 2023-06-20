@@ -32,7 +32,7 @@ class _ScheduleHistoryState extends State<ScheduleHistory> {
         child: Scaffold(
       body: FutureBuilder(
         future:
-            handler.querySchedules(), // handler가 queryStudents 실행하면서 view 생성
+            handler.queryAllSchedules(), // handler가 queryStudents 실행하면서 view 생성
         builder: (BuildContext context,
             AsyncSnapshot<List<ScheduleModel>> snapshot) {
           if (snapshot.hasData) {

@@ -5,6 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:haruhabit_app/src/blocs/health_bloc.dart';
 import 'package:haruhabit_app/src/blocs/health_event.dart';
 import 'package:haruhabit_app/src/blocs/health_state.dart';
+import 'package:haruhabit_app/src/utils/add_health.dart';
+import 'package:haruhabit_app/src/utils/card_dialog.dart';
+import 'package:haruhabit_app/src/utils/gridcard_util.dart';
+import 'package:intl/date_time_patterns.dart';
 
 class Health extends StatelessWidget {
   const Health({super.key});
@@ -14,7 +18,7 @@ class Health extends StatelessWidget {
     // healthBloc.on((event, emit) => )
     return Scaffold(
       appBar: AppBar(
-        title: const Text("steps"),
+        title: const Text("Health"),
       ),
       body: BlocProvider(
         create: (_) => HealthBloc()..add(HealthFetched()),
@@ -35,18 +39,18 @@ class Health extends StatelessWidget {
                     ),
                   );
                 }
-                // return ListView.builder(
-                //   itemBuilder: (BuildContext context, int index) {
-                //     return index >= state.posts.length
-                //         ? const BottomLoader()
-                //         : PostListItem(post: state.posts[index]);
-                //   },
-                //   itemCount: state.hasReachedMax
-                //       ? state.posts.length
-                //       : state.posts.length + 1,
-                //   controller: _scrollController,
-                // );
-                return Text(state.model.steps.toString());
+                return Container(
+                    child: Column(
+                  children: [
+                    GridcardUtil(
+                      content: Container(
+                        height: MediaQuery.of(context).size.height / 8,
+                        width: MediaQuery.of(context).size.width / 1.1,
+                        child: Text(state.model.steps.toString()),
+                      ),
+                    ),
+                  ],
+                ));
               case HealthStatus.initial:
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -55,6 +59,17 @@ class Health extends StatelessWidget {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          //-
+          Navigator.of(context).push(CardDialog(builder: (context) {
+            return AddHealth();
+          }));
+          // print(DateTime.now().subtract(Duration(minutes: 20)));
+        },
+      ),
     );
   }
+
+  // Widget
 }

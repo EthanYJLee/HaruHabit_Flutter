@@ -9,7 +9,6 @@ import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 
 class DatabaseHandler {
-
   Future<Database> initializeDB(String db) async {
     String path = await getDatabasesPath();
 
@@ -42,6 +41,27 @@ class DatabaseHandler {
     }
   }
 
+  // read all schedules
+  Future<List<ScheduleModel>> queryAllSchedules() async {
+    final Database db = await initializeDB('schedules');
+    final List<Map<String, Object?>> queryResult =
+        await db.rawQuery('SELECT * FROM schedules');
+    return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
+  }
+
+  // read selected day's schedules
+  Future<List<ScheduleModel>> querySelectedSchedules(
+      String selectedDate) async {
+    final Database db = await initializeDB('schedules');
+    final List<Map<String, Object?>> queryResult =
+        // await db.rawQuery('SELECT * FROM schedules');
+        await db.query('schedules',
+            columns: ['sId', 'date', 'schedule', 'place', 'hour', 'minute'],
+            where: 'date = ?',
+            whereArgs: [selectedDate]);
+    print(queryResult.map((e) => ScheduleModel.fromMap(e)).toList());
+    return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
+  }
 
   // insert new habit into DB
   Future insertHabit(HabitModel habitModel) async {
@@ -69,7 +89,6 @@ class DatabaseHandler {
     return queryResult.map((e) => HabitModel.fromMap(e)).toList();
   }
 
-
   // insert new schedule into DB
   Future insertSchedule(ScheduleModel scheduleModel) async {
     int result = 0;
@@ -87,14 +106,6 @@ class DatabaseHandler {
       // conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return result;
-  }
-
-  // read schedules
-  Future<List<ScheduleModel>> querySchedules() async {
-    final Database db = await initializeDB('schedules');
-    final List<Map<String, Object?>> queryResult =
-        await db.rawQuery('SELECT * FROM schedules');
-    return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 
   /// Desc : Event (일정) 달력에 보여주도록 형식 변경

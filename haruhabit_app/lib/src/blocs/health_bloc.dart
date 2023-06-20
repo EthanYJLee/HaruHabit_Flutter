@@ -7,11 +7,14 @@ import 'package:equatable/equatable.dart';
 import 'package:haruhabit_app/src/blocs/health_event.dart';
 import 'package:haruhabit_app/src/blocs/health_state.dart';
 import 'package:haruhabit_app/src/models/health_model.dart';
+import 'package:haruhabit_app/src/models/step_model.dart';
 import 'package:health/health.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stream_transform/stream_transform.dart';
+
+import '../utils/health_util.dart';
 
 const throttleDuration = Duration(milliseconds: 100);
 
@@ -31,15 +34,16 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     );
   }
 
-  // List<HealthDataPoint> _healthDataList = [];
   HealthFactory health = HealthFactory(useHealthConnectIfAvailable: true);
   static final dataTypes = [HealthDataType.STEPS, HealthDataType.WORKOUT];
   final permissions =
       dataTypes.map((e) => HealthDataAccess.READ_WRITE).toList();
   bool isAuthorized = false;
-  final _healthFetcher = PublishSubject<HealthModel>();
+  final _stepFetcher = PublishSubject<StepModel>();
+  List<HealthDataPoint> _healthDataList = [];
+  static final types = dataTypesIOS;
 
-  Observable<HealthModel> get healthData => _healthFetcher.stream;
+  Observable<StepModel> get healthData => _stepFetcher.stream;
 
   Future<void> onHealthFetched(
       HealthFetched event, Emitter<HealthState> emit) async {
@@ -50,11 +54,11 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
         print("entered");
         isAuthorized = await authorize();
         if (isAuthorized) {
-          final healthData = await _fetchHealthData();
-          print(healthData.steps);
-          _healthFetcher.sink.add(healthData);
+          final stepData = await _fetchStepData();
+          print(stepData.steps);
+          _stepFetcher.sink.add(stepData);
           return emit(
-              state.copyWith(status: HealthStatus.success, model: healthData));
+              state.copyWith(status: HealthStatus.success, model: stepData));
         }
       }
     } catch (_) {
@@ -89,47 +93,80 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     return authorized;
   }
 
-  // /// Add some random health data.
-  // Future _addData() async {
-  //   final now = DateTime.now();
-  //   final earlier = now.subtract(Duration(minutes: 20));
-  //   // Add data for supported types
-  //   // NOTE: These are only the ones supported on Androids new API Health Connect.
-  //   // Both Android's Google Fit and iOS' HealthKit have more types that we support in the enum list [HealthDataType]
-  //   // Add more - like AUDIOGRAM, HEADACHE_SEVERE etc. to try them.
-  //   bool success = true;
-  //   // 걸음 수 Data 추가
-  //   success &=
-  //       await health.writeHealthData(90, HealthDataType.STEPS, earlier, now);
+  Future _addWorkoutData(
+      HealthWorkoutActivityType type, DateTime start, DateTime end) async {
+    bool success = true;
+    success &= await health.writeWorkoutData(
+      type,
+      start,
+      end,
+    );
+    // _state = success ? AppState.DATA_ADDED : AppState.DATA_NOT_ADDED;
+    success ? print('Data Added') : print('Data Not Added');
+  }
 
-  //   setState(() {
-  //     _state = success ? AppState.DATA_ADDED : AppState.DATA_NOT_ADDED;
-  //   });
-  // }
-
-  Future<HealthModel> _fetchHealthData() async {
+  // fetch today's step count from the health plugin
+  Future<StepModel> _fetchStepData() async {
     // today's data since midnight
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
-    late HealthModel healthModel;
+    late StepModel stepModel;
 
     bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
     print(requested);
 
     if (requested) {
       try {
-        healthModel = HealthModel(
+        stepModel = StepModel(
             steps: await health.getTotalStepsInInterval(midnight, now) as int);
       } catch (error) {
         print("Caught exception in getTotalStepsInInterval: $error");
       }
-      print('Total number of steps: ${healthModel.steps}');
+      print('Total number of steps: ${stepModel.steps}');
     }
     // return healthModel;
-    return (healthModel.steps == null)
-        ? const HealthModel(steps: 0)
-        : healthModel;
+    return (stepModel.steps == null)
+        ? const StepModel(steps: 0)
+        : stepModel;
   }
+
+    /// Fetch data points from the health plugin and show them in the app.
+  Future fetchData() async {
+    // setState(() => _state = AppState.FETCHING_DATA);
+
+    // get data within the last 24 hours
+    final now = DateTime.now();
+    final yesterday = now.subtract(Duration(hours: 24));
+
+    // Clear old data points
+    _healthDataList.clear();
+
+    try {
+      // fetch health data
+      List<HealthDataPoint> healthData =
+          await health.getHealthDataFromTypes(yesterday, now, types);
+      print(healthData.length);
+
+      // save all the new data points (only the first 100)
+      _healthDataList.addAll(
+          (healthData.length < 10) ? healthData : healthData.sublist(0, 10));
+    } catch (error) {
+      print("Exception in getHealthDataFromTypes: $error");
+    }
+
+    // filter out duplicates
+    _healthDataList = HealthFactory.removeDuplicates(_healthDataList);
+
+    // print the results
+    _healthDataList.forEach((x) => print(x));
+
+    // update the UI to display the results
+    // setState(() {
+    //   _state = _healthDataList.isEmpty ? AppState.NO_DATA : AppState.DATA_READY;
+    // });
+  }
+
+
 }
 
 final healthBloc = HealthBloc();

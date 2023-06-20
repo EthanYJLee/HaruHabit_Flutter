@@ -11,8 +11,6 @@ import 'package:haruhabit_app/src/utils/card_dialog.dart';
 import 'package:haruhabit_app/src/utils/create_habit.dart';
 import 'package:haruhabit_app/src/utils/create_schedule.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
-import 'package:haruhabit_app/src/views/table_complex_example.dart';
-import 'package:haruhabit_app/src/views/table_events_example.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {

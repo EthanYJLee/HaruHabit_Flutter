@@ -4,13 +4,22 @@ import 'package:rxdart/rxdart.dart';
 
 class ScheduleBloc {
   final DatabaseHandler _handler = DatabaseHandler();
-  final _scheduleFetcher = PublishSubject<List<ScheduleModel>>();
+  final _allScheduleFetcher = PublishSubject<List<ScheduleModel>>();
+  final _selectedScheduleFetcher = PublishSubject<List<ScheduleModel>>();
 
-  Observable<List<ScheduleModel>> get allSchedule => _scheduleFetcher.stream;
+  Observable<List<ScheduleModel>> get allSchedule => _allScheduleFetcher.stream;
+  Observable<List<ScheduleModel>> get selectedSchedule =>
+      _selectedScheduleFetcher.stream;
 
   fetchAllSchedules() async {
-    List<ScheduleModel> scheduleModel = await _handler.querySchedules();
-    _scheduleFetcher.sink.add(scheduleModel);
+    List<ScheduleModel> scheduleModel = await _handler.queryAllSchedules();
+    _allScheduleFetcher.sink.add(scheduleModel);
+  }
+
+  fetchSelectedSchedules(String selectedDate) async {
+    List<ScheduleModel> scheduleModel =
+        await _handler.querySelectedSchedules(selectedDate);
+    _selectedScheduleFetcher.sink.add(scheduleModel);
   }
 }
 
