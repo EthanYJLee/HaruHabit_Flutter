@@ -19,7 +19,7 @@ class _TableEventsExampleState extends State<TableEventsExample> {
 
   @override
   void initState() {
-    getEventLists();
+    // getEventLists();
     super.initState();
 
     _selectedDay = _focusedDay;

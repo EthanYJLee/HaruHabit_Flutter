@@ -42,21 +42,22 @@ Map<DateTime, dynamic> eventSource = <DateTime, dynamic>{};
 late LinkedHashMap<DateTime, dynamic> kEvents =
     LinkedHashMap<DateTime, dynamic>();
 
-getEventLists() async {
-  // Event들을 날짜별로 묶은 모델 생성
-  eventSource = await handler.eventLists();
-
-  // Map 객체를 LinkedHashMap 객체로 다시 변형
-  //**
-  // LinkedHashMap: == 비교나 hash 값 불러오는 등의 기능을 사용자 정의할 수 있게 해주는 map임.
-  // addAll(eventSource)는 객체 생성과 동시에 addAll 메소드를 실행하라는 뜻임.
-  // equals 파라미터는 isSameDay 함수 실행으로 equal 여부를 판단하도록 사용자 정의한다는 의미임.
-  // */
-  kEvents = LinkedHashMap(
-    equals: isSameDay,
-    hashCode: getHashCode,
-  )..addAll(eventSource);
-}
+// Update : CalendarBloc으로 대체함
+// Date : 2023.06.23
+// getEventLists() async {
+//   // Event들을 날짜별로 묶은 모델 생성
+//   eventSource = await handler.eventLists();
+//   // Map 객체를 LinkedHashMap 객체로 다시 변형
+//   //**
+//   // LinkedHashMap: == 비교나 hash 값 불러오는 등의 기능을 사용자 정의할 수 있게 해주는 map임.
+//   // addAll(eventSource)는 객체 생성과 동시에 addAll 메소드를 실행하라는 뜻임.
+//   // equals 파라미터는 isSameDay 함수 실행으로 equal 여부를 판단하도록 사용자 정의한다는 의미임.
+//   // */
+//   kEvents = LinkedHashMap(
+//     equals: isSameDay,
+//     hashCode: getHashCode,
+//   )..addAll(eventSource);
+// }
 
 int getHashCode(DateTime key) {
   // print(DateTime.now().day * 1000000 +

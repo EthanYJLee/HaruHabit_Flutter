@@ -111,12 +111,6 @@ class Home extends StatelessWidget {
                   width: MediaQuery.of(context).size.width / 1.1,
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => TableEventsExample()));
-                  },
-                  child: const Text("TableEventsExample"))
             ],
           ),
         ),

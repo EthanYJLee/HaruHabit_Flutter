@@ -45,7 +45,8 @@ class _TimelineUtilState extends State<TimelineUtil> {
   }
 
   void _resetSelectedDate() {
-    _selectedDate = DateTime.now().add(const Duration(days: 2));
+    // _selectedDate = DateTime.now().add(const Duration(days: 2));
+    _selectedDate = DateTime.now();
   }
 
   Widget _timeline() {

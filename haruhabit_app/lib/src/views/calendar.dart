@@ -44,10 +44,11 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    calendarBloc.getEventLists();
     // Desc : 날짜별 Event들을 받아서 kEvents에 LinkedHashMap 형식으로 추가 (업데이트)해주기
     // Date : 2023.06.23
-    getEventLists().then((_) => setState(() {}));
+    // Update : CalendarBloc 사용으로 수정
+    // getEventLists().then((_) => setState(() {}));
+    calendarBloc.getEventLists();
     _selectedDay = _focusedDay.value;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
     _onDaySelected(_selectedDay!, _focusedDay.value);
@@ -55,7 +56,7 @@ class _CalendarState extends State<Calendar> {
 
   List<Event> _getEventsForDay(DateTime day) {
     // Implementation example
-    return kEvents[day] ?? [];
+    return calendarBloc.kEvents[day] ?? [];
   }
 
   //**  범위를 정해 이벤트를 받아올 경우 사용할 것
@@ -126,9 +127,15 @@ class _CalendarState extends State<Calendar> {
               onPressed: () {
                 Navigator.of(context).push(CardDialog(builder: (context) {
                   return AddSchedule(selectedDate: _selectedDay!);
-                })).whenComplete(() => _getEventsForDay(_selectedDay!));
+                })).whenComplete(() {
+                  calendarBloc.getEventLists();
+                  _getEventsForDay(_selectedDay!);
+                  setState(() {
+                    _selectedEvents.notifyListeners();
+                  });
+                });
               },
-              icon: Icon(CupertinoIcons.add_circled))
+              icon: const Icon(CupertinoIcons.add_circled))
         ],
         elevation: 0,
       ),
@@ -141,55 +148,81 @@ class _CalendarState extends State<Calendar> {
                 decoration: BoxDecoration(
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(15)),
-                child: TableCalendar<Event>(
-                  locale: "en",
-                  firstDay: kFirstDay,
-                  lastDay: kLastDay,
-                  focusedDay: _focusedDay.value,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  // rangeStartDay: _rangeStart,
-                  // rangeEndDay: _rangeEnd,
-                  calendarFormat: _calendarFormat,
-                  // rangeSelectionMode: _rangeSelectionMode,
-                  eventLoader: _getEventsForDay,
-                  startingDayOfWeek: StartingDayOfWeek.sunday,
-                  calendarStyle: const CalendarStyle(
-                    // Use `CalendarStyle` to customize the UI
-                    outsideDaysVisible: true,
-                  ),
-                  headerStyle: const HeaderStyle(
-                    titleCentered: true,
-                    formatButtonVisible: false,
-                    leftChevronIcon: Icon(
-                      CupertinoIcons.arrow_left_circle,
-                      color: Color.fromARGB(255, 164, 158, 255),
-                    ),
-                    rightChevronIcon: Icon(
-                      CupertinoIcons.arrow_right_circle,
-                      color: Color.fromARGB(255, 164, 158, 255),
-                    ),
-                  ),
-                  onDaySelected: _onDaySelected,
-                  // onRangeSelected: _onRangeSelected,
-                  onPageChanged: (focusedDay) => _focusedDay.value = focusedDay,
+                // child: TableCalendar<Event>(
+                //   locale: "en",
+                //   firstDay: kFirstDay,
+                //   lastDay: kLastDay,
+                //   focusedDay: _focusedDay.value,
+                //   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                //   // rangeStartDay: _rangeStart,
+                //   // rangeEndDay: _rangeEnd,
+                //   calendarFormat: _calendarFormat,
+                //   // rangeSelectionMode: _rangeSelectionMode,
+                //   eventLoader: _getEventsForDay,
+                //   startingDayOfWeek: StartingDayOfWeek.sunday,
+                //   calendarStyle: const CalendarStyle(
+                //     // Use `CalendarStyle` to customize the UI
+                //     outsideDaysVisible: true,
+                //   ),
+                //   headerStyle: const HeaderStyle(
+                //     titleCentered: true,
+                //     formatButtonVisible: false,
+                //     leftChevronIcon: Icon(
+                //       CupertinoIcons.arrow_left_circle,
+                //       color: Color.fromARGB(255, 164, 158, 255),
+                //     ),
+                //     rightChevronIcon: Icon(
+                //       CupertinoIcons.arrow_right_circle,
+                //       color: Color.fromARGB(255, 164, 158, 255),
+                //     ),
+                //   ),
+                //   onDaySelected: _onDaySelected,
+                //   // onRangeSelected: _onRangeSelected,
+                //   onPageChanged: (focusedDay) => _focusedDay.value = focusedDay,
+                // ),
+                child: StreamBuilder(
+                  stream: calendarBloc.eventList,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return TableCalendar<Event>(
+                        locale: "en",
+                        firstDay: kFirstDay,
+                        lastDay: kLastDay,
+                        focusedDay: _focusedDay.value,
+                        selectedDayPredicate: (day) =>
+                            isSameDay(_selectedDay, day),
+                        calendarFormat: _calendarFormat,
+                        eventLoader: _getEventsForDay,
+                        startingDayOfWeek: StartingDayOfWeek.sunday,
+                        calendarStyle: const CalendarStyle(
+                          outsideDaysVisible: true,
+                        ),
+                        headerStyle: const HeaderStyle(
+                          titleCentered: true,
+                          formatButtonVisible: false,
+                          leftChevronIcon: Icon(
+                            CupertinoIcons.arrow_left_circle,
+                            color: Color.fromARGB(255, 164, 158, 255),
+                          ),
+                          rightChevronIcon: Icon(
+                            CupertinoIcons.arrow_right_circle,
+                            color: Color.fromARGB(255, 164, 158, 255),
+                          ),
+                        ),
+                        onDaySelected: _onDaySelected,
+                        onPageChanged: (focusedDay) =>
+                            _focusedDay.value = focusedDay,
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
               ),
             ),
-
-            // *******************************************************************************************
-            // ----------------------------Calendar Bloc 활용 고려----------------------------
-            StreamBuilder(
-                stream: calendarBloc.eventList,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data!.values.toString());
-                  } else if (snapshot.hasError) {
-                    return Text(snapshot.error.toString());
-                  }
-                  return Text("?");
-                }),
-            // ----------------------------Calendar Bloc 활용 고려----------------------------
-            // *******************************************************************************************
 
             // ----------------------------------------------------
             Expanded(
@@ -220,6 +253,45 @@ class _CalendarState extends State<Calendar> {
                   );
                 },
               ),
+              // child: StreamBuilder(
+              //   stream: calendarBloc.eventList,
+              //   builder: (context, snapshot) {
+              //     if (snapshot.hasData) {
+              //       return ValueListenableBuilder<List<Event>>(
+              //         valueListenable: _selectedEvents,
+              //         builder: (context, value, _) {
+              //           return ListView.builder(
+              //             itemCount: value.length,
+              //             itemBuilder: (context, index) {
+              //               return Container(
+              //                 margin: const EdgeInsets.symmetric(
+              //                   horizontal: 10.0,
+              //                   vertical: 5.0,
+              //                 ),
+              //                 decoration: BoxDecoration(
+              //                   border: Border.all(),
+              //                   borderRadius: BorderRadius.circular(15.0),
+              //                 ),
+              //                 child: ListTile(
+              //                   onTap: () => print('${value[index]}'),
+              //                   title: Text('${value[index]}'),
+              //                   subtitle: Text("${value[index].place}"),
+              //                   trailing: Text(
+              //                       "${value[index].hour} : ${value[index].minute}"),
+              //                 ),
+              //               );
+              //             },
+              //           );
+              //         },
+              //       );
+              //     } else if (snapshot.hasError) {
+              //       return Text(snapshot.error.toString());
+              //     }
+              //     return const Center(
+              //       child: CircularProgressIndicator(),
+              //     );
+              //   },
+              // ),
             ),
           ],
         ),
