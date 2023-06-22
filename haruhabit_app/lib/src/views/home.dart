@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:haruhabit_app/src/examples/table_complex_example.dart';
+import 'package:haruhabit_app/src/examples/table_events_example.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
 import 'package:haruhabit_app/src/utils/header.dart';
 import 'package:haruhabit_app/src/views/calendar.dart';
@@ -109,6 +111,12 @@ class Home extends StatelessWidget {
                   width: MediaQuery.of(context).size.width / 1.1,
                 ),
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => TableEventsExample()));
+                  },
+                  child: const Text("TableEventsExample"))
             ],
           ),
         ),
@@ -130,11 +138,11 @@ class Home extends StatelessWidget {
           children: [
             SpeedDialChild(
               child: const Icon(CupertinoIcons.calendar),
-              label: "습관 추가",
-              labelBackgroundColor: Colors.transparent,
+              label: "Add Habit",
+              labelBackgroundColor: Colors.redAccent[100],
               labelStyle: const TextStyle(color: Colors.white),
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: Colors.redAccent[100],
+              foregroundColor: Colors.white,
               // onTap: () => showSearchView(),
               onTap: () {
                 // Navigator.of(context).push(CardDialog(builder: (context) {
@@ -146,11 +154,11 @@ class Home extends StatelessWidget {
             ),
             SpeedDialChild(
                 child: const Icon(CupertinoIcons.clock),
-                label: "일정 추가",
-                labelBackgroundColor: Colors.transparent,
+                label: "Add To-Do",
+                labelBackgroundColor: Colors.redAccent[100],
                 labelStyle: const TextStyle(color: Colors.white),
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+                backgroundColor: Colors.redAccent[100],
+                foregroundColor: Colors.white,
                 // onTap: () => showSortDialog(),
                 onTap: () {
                   Navigator.of(context).push(
@@ -158,11 +166,11 @@ class Home extends StatelessWidget {
                 }),
             SpeedDialChild(
               child: const Icon(CupertinoIcons.list_bullet),
-              label: "목록 보기",
-              labelBackgroundColor: Colors.transparent,
+              label: "View All",
+              labelBackgroundColor: Colors.redAccent[100],
               labelStyle: const TextStyle(color: Colors.white),
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: Colors.redAccent[100],
+              foregroundColor: Colors.white,
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const HistoryTabbar()));

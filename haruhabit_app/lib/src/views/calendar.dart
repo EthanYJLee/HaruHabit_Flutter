@@ -24,31 +24,33 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   late final ValueNotifier<List<Event>> _selectedEvents;
-
-  // Calendar 관련
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  // RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-  //     .toggledOff; // Can be toggled on/off by longpressing a date
-  // final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
   DateTime? _selectedDay;
-  // DateTime? _rangeStart;
-  // DateTime? _rangeEnd;
   late List<ScheduleModel> scheduleModel;
   final Set<DateTime> _selectedDays = LinkedHashSet<DateTime>(
     equals: isSameDay,
     hashCode: getHashCode,
   );
+  //**  범위를 정해 이벤트를 받아올 경우 사용할 것
+  // RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
+  //     .toggledOff; // Can be toggled on/off by longpressing a date
+  // final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
+  // DateTime? _rangeStart;
+  // DateTime? _rangeEnd;
+  // */
 
   @override
   void initState() {
     // TODO: implement initState
-    getEventLists();
     super.initState();
+    calendarBloc.getEventLists();
+    // Desc : 날짜별 Event들을 받아서 kEvents에 LinkedHashMap 형식으로 추가 (업데이트)해주기
+    // Date : 2023.06.23
+    getEventLists().then((_) => setState(() {}));
     _selectedDay = _focusedDay.value;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
     _onDaySelected(_selectedDay!, _focusedDay.value);
-    print(_selectedEvents);
   }
 
   List<Event> _getEventsForDay(DateTime day) {
@@ -56,12 +58,13 @@ class _CalendarState extends State<Calendar> {
     return kEvents[day] ?? [];
   }
 
-  List<Event> _getEventsForDays(Iterable<DateTime> days) {
-    return [
-      for (final d in days) ..._getEventsForDay(d),
-    ];
-  }
-
+  //**  범위를 정해 이벤트를 받아올 경우 사용할 것
+  // List<Event> _getEventsForDays(Iterable<DateTime> days) {
+  //   return [
+  //     for (final d in days) ..._getEventsForDay(d),
+  //   ];
+  // }
+  //
   // List<Event> _getEventsForRange(DateTime start, DateTime end) {
   //   // Implementation example
   //   final days = daysInRange(start, end);
@@ -69,6 +72,26 @@ class _CalendarState extends State<Calendar> {
   //     for (final d in days) ..._getEventsForDay(d),
   //   ];
   // }
+  //
+  // void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
+  //   setState(() {
+  //     _selectedDay = null;
+  //     _focusedDay = focusedDay;
+  //     _rangeStart = start;
+  //     _rangeEnd = end;
+  //     _rangeSelectionMode = RangeSelectionMode.toggledOn;
+  //   });
+  //
+  //   // `start` or `end` could be null
+  //   if (start != null && end != null) {
+  //     _selectedEvents.value = _getEventsForRange(start, end);
+  //   } else if (start != null) {
+  //     _selectedEvents.value = _getEventsForDay(start);
+  //   } else if (end != null) {
+  //     _selectedEvents.value = _getEventsForDay(end);
+  //   }
+  // }
+  // */
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(_selectedDay, selectedDay)) {
@@ -82,42 +105,6 @@ class _CalendarState extends State<Calendar> {
       });
     }
   }
-
-  // void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-  //   setState(() {
-  //     if (_selectedDays.contains(selectedDay)) {
-  //       _selectedDays.remove(selectedDay);
-  //     } else {
-  //       _selectedDays.add(selectedDay);
-  //     }
-
-  //     _focusedDay = focusedDay;
-  //     // _rangeStart = null;
-  //     // _rangeEnd = null;
-  //     // _rangeSelectionMode = RangeSelectionMode.toggledOff;
-  //   });
-
-  //   _selectedEvents.value = _getEventsForDays(_selectedDays);
-  // }
-
-  // void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
-  //   setState(() {
-  //     _selectedDay = null;
-  //     _focusedDay = focusedDay;
-  //     _rangeStart = start;
-  //     _rangeEnd = end;
-  //     _rangeSelectionMode = RangeSelectionMode.toggledOn;
-  //   });
-
-  //   // `start` or `end` could be null
-  //   if (start != null && end != null) {
-  //     _selectedEvents.value = _getEventsForRange(start, end);
-  //   } else if (start != null) {
-  //     _selectedEvents.value = _getEventsForDay(start);
-  //   } else if (end != null) {
-  //     _selectedEvents.value = _getEventsForDay(end);
-  //   }
-  // }
 
   bool get canClearSelection =>
       // _selectedDays.isNotEmpty || _rangeStart != null || _rangeEnd != null;
@@ -188,6 +175,21 @@ class _CalendarState extends State<Calendar> {
                 ),
               ),
             ),
+
+            // *******************************************************************************************
+            // ----------------------------Calendar Bloc 활용 고려----------------------------
+            StreamBuilder(
+                stream: calendarBloc.eventList,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(snapshot.data!.values.toString());
+                  } else if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  }
+                  return Text("?");
+                }),
+            // ----------------------------Calendar Bloc 활용 고려----------------------------
+            // *******************************************************************************************
 
             // ----------------------------------------------------
             Expanded(

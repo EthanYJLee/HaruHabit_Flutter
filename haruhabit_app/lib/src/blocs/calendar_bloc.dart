@@ -22,8 +22,6 @@ class CalendarBloc {
   getEventLists() async {
     // Event들을 날짜별로 묶은 모델 생성
     eventSource = await handler.eventLists();
-    print(eventSource.keys);
-    print(eventSource.keys.toList());
 
     // Map 객체를 LinkedHashMap 객체로 다시 변형
     //**

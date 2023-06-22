@@ -25,9 +25,8 @@ class Event {
 
 final DatabaseHandler handler = DatabaseHandler();
 
-/// Example events.
-/// Using a [LinkedHashMap] is highly recommended if you decide to use a map.
-
+// /// Example events.
+// /// Using a [LinkedHashMap] is highly recommended if you decide to use a map.
 // final _kEventSource = Map.fromIterable(List.generate(50, (index) => index),
 //     key: (item) => DateTime.utc(kFirstDay.year, kFirstDay.month, item * 50),
 //     value: (item) => List.generate(
@@ -39,21 +38,13 @@ final DatabaseHandler handler = DatabaseHandler();
 //     ],
 //   });
 
+Map<DateTime, dynamic> eventSource = <DateTime, dynamic>{};
 late LinkedHashMap<DateTime, dynamic> kEvents =
     LinkedHashMap<DateTime, dynamic>();
-Map<DateTime, dynamic> eventSource = <DateTime, dynamic>{};
 
-void getEventLists() async {
+getEventLists() async {
   // Event들을 날짜별로 묶은 모델 생성
   eventSource = await handler.eventLists();
-  // eventSource = await handler.eventLists().whenComplete(
-  //       () => kEvents = LinkedHashMap(
-  //         equals: isSameDay,
-  //         hashCode: getHashCode,
-  //       )..addAll(eventSource),
-  //     );
-  print(eventSource.keys);
-  print(eventSource.keys.toList());
 
   // Map 객체를 LinkedHashMap 객체로 다시 변형
   //**
