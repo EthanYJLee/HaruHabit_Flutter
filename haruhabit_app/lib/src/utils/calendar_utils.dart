@@ -16,8 +16,9 @@ class Event {
   String place;
   String hour;
   String minute;
+  int isDone;
 
-  Event(this.schedule, this.place, this.hour, this.minute);
+  Event(this.schedule, this.place, this.hour, this.minute, this.isDone);
 
   @override
   String toString() => schedule;

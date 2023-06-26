@@ -5,10 +5,16 @@ class ScheduleModel {
   final String? place;
   final String? hour;
   final String? minute;
+  int isDone;
 
   ScheduleModel(
-      {this.sId, this.date, this.schedule, this.place, this.hour, this.minute});
-  
+      {this.sId,
+      this.date,
+      this.schedule,
+      this.place,
+      this.hour,
+      this.minute,
+      required this.isDone});
 
   ScheduleModel.fromMap(Map<String, dynamic> res)
       : sId = res['sId'],
@@ -16,7 +22,8 @@ class ScheduleModel {
         schedule = res['schedule'],
         place = res['place'],
         hour = res['hour'],
-        minute = res['minute'];
+        minute = res['minute'],
+        isDone = res['isDone'];
 
   Map<String, Object?> toMap() {
     return {
@@ -25,7 +32,17 @@ class ScheduleModel {
       'schedule': schedule,
       'place': place,
       'hour': hour,
-      'minute': minute,
+      'minute' : minute,
+      'isDone': isDone,
     };
   }
+  // static List<ScheduleModel> getList() {
+  //   return <ScheduleModel>[
+  //     CheckBoxListTileModel(
+  //       title: "Android",
+  //       isCheck: true,
+  //     ),
+      
+  //   ];
+  // }
 }

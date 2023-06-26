@@ -12,6 +12,7 @@ import 'package:haruhabit_app/src/utils/card_dialog.dart';
 import 'package:haruhabit_app/src/utils/add_habit.dart';
 import 'package:haruhabit_app/src/utils/add_schedule.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
+import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -23,6 +24,7 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  // late final ValueNotifier<List<Event>> _selectedEvents;
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
@@ -47,7 +49,6 @@ class _CalendarState extends State<Calendar> {
     // Desc : 날짜별 Event들을 받아서 kEvents에 LinkedHashMap 형식으로 추가 (업데이트)해주기
     // Date : 2023.06.23
     // Update : CalendarBloc 사용으로 수정
-    // getEventLists().then((_) => setState(() {}));
     calendarBloc.getEventLists();
     _selectedDay = _focusedDay.value;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
@@ -102,9 +103,9 @@ class _CalendarState extends State<Calendar> {
         // _rangeStart = null; // Important to clean those
         // _rangeEnd = null;
         // _rangeSelectionMode = RangeSelectionMode.toggledOff;
-        _selectedEvents.value = _getEventsForDay(selectedDay);
       });
     }
+    _selectedEvents.value = _getEventsForDay(selectedDay);
   }
 
   bool get canClearSelection =>
@@ -122,6 +123,20 @@ class _CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: TextButton(
+          onPressed: () {
+            setState(() {
+              _selectedDay = DateTime.now();
+              _selectedEvents.value = _getEventsForDay(_selectedDay!);
+            });
+          },
+          child: Text(
+            "Today",
+            style: TextStyle(
+              color: Colors.redAccent[100],
+            ),
+          ),
+        ),
         actions: [
           IconButton(
               onPressed: () {
@@ -132,6 +147,8 @@ class _CalendarState extends State<Calendar> {
                   _getEventsForDay(_selectedDay!);
                   setState(() {
                     _selectedEvents.notifyListeners();
+                    // calendarBloc.getEventLists();
+                    // _selectedEvents.value = _getEventsForDay(_selectedDay!);
                   });
                 });
               },
@@ -143,43 +160,11 @@ class _CalendarState extends State<Calendar> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
+              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 5),
               child: Container(
                 decoration: BoxDecoration(
                     border: Border.all(),
                     borderRadius: BorderRadius.circular(15)),
-                // child: TableCalendar<Event>(
-                //   locale: "en",
-                //   firstDay: kFirstDay,
-                //   lastDay: kLastDay,
-                //   focusedDay: _focusedDay.value,
-                //   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                //   // rangeStartDay: _rangeStart,
-                //   // rangeEndDay: _rangeEnd,
-                //   calendarFormat: _calendarFormat,
-                //   // rangeSelectionMode: _rangeSelectionMode,
-                //   eventLoader: _getEventsForDay,
-                //   startingDayOfWeek: StartingDayOfWeek.sunday,
-                //   calendarStyle: const CalendarStyle(
-                //     // Use `CalendarStyle` to customize the UI
-                //     outsideDaysVisible: true,
-                //   ),
-                //   headerStyle: const HeaderStyle(
-                //     titleCentered: true,
-                //     formatButtonVisible: false,
-                //     leftChevronIcon: Icon(
-                //       CupertinoIcons.arrow_left_circle,
-                //       color: Color.fromARGB(255, 164, 158, 255),
-                //     ),
-                //     rightChevronIcon: Icon(
-                //       CupertinoIcons.arrow_right_circle,
-                //       color: Color.fromARGB(255, 164, 158, 255),
-                //     ),
-                //   ),
-                //   onDaySelected: _onDaySelected,
-                //   // onRangeSelected: _onRangeSelected,
-                //   onPageChanged: (focusedDay) => _focusedDay.value = focusedDay,
-                // ),
                 child: StreamBuilder(
                   stream: calendarBloc.eventList,
                   builder: (context, snapshot) {
@@ -226,72 +211,61 @@ class _CalendarState extends State<Calendar> {
 
             // ----------------------------------------------------
             Expanded(
-              child: ValueListenableBuilder<List<Event>>(
-                valueListenable: _selectedEvents,
-                builder: (context, value, _) {
-                  return ListView.builder(
-                    itemCount: value.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 5.0,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: ListTile(
-                          onTap: () => print('${value[index]}'),
-                          title: Text('${value[index]}'),
-                          subtitle: Text("${value[index].place}"),
-                          trailing: Text(
-                              "${value[index].hour} : ${value[index].minute}"),
-                        ),
-                      );
-                    },
-                  );
-                },
+              child: Container(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: ValueListenableBuilder<List<Event>>(
+                  valueListenable: _selectedEvents,
+                  builder: (context, value, _) {
+                    /// Desc : 페이지 빌드 후에 addPostFrameCallback()를 통해 비동기로 콜백함수를 호출한다.
+                    /// selected 되어있는 날짜의 Event를 ListView로 보여주기 위한 목적.
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      // setState()가 있는 함수 호출
+                      _onDaySelected(_selectedDay!, _focusedDay.value);
+                    });
+                    // value = _selectedEvents로 적용
+                    return ListView.builder(
+                      itemCount: value.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 5.0,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          // child: ListTile(
+                          //   onTap: () => print('${value[index].isDone}'),
+                          //   title: Text('${value[index].schedule}'),
+                          //   subtitle: Text("${value[index].place}"),
+                          //   trailing: Text(
+                          //       "${value[index].hour} : ${value[index].minute}"),
+                          // ),
+                          child: CheckboxListTile(
+                            title: Text(
+                              value[index].schedule,
+                            ),
+                            value: (value[index].isDone == 0) ? false : true,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                if (val == true) {
+                                  value[index].isDone = 1;
+                                } else {
+                                  value[index].isDone = 0;
+                                }
+                              });
+                              print(value[index].isDone);
+                              // -------------------------------------------------------------------------------------
+                              // isDone 업데이트하는 함수 (database handler) 추가하기
+                              // -------------------------------------------------------------------------------------
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-              // child: StreamBuilder(
-              //   stream: calendarBloc.eventList,
-              //   builder: (context, snapshot) {
-              //     if (snapshot.hasData) {
-              //       return ValueListenableBuilder<List<Event>>(
-              //         valueListenable: _selectedEvents,
-              //         builder: (context, value, _) {
-              //           return ListView.builder(
-              //             itemCount: value.length,
-              //             itemBuilder: (context, index) {
-              //               return Container(
-              //                 margin: const EdgeInsets.symmetric(
-              //                   horizontal: 10.0,
-              //                   vertical: 5.0,
-              //                 ),
-              //                 decoration: BoxDecoration(
-              //                   border: Border.all(),
-              //                   borderRadius: BorderRadius.circular(15.0),
-              //                 ),
-              //                 child: ListTile(
-              //                   onTap: () => print('${value[index]}'),
-              //                   title: Text('${value[index]}'),
-              //                   subtitle: Text("${value[index].place}"),
-              //                   trailing: Text(
-              //                       "${value[index].hour} : ${value[index].minute}"),
-              //                 ),
-              //               );
-              //             },
-              //           );
-              //         },
-              //       );
-              //     } else if (snapshot.hasError) {
-              //       return Text(snapshot.error.toString());
-              //     }
-              //     return const Center(
-              //       child: CircularProgressIndicator(),
-              //     );
-              //   },
-              // ),
             ),
           ],
         ),
@@ -300,6 +274,8 @@ class _CalendarState extends State<Calendar> {
   }
 }
 
+/// Desc : Calendar Header 커스텀 클래스
+/// Date : 2023.06.24
 class _CalendarHeader extends StatelessWidget {
   final DateTime focusedDay;
   final VoidCallback onLeftArrowTap;

@@ -13,15 +13,18 @@ class GridcardUtil extends StatelessWidget {
       height: MediaQuery.of(context).size.height / 5.5,
       padding: const EdgeInsets.only(left: 10, right: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(50),
       ),
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
         elevation: 5,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
+              padding: const EdgeInsets.all(15),
               child: content,
             ),
             // Text(

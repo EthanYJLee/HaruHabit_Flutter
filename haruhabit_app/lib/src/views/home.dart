@@ -45,7 +45,6 @@ class Home extends StatelessWidget {
               const Divider(
                 thickness: 3,
               ),
-              // _header('To-Do'),
               const Header(title: 'To-Do'),
               GridcardUtil(
                 content: Container(
@@ -55,44 +54,39 @@ class Home extends StatelessWidget {
                     stream: scheduleBloc.selectedSchedule,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        // print(snapshot.data!.length);
                         return ListView.builder(
                             itemCount: snapshot.data!.length,
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                child: InkWell(
-                                    child: GestureDetector(
-                                  onTap: () async {
-                                    ScheduleModel scheduleModel = ScheduleModel(
-                                      sId: snapshot.data?[index].sId,
-                                      date: "${snapshot.data?[index].date}",
-                                      schedule:
-                                          "${snapshot.data?[index].schedule}",
-                                      place: "${snapshot.data?[index].place}",
-                                      hour: "${snapshot.data?[index].hour}",
-                                      minute: "${snapshot.data?[index].minute}",
-                                    );
-                                  },
-                                  child: Card(
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15))),
-                                    elevation: 5,
-                                    child: Column(
-                                      children: [
-                                        // Text('id : ${snapshot.data?[index].sId}'),
-                                        Text('${snapshot.data?[index].date}'),
-                                        Text(
-                                            '${snapshot.data?[index].schedule}'),
-                                        // Text('place : ${snapshot.data?[index].place}'),
-                                        Text(
-                                            '${snapshot.data?[index].hour}:${snapshot.data?[index].minute}'),
-                                      ],
-                                    ),
+                              return InkWell(
+                                  child: GestureDetector(
+                                onTap: () async {
+                                  ScheduleModel scheduleModel = ScheduleModel(
+                                    sId: snapshot.data?[index].sId,
+                                    date: "${snapshot.data?[index].date}",
+                                    schedule:
+                                        "${snapshot.data?[index].schedule}",
+                                    place: "${snapshot.data?[index].place}",
+                                    hour: "${snapshot.data?[index].hour}",
+                                    minute: "${snapshot.data?[index].minute}",
+                                    isDone: snapshot.data![index].isDone,
+                                  );
+                                },
+                                child: Card(
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(15))),
+                                  elevation: 3,
+                                  child: Column(
+                                    children: [
+                                      Text('${snapshot.data?[index].date}'),
+                                      Text('${snapshot.data?[index].schedule}'),
+                                      Text(
+                                          '${snapshot.data?[index].hour}:${snapshot.data?[index].minute}'),
+                                    ],
                                   ),
-                                )),
-                              );
+                                ),
+                              ));
                             });
                       } else if (snapshot.hasError) {
                         return Text(snapshot.error.toString());
@@ -115,7 +109,7 @@ class Home extends StatelessWidget {
           ),
         ),
 
-        /// Desc : 습관 및 일정을 추가하는 Floating Action Button
+        /// Desc : 습관 및 일정을 추가하고 조회하는 Floating Action Button
         /// Date : 2023.06.01
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: SpeedDial(
@@ -172,32 +166,6 @@ class Home extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // 각 Grid Card의 Header
-  Widget _header(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 30, right: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              "View all",
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-            ),
-          ),
-        ],
       ),
     );
   }

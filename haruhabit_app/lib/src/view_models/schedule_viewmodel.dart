@@ -3,7 +3,7 @@ import 'package:haruhabit_app/src/utils/database_handler.dart';
 
 class ScheduleViewModel {
   Future<int> addSchedule(String date, String schedule, String place,
-      String hour, String minute) async {
+      String hour, String minute, int isDone) async {
     DatabaseHandler handler = DatabaseHandler();
     ScheduleModel scheduleModel = ScheduleModel(
       date: date,
@@ -11,6 +11,7 @@ class ScheduleViewModel {
       place: place,
       hour: hour,
       minute: minute,
+      isDone: isDone,
     );
     await handler.insertSchedule(scheduleModel);
     return 0;

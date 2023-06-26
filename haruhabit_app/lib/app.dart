@@ -25,9 +25,11 @@ class App extends StatelessWidget {
         primaryColor: const Color.fromARGB(255, 164, 158, 255),
         canvasColor: const Color.fromRGBO(223, 221, 255, 1),
         appBarTheme: AppBarTheme(
-            color: const Color.fromRGBO(223, 221, 255, 1),
-            actionsIconTheme: IconThemeData(color: Colors.redAccent[100]),
-            foregroundColor: Colors.redAccent[100]),
+          color: const Color.fromRGBO(223, 221, 255, 1),
+          actionsIconTheme: IconThemeData(color: Colors.redAccent[100]),
+          foregroundColor: Colors.redAccent[100],
+          
+        ),
         tabBarTheme: const TabBarTheme(),
         bottomAppBarTheme: BottomAppBarTheme(
           color: Color.fromARGB(255, 164, 158, 255),

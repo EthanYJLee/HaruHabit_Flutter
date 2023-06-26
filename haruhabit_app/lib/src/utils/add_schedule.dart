@@ -54,17 +54,14 @@ class _AddScheduleState extends State<AddSchedule> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 child: Container(
-                  height: MediaQuery.of(context).size.height / 1.8,
+                  height: MediaQuery.of(context).size.height / 2.5,
                   width: MediaQuery.of(context).size.width / 1.1,
                   padding: const EdgeInsets.all(30),
                   child: Column(
                     children: [
                       // 선택한 날짜 보여주기
                       Text(
-                        "${widget.selectedDate.toString().substring(
-                              0,
-                              10,
-                            )}",
+                        widget.selectedDate.toString().substring(0, 10),
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500),
                       ),
@@ -75,7 +72,8 @@ class _AddScheduleState extends State<AddSchedule> {
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: TextField(
                           controller: _scheduleController,
-                          decoration: const InputDecoration(hintText: "일정"),
+                          decoration:
+                              const InputDecoration(hintText: "Schedule"),
                         ),
                       ),
 
@@ -84,7 +82,8 @@ class _AddScheduleState extends State<AddSchedule> {
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: TextField(
                           controller: _placeController,
-                          decoration: const InputDecoration(hintText: "장소"),
+                          decoration:
+                              const InputDecoration(hintText: "Location"),
                         ),
                       ),
 
@@ -141,18 +140,21 @@ class _AddScheduleState extends State<AddSchedule> {
                                   _place,
                                   hour.toString(),
                                   minute.toString(),
+                                  0,
                                 );
-
                                 Navigator.of(context).pop();
                               }
                             }
                           },
-                          child: const Text(
-                            "추가",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black),
+                          child: const Padding(
+                            padding: EdgeInsets.only(top: 20.0),
+                            child: Text(
+                              "Add",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+                            ),
                           ))
                     ],
                   ),
@@ -183,7 +185,6 @@ class _AddScheduleState extends State<AddSchedule> {
                   // backgroundColor: Color.fromARGB(255, 164, 158, 255),
                   initialDateTime: DateTime(DateTime.now().year,
                       DateTime.now().month, DateTime.now().day, hour, minute),
-
                   mode: CupertinoDatePickerMode.time,
                   // 분 간격
                   minuteInterval: 5,
@@ -202,7 +203,7 @@ class _AddScheduleState extends State<AddSchedule> {
               // user's locale settings.
               // 기기 설정에 따라 locale 자동 적용
               child: Text(
-                "${hour} : ${minute}",
+                "${hour}".padLeft(2, "0") + " : " + "${minute}".padLeft(2, "0"),
                 style: TextStyle(
                   fontSize: 18.0,
                   color: Colors.redAccent[100],

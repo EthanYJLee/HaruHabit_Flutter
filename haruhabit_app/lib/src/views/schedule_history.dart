@@ -48,6 +48,7 @@ class _ScheduleHistoryState extends State<ScheduleHistory> {
                       place: "${snapshot.data?[index].place}",
                       hour: "${snapshot.data?[index].hour}",
                       minute: "${snapshot.data?[index].minute}",
+                      isDone: snapshot.data![index].isDone,
                     );
                     // Navigator.push(
                     //   context,

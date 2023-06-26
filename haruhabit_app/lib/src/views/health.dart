@@ -130,14 +130,27 @@ class Health extends StatelessWidget {
           useRotationAnimation: true,
           animationCurve: Curves.easeInOutQuart,
           children: [
+            // SpeedDialChild(
+            //   child: const Icon(CupertinoIcons.add),
+            //   onTap: () {
+            //     Navigator.of(context).push(CardDialog(builder: (context) {
+            //       return const AddHealth();
+            //     }));
+            //   },
+            // ),
             SpeedDialChild(
-              child: const Icon(CupertinoIcons.add),
+              child: const Icon(CupertinoIcons.list_bullet),
+              label: "Add Workout",
+              labelBackgroundColor: Colors.redAccent[100],
+              labelStyle: const TextStyle(color: Colors.white),
+              backgroundColor: Colors.redAccent[100],
+              foregroundColor: Colors.white,
               onTap: () {
                 Navigator.of(context).push(CardDialog(builder: (context) {
                   return const AddHealth();
                 }));
               },
-            )
+            ),
           ],
         ),
       ),

@@ -34,7 +34,7 @@ class DatabaseHandler {
           ),
           onCreate: (database, version) async {
             await database.execute(
-                'CREATE TABLE IF NOT EXISTS schedules (sId INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, schedule TEXT, place TEXT, hour TEXT, minute TEXT)');
+                'CREATE TABLE IF NOT EXISTS schedules (sId INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, schedule TEXT, place TEXT, hour TEXT, minute TEXT, isDone INTEGER)');
           },
           version: 1,
         );
@@ -57,12 +57,28 @@ class DatabaseHandler {
     final List<Map<String, Object?>> queryResult =
         // await db.rawQuery('SELECT * FROM schedules');
         await db.query('schedules',
-            columns: ['sId', 'date', 'schedule', 'place', 'hour', 'minute'],
+            columns: [
+              'sId',
+              'date',
+              'schedule',
+              'place',
+              'hour',
+              'minute',
+              'isDone'
+            ],
             where: 'date = ?',
             whereArgs: [selectedDate]);
     // print(queryResult.map((e) => ScheduleModel.fromMap(e)).toList());
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
+
+  // Future<int> scheduleIsDone(ScheduleModel scheduleModel) async {
+  //   final Database db = await openDatabase('schedules.db');
+  //   int count = await db.rawUpdate(
+  //       'UPDATE schedules SET name = ?, dept = ?, phone = ? WHERE code = ?',
+  //       [student.name, student.dept, student.phone, student.code]);
+  //   return count;
+  // }
 
   // ----------Habits----------
 
@@ -97,7 +113,7 @@ class DatabaseHandler {
     int result = 0;
     final db = await initializeDB('schedules');
     result = await db.rawInsert(
-      'INSERT INTO schedules (sId, date, schedule, place, hour, minute) VALUES (?,?,?,?,?,?)',
+      'INSERT INTO schedules (sId, date, schedule, place, hour, minute, isDone) VALUES (?,?,?,?,?,?,?)',
       [
         scheduleModel.sId,
         scheduleModel.date,
@@ -105,6 +121,7 @@ class DatabaseHandler {
         scheduleModel.place,
         scheduleModel.hour,
         scheduleModel.minute,
+        scheduleModel.isDone,
       ],
       // conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -146,7 +163,8 @@ class DatabaseHandler {
               model.schedule.toString(),
               model.place.toString(),
               model.hour.toString(),
-              model.minute.toString()));
+              model.minute.toString(),
+              model.isDone));
         }
       }
     }

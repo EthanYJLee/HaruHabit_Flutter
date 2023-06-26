@@ -81,7 +81,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
   /// Date : 2023.06.20
   Widget _todoSummary(int todo) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 25, right: 25),
+      padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -99,9 +99,6 @@ class _TimelineUtilState extends State<TimelineUtil> {
               //-
             },
           ),
-          SizedBox(
-            width: 10,
-          ),
           TextButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.teal[200]),
@@ -117,7 +114,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
             width: 10,
           ),
           Text(
-            "You've got ${todo} tasks",
+            "${todo} Schedules",
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

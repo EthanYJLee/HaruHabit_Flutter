@@ -11,7 +11,7 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 30, right: 30),
+      padding: const EdgeInsets.only(left: 35, right: 25),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -19,16 +19,17 @@ class Header extends StatelessWidget {
             title,
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              "View all",
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-            ),
-          ),
+          // TextButton(
+          //   onPressed: () {},
+          //   child: const Text(
+          //     "View all",
+          //     style: TextStyle(
+          //         fontSize: 18,
+          //         fontWeight: FontWeight.bold,
+          //         color: Colors.black),
+          //   ),
+          // ),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
         ],
       ),
     );
