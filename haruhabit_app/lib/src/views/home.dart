@@ -110,19 +110,27 @@ class Home extends StatelessWidget {
                     );
                   },
                 ),
-                GridcardUtil(
-                    content: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      IconButton(
-                          onPressed: () {
-                            //-
-                          },
-                          icon: const Icon(CupertinoIcons.add_circled))
-                    ]),
-                  ],
-                )),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                            builder: (context) => const Calendar()))
+                        .whenComplete(() => scheduleBloc.fetchAllSchedules());
+                  },
+                  child: GridcardUtil(
+                      content: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              CupertinoIcons.add_circled,
+                            ),
+                          ]),
+                    ],
+                  )),
+                ),
                 const Divider(
                   thickness: 3,
                 ),
