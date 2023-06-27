@@ -46,7 +46,7 @@ class DatabaseHandler {
   Future<List<ScheduleModel>> queryAllSchedules() async {
     final Database db = await initializeDB('schedules');
     final List<Map<String, Object?>> queryResult =
-        await db.rawQuery('SELECT * FROM schedules');
+        await db.rawQuery('SELECT * FROM schedules ORDER BY hour ASC');
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 
@@ -54,20 +54,18 @@ class DatabaseHandler {
   Future<List<ScheduleModel>> querySelectedSchedules(
       String selectedDate) async {
     final Database db = await initializeDB('schedules');
-    final List<Map<String, Object?>> queryResult =
-        // await db.rawQuery('SELECT * FROM schedules');
-        await db.query('schedules',
-            columns: [
-              'sId',
-              'date',
-              'schedule',
-              'place',
-              'hour',
-              'minute',
-              'isDone'
-            ],
-            where: 'date = ?',
-            whereArgs: [selectedDate]);
+    final List<Map<String, Object?>> queryResult = await db.query('schedules',
+        columns: [
+          'sId',
+          'date',
+          'schedule',
+          'place',
+          'hour',
+          'minute',
+          'isDone'
+        ],
+        where: 'date = ?',
+        whereArgs: [selectedDate]);
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 

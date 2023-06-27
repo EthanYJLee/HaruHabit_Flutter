@@ -21,6 +21,11 @@ class ScheduleBloc {
         await _handler.querySelectedSchedules(selectedDate);
     _selectedScheduleFetcher.sink.add(scheduleModel);
   }
+
+  dispose() {
+    _allScheduleFetcher.close();
+    _selectedScheduleFetcher.close();
+  }
 }
 
 final ScheduleBloc scheduleBloc = ScheduleBloc();

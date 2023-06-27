@@ -13,6 +13,8 @@ import 'package:haruhabit_app/src/utils/gridcard_util.dart';
 import 'package:haruhabit_app/src/utils/header.dart';
 import 'package:intl/date_time_patterns.dart';
 
+import 'history_tabbar.dart';
+
 class Health extends StatelessWidget {
   const Health({super.key});
 
@@ -98,7 +100,11 @@ class Health extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                const Header(title: 'Workout'),
+                                // Header(
+                                //     title: 'Workout',
+                                //     destination: HistoryTabbar(
+
+                                //     )),
                                 const GridcardUtil(content: null),
                                 const SizedBox(
                                   height: 300,

@@ -77,7 +77,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
     );
   }
 
-  /// Desc : 선택한 날짜 / 오늘 및 해당하는 날짜의 일정 개수 보여주기
+  /// Desc : 선택한 날짜 보여주는 버튼, 오늘 날짜로 이동하는 버튼, 선택된 날짜의 일정 개수 보여주는 위젯
   /// Date : 2023.06.20
   Widget _todoSummary(int todo) {
     return Padding(

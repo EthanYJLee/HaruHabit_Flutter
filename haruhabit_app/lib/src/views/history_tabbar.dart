@@ -12,7 +12,8 @@ import 'package:table_calendar/table_calendar.dart';
 import '../utils/calendar_utils.dart';
 
 class HistoryTabbar extends StatefulWidget {
-  const HistoryTabbar({super.key});
+  const HistoryTabbar({super.key, required this.initialView});
+  final int initialView;
 
   @override
   State<HistoryTabbar> createState() => _HistoryTabbarState();
@@ -31,13 +32,17 @@ class _HistoryTabbarState extends State<HistoryTabbar> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    currentIndex = 0;
+    currentIndex = widget.initialView;
     onSelected = [true, false];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("History"),
+        elevation: 0,
+      ),
       body: tabbarItems[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         unselectedLabelStyle:
@@ -55,7 +60,8 @@ class _HistoryTabbarState extends State<HistoryTabbar> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: onSelected[0]
+            // icon: onSelected[0]
+            icon: currentIndex == 0
                 ? Icon(
                     CupertinoIcons.calendar_circle_fill,
                     color: Colors.redAccent[100],
@@ -67,7 +73,8 @@ class _HistoryTabbarState extends State<HistoryTabbar> {
             label: "Habit",
           ),
           BottomNavigationBarItem(
-            icon: onSelected[1]
+            // icon: onSelected[1]
+            icon: currentIndex == 1
                 ? Icon(
                     CupertinoIcons.clock_fill,
                     color: Colors.redAccent[100],

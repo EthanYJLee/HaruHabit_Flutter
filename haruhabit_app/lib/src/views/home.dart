@@ -25,85 +25,117 @@ class Home extends StatelessWidget {
     scheduleBloc.fetchAllSchedules();
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: Column(
-            children: [
-              const TimelineUtil(),
-              const Divider(
-                thickness: 3,
-              ),
-              const Header(title: 'To-Do'),
-              GridcardUtil(
-                content: Container(
-                  height: MediaQuery.of(context).size.height / 8,
-                  width: MediaQuery.of(context).size.width / 1.1,
-                  child: StreamBuilder(
-                    stream: scheduleBloc.selectedSchedule,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width / 3.7,
-                                child: InkWell(
-                                    child: GestureDetector(
-                                  onTap: () async {
-                                    ScheduleModel scheduleModel = ScheduleModel(
-                                      sId: snapshot.data?[index].sId,
-                                      date: "${snapshot.data?[index].date}",
-                                      schedule:
-                                          "${snapshot.data?[index].schedule}",
-                                      place: "${snapshot.data?[index].place}",
-                                      hour: "${snapshot.data?[index].hour}",
-                                      minute: "${snapshot.data?[index].minute}",
-                                      isDone: snapshot.data![index].isDone,
-                                    );
-                                  },
-                                  child: Card(
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15))),
-                                    elevation: 3,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        // Text('${snapshot.data?[index].date}'),
-                                        Text(
-                                          '${snapshot.data?[index].hour}:${snapshot.data?[index].minute}',
-                                          style: TextStyle(fontSize: 20),
-                                        ),
-                                        Text(
-                                          '${snapshot.data?[index].schedule}',
-                                          style: TextStyle(fontSize: 16),
-                                          maxLines: 3,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )),
-                              );
-                            });
-                      } else if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                const TimelineUtil(),
+                const Divider(
+                  thickness: 3,
+                ),
+                const Header(
+                  title: 'To-Do',
+                  destination: HistoryTabbar(
+                    initialView: 0,
                   ),
                 ),
-              ),
-              const Header(title: 'Plan'),
-              GridcardUtil(
-                content: Container(
-                  height: MediaQuery.of(context).size.height / 8,
-                  width: MediaQuery.of(context).size.width / 1.1,
+                StreamBuilder(
+                  stream: scheduleBloc.selectedSchedule,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.length > 0) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height / 6,
+                          width: MediaQuery.of(context).size.width / 1.1,
+                          child: ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width /
+                                          3.7,
+                                      child: Card(
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15))),
+                                        elevation: 3,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${snapshot.data?[index].hour}:${snapshot.data?[index].minute}',
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                            Text(
+                                              '${snapshot.data?[index].schedule}',
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                              maxLines: 4,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    // 일정 완료 버튼
+                                    Positioned(
+                                      right: 1,
+                                      top: 1,
+                                      child: IconButton(
+                                          onPressed: () {
+                                            // -----------
+                                          },
+                                          icon: (snapshot.data?[index].isDone ==
+                                                  0)
+                                              ? const Icon(CupertinoIcons
+                                                  .checkmark_alt_circle)
+                                              : const Icon(CupertinoIcons
+                                                  .checkmark_alt_circle_fill)),
+                                    ),
+                                  ],
+                                );
+                              }),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    } else if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
-              ),
-            ],
+                GridcardUtil(
+                    content: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      IconButton(
+                          onPressed: () {
+                            //-
+                          },
+                          icon: const Icon(CupertinoIcons.add_circled))
+                    ]),
+                  ],
+                )),
+                const Divider(
+                  thickness: 3,
+                ),
+                const Header(
+                    title: 'Plan',
+                    destination: HistoryTabbar(
+                      initialView: 1,
+                    )),
+                GridcardUtil(
+                  content: Container(),
+                ),
+              ],
+            ),
           ),
         ),
 
@@ -161,7 +193,9 @@ class Home extends StatelessWidget {
               foregroundColor: Colors.white,
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const HistoryTabbar()));
+                    builder: (context) => const HistoryTabbar(
+                          initialView: 0,
+                        )));
               },
             ),
           ],

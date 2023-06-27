@@ -14,10 +14,6 @@ class ScheduleHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     calendarBloc.getEventLists();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Schedule History"),
-        elevation: 0,
-      ),
       body: StreamBuilder(
         stream: calendarBloc.eventList,
         builder: (context, snapshot) {
@@ -29,11 +25,16 @@ class ScheduleHistory extends StatelessWidget {
                   return Container(
                     decoration: BoxDecoration(border: Border.all(width: 0.1)),
                     child: ExpansionTile(
+                      // collapsedBackgroundColor: Colors.teal[100],
+                      textColor: Colors.black,
+                      iconColor: Colors.black,
+
                       /// Desc : Schedule이 있는 날짜를 중복 제거한 뒤 ExpansionTile의 대분류로 지정
                       /// Date : 2023.06.27
                       title: Text("${calendarBloc.kEvents.keys.toList()[index]}"
                           .substring(0, 10)),
-                      // subtitle: Text('Trailing expansion arrow icon'),
+                      subtitle: Text(
+                          "${calendarBloc.kEvents.values.toList()[index].length} Tasks"),
                       children: <Widget>[
                         ListView.builder(
                             shrinkWrap: true,

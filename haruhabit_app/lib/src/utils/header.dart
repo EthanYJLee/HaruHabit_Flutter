@@ -6,13 +6,14 @@ import 'package:flutter/src/widgets/placeholder.dart';
 /// Desc : 일정, 건강 데이터 등 리스트를 보여주는 Card 범위의 Header
 /// Date : 2023.06.20
 class Header extends StatelessWidget {
-  const Header({super.key, required this.title});
+  const Header({super.key, required this.title, required this.destination});
   final String title;
+  final dynamic destination;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 35, right: 25),
+      padding: const EdgeInsets.only(left: 30, right: 25),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -31,7 +32,11 @@ class Header extends StatelessWidget {
           //   ),
           // ),
           IconButton(
-              onPressed: () {}, icon: const Icon(CupertinoIcons.right_chevron))
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => destination));
+              },
+              icon: const Icon(CupertinoIcons.right_chevron))
         ],
       ),
     );
