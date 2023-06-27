@@ -25,7 +25,11 @@ const List<HealthDataType> dataTypesIOS = [
   HealthDataType.IRREGULAR_HEART_RATE_EVENT,
   HealthDataType.LOW_HEART_RATE_EVENT,
   HealthDataType.RESTING_HEART_RATE,
+  //**
+  //
   HealthDataType.STEPS,
+  //
+  // */
   HealthDataType.WAIST_CIRCUMFERENCE,
   HealthDataType.WALKING_HEART_RATE,
   HealthDataType.WEIGHT,
@@ -37,7 +41,11 @@ const List<HealthDataType> dataTypesIOS = [
   HealthDataType.SLEEP_ASLEEP,
   HealthDataType.WATER,
   HealthDataType.EXERCISE_TIME,
+  //**
+  //
   HealthDataType.WORKOUT,
+  //
+  // */
   HealthDataType.HEADACHE_NOT_PRESENT,
   HealthDataType.HEADACHE_MILD,
   HealthDataType.HEADACHE_MODERATE,
@@ -56,15 +64,15 @@ const List<HealthDataType> dataTypesAndroid = [
   HealthDataType.BODY_FAT_PERCENTAGE,
   HealthDataType.HEIGHT,
   HealthDataType.WEIGHT,
-  // HealthDataType.BODY_MASS_INDEX,
+  HealthDataType.BODY_MASS_INDEX,
   HealthDataType.BODY_TEMPERATURE,
   HealthDataType.HEART_RATE,
   HealthDataType.STEPS,
-  // HealthDataType.MOVE_MINUTES, // TODO: Find alternative for Health Connect
+  HealthDataType.MOVE_MINUTES, // TODO: Find alternative for Health Connect
   HealthDataType.DISTANCE_DELTA,
-  // HealthDataType.SLEEP_AWAKE,
-  // HealthDataType.SLEEP_ASLEEP,
-  // HealthDataType.SLEEP_IN_BED,
+  HealthDataType.SLEEP_AWAKE,
+  HealthDataType.SLEEP_ASLEEP,
+  HealthDataType.SLEEP_IN_BED,
   HealthDataType.WATER,
   HealthDataType.WORKOUT,
 ];
