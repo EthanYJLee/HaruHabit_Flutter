@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -29,7 +30,8 @@ class Header extends StatelessWidget {
           //         color: Colors.black),
           //   ),
           // ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
+          IconButton(
+              onPressed: () {}, icon: const Icon(CupertinoIcons.right_chevron))
         ],
       ),
     );

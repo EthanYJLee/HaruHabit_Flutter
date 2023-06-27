@@ -40,7 +40,7 @@ class DatabaseHandler {
         );
     }
   }
-  // ----------Schedules----------
+  // -------------------- Schedules --------------------
 
   // read all schedules
   Future<List<ScheduleModel>> queryAllSchedules() async {
@@ -68,19 +68,59 @@ class DatabaseHandler {
             ],
             where: 'date = ?',
             whereArgs: [selectedDate]);
-    // print(queryResult.map((e) => ScheduleModel.fromMap(e)).toList());
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 
-  // Future<int> scheduleIsDone(ScheduleModel scheduleModel) async {
-  //   final Database db = await openDatabase('schedules.db');
-  //   int count = await db.rawUpdate(
-  //       'UPDATE schedules SET name = ?, dept = ?, phone = ? WHERE code = ?',
-  //       [student.name, student.dept, student.phone, student.code]);
-  //   return count;
-  // }
+  // 일정 (Schedule) 체크박스 체크/해제
+  Future<int> scheduleIsDone(int isChecked, String sId) async {
+    final Database db = await openDatabase('schedules.db');
+    int count = await db.rawUpdate(
+        'UPDATE schedules SET isDone = ? WHERE sId = ?', [isChecked, sId]);
+    return count;
+  }
 
-  // ----------Habits----------
+  /// Desc : Event (일정) 달력에 보여주도록 형식 변경
+  /// Date : 2023.06.02
+  Future<Map<DateTime, dynamic>> eventLists() async {
+    final Database db = await initializeDB('schedules');
+
+    // 스케쥴 List
+    final List<Map<String, Object?>> scheduleResult = await db
+        .rawQuery("SELECT * FROM schedules ORDER BY date, hour, minute");
+    List<ScheduleModel> models =
+        scheduleResult.map((e) => ScheduleModel.fromMap(e)).toList();
+
+    // date 중복 없애기
+    var uniqueDate = Set<String>();
+    models.where((models) => uniqueDate.add(models.date!)).toList();
+
+    // 빈 배열 생성
+    final Map<DateTime, List<Event>> eventSource = Map<DateTime, List<Event>>();
+
+    // uniqueDate를 key로 지정 (추가)
+    for (String date in uniqueDate) {
+      eventSource.addAll({DateTime.parse(date): []});
+    }
+
+    // 각 uniqueDate에 해당하는 일정 할당
+    for (int i = 0; i < eventSource.length; i++) {
+      for (ScheduleModel model in models) {
+        if (DateTime.parse(model.date.toString()) ==
+            eventSource.keys.toList()[i]) {
+          eventSource.values.toList()[i].add(Event(
+              model.sId.toString(),
+              model.schedule.toString(),
+              model.place.toString(),
+              model.hour.toString(),
+              model.minute.toString(),
+              model.isDone));
+        }
+      }
+    }
+    return eventSource;
+  }
+
+  // -------------------- Habits --------------------
 
   // read all habits
   Future<List<HabitModel>> queryAllHabits() async {
@@ -126,49 +166,6 @@ class DatabaseHandler {
       // conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return result;
-  }
-
-  // ----------Calendar (Event)----------
-
-  /// Desc : Event (일정) 달력에 보여주도록 형식 변경
-  /// Date : 2023.06.02
-  Future<Map<DateTime, dynamic>> eventLists() async {
-    final Database db = await initializeDB('schedules');
-
-    // 스케쥴 List
-    final List<Map<String, Object?>> scheduleResult = await db.rawQuery(
-        // "SELECT date, schedule, place, hour, minute FROM schedules ORDER BY date, hour, minute");
-        "SELECT * FROM schedules ORDER BY date, hour, minute");
-    List<ScheduleModel> models =
-        scheduleResult.map((e) => ScheduleModel.fromMap(e)).toList();
-
-    // date 중복 없애기
-    var uniqueDate = Set<String>();
-    models.where((models) => uniqueDate.add(models.date!)).toList();
-
-    // 빈 배열 생성
-    final Map<DateTime, List<Event>> eventSource = Map<DateTime, List<Event>>();
-
-    // uniqueDate를 key로 지정 (추가)
-    for (String date in uniqueDate) {
-      eventSource.addAll({DateTime.parse(date): []});
-    }
-
-    // 각 uniqueDate에 해당하는 일정 할당
-    for (int i = 0; i < eventSource.length; i++) {
-      for (ScheduleModel model in models) {
-        if (DateTime.parse(model.date.toString()) ==
-            eventSource.keys.toList()[i]) {
-          eventSource.values.toList()[i].add(Event(
-              model.schedule.toString(),
-              model.place.toString(),
-              model.hour.toString(),
-              model.minute.toString(),
-              model.isDone));
-        }
-      }
-    }
-    return eventSource;
   }
 
   // --------------------------------------------------------------------------------------------------

@@ -1,9 +1,15 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:haruhabit_app/src/blocs/calendar_bloc.dart';
 import 'package:haruhabit_app/src/views/habit_history.dart';
 import 'package:haruhabit_app/src/views/schedule_history.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+import '../utils/calendar_utils.dart';
 
 class HistoryTabbar extends StatefulWidget {
   const HistoryTabbar({super.key});
@@ -15,9 +21,9 @@ class HistoryTabbar extends StatefulWidget {
 class _HistoryTabbarState extends State<HistoryTabbar> {
   late int currentIndex;
 
-  final List<Widget> tabbarItems = const [
-    HabitHistory(),
+  final List<Widget> tabbarItems = [
     ScheduleHistory(),
+    HabitHistory(),
   ];
   late List<bool> onSelected;
 
@@ -32,9 +38,6 @@ class _HistoryTabbarState extends State<HistoryTabbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-      ),
       body: tabbarItems[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         unselectedLabelStyle:

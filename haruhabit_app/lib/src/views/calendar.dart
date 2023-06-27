@@ -24,7 +24,6 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  // late final ValueNotifier<List<Event>> _selectedEvents;
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
@@ -234,16 +233,17 @@ class _CalendarState extends State<Calendar> {
                             border: Border.all(),
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          // child: ListTile(
-                          //   onTap: () => print('${value[index].isDone}'),
-                          //   title: Text('${value[index].schedule}'),
-                          //   subtitle: Text("${value[index].place}"),
-                          //   trailing: Text(
-                          //       "${value[index].hour} : ${value[index].minute}"),
-                          // ),
                           child: CheckboxListTile(
                             title: Text(
                               value[index].schedule,
+                            ),
+                            subtitle: Text(
+                              value[index].place,
+                            ),
+                            secondary: Text(
+                              "${value[index].hour}" +
+                                  " : " +
+                                  "${value[index].minute}",
                             ),
                             value: (value[index].isDone == 0) ? false : true,
                             onChanged: (bool? val) {
@@ -253,11 +253,10 @@ class _CalendarState extends State<Calendar> {
                                 } else {
                                   value[index].isDone = 0;
                                 }
+                                // 체크박스 체크하면 0, 1 (isDone? false/true) 값 업데이트
+                                handler.scheduleIsDone(value[index].isDone,
+                                    value[index].sId.toString());
                               });
-                              print(value[index].isDone);
-                              // -------------------------------------------------------------------------------------
-                              // isDone 업데이트하는 함수 (database handler) 추가하기
-                              // -------------------------------------------------------------------------------------
                             },
                           ),
                         );

@@ -8,17 +8,18 @@ import 'package:haruhabit_app/src/models/schedule_model.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-/// Desc : Event 객체 정의
-/// Example event class.
+/// Desc : 일정 (Schedule)을 달력에 표시하기 위한 Event 객체 정의
 /// Date : 2023.06.02
 class Event {
+  String sId;
   String schedule;
   String place;
   String hour;
   String minute;
   int isDone;
 
-  Event(this.schedule, this.place, this.hour, this.minute, this.isDone);
+  Event(
+      this.sId, this.schedule, this.place, this.hour, this.minute, this.isDone);
 
   @override
   String toString() => schedule;
