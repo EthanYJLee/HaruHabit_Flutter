@@ -14,8 +14,8 @@ class Event {
   String sId;
   String schedule;
   String place;
-  String hour;
-  String minute;
+  int hour;
+  int minute;
   int isDone;
 
   Event(
@@ -39,10 +39,6 @@ final DatabaseHandler handler = DatabaseHandler();
 //       Event('Today\'s Event 2', false),
 //     ],
 //   });
-
-Map<DateTime, dynamic> eventSource = <DateTime, dynamic>{};
-late LinkedHashMap<DateTime, dynamic> kEvents =
-    LinkedHashMap<DateTime, dynamic>();
 
 // Update : CalendarBloc으로 대체함
 // Date : 2023.06.23

@@ -12,6 +12,8 @@ import 'package:haruhabit_app/src/utils/card_dialog.dart';
 import 'package:haruhabit_app/src/utils/add_habit.dart';
 import 'package:haruhabit_app/src/utils/add_schedule.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
+import 'package:haruhabit_app/src/views/home.dart';
+import 'package:haruhabit_app/src/views/tabbar.dart';
 import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -122,6 +124,15 @@ class _CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(CupertinoIcons.back),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const Tabbar()),
+                (Route<dynamic> route) => false);
+          },
+        ),
         title: TextButton(
           onPressed: () {
             setState(() {

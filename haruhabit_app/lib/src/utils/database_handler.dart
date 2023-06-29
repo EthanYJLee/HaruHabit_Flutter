@@ -34,7 +34,7 @@ class DatabaseHandler {
           ),
           onCreate: (database, version) async {
             await database.execute(
-                'CREATE TABLE IF NOT EXISTS schedules (sId INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, schedule TEXT, place TEXT, hour TEXT, minute TEXT, isDone INTEGER)');
+                'CREATE TABLE IF NOT EXISTS schedules (sId INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, schedule TEXT, place TEXT, hour INTEGER, minute INTEGER, isDone INTEGER)');
           },
           version: 1,
         );
@@ -46,7 +46,7 @@ class DatabaseHandler {
   Future<List<ScheduleModel>> queryAllSchedules() async {
     final Database db = await initializeDB('schedules');
     final List<Map<String, Object?>> queryResult =
-        await db.rawQuery('SELECT * FROM schedules ORDER BY hour ASC');
+        await db.rawQuery('SELECT * FROM schedules ORDER BY hour, minute');
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 
@@ -65,7 +65,8 @@ class DatabaseHandler {
           'isDone'
         ],
         where: 'date = ?',
-        whereArgs: [selectedDate]);
+        whereArgs: [selectedDate],
+        orderBy: 'hour, minute');
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 
@@ -109,8 +110,8 @@ class DatabaseHandler {
               model.sId.toString(),
               model.schedule.toString(),
               model.place.toString(),
-              model.hour.toString(),
-              model.minute.toString(),
+              model.hour!,
+              model.minute!,
               model.isDone));
         }
       }

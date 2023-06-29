@@ -138,8 +138,8 @@ class _AddScheduleState extends State<AddSchedule> {
                                       ),
                                   _schedule,
                                   _place,
-                                  hour.toString(),
-                                  minute.toString(),
+                                  hour,
+                                  minute,
                                   0,
                                 );
                                 Navigator.of(context).pop();
