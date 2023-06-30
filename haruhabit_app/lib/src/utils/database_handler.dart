@@ -119,6 +119,26 @@ class DatabaseHandler {
     return eventSource;
   }
 
+  // insert new schedule into DB
+  Future insertSchedule(ScheduleModel scheduleModel) async {
+    int result = 0;
+    final db = await initializeDB('schedules');
+    result = await db.rawInsert(
+      'INSERT INTO schedules (sId, date, schedule, place, hour, minute, isDone) VALUES (?,?,?,?,?,?,?)',
+      [
+        scheduleModel.sId,
+        scheduleModel.date,
+        scheduleModel.schedule,
+        scheduleModel.place,
+        scheduleModel.hour,
+        scheduleModel.minute,
+        scheduleModel.isDone,
+      ],
+      // conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return result;
+  }
+
   // -------------------- Habits --------------------
 
   // read all habits
@@ -147,25 +167,7 @@ class DatabaseHandler {
     return result;
   }
 
-  // insert new schedule into DB
-  Future insertSchedule(ScheduleModel scheduleModel) async {
-    int result = 0;
-    final db = await initializeDB('schedules');
-    result = await db.rawInsert(
-      'INSERT INTO schedules (sId, date, schedule, place, hour, minute, isDone) VALUES (?,?,?,?,?,?,?)',
-      [
-        scheduleModel.sId,
-        scheduleModel.date,
-        scheduleModel.schedule,
-        scheduleModel.place,
-        scheduleModel.hour,
-        scheduleModel.minute,
-        scheduleModel.isDone,
-      ],
-      // conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    return result;
-  }
+  
 
   // --------------------------------------------------------------------------------------------------
 

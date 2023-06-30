@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:haruhabit_app/src/blocs/schedule_bloc.dart';
 import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:haruhabit_app/src/utils/date_picker_item.dart';
-import 'package:haruhabit_app/src/view_models/schedule_viewmodel.dart';
 import 'package:haruhabit_app/src/views/calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -19,13 +19,12 @@ class AddSchedule extends StatefulWidget {
 }
 
 class _AddScheduleState extends State<AddSchedule> {
-  ScheduleViewModel _scheduleViewModel = ScheduleViewModel();
   late TextEditingController _scheduleController;
   late TextEditingController _placeController;
   late String _schedule;
   late String _place;
   late int hour = 12;
-  late int minute = 30;
+  late int minute = 00;
 
   @override
   void initState() {
@@ -131,7 +130,7 @@ class _AddScheduleState extends State<AddSchedule> {
                                 // ----------------
                                 _schedule = _scheduleController.text;
                                 _place = _placeController.text;
-                                _scheduleViewModel.addSchedule(
+                                scheduleBloc.addSchedule(
                                   widget.selectedDate.toString().substring(
                                         0,
                                         10,
