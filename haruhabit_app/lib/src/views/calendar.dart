@@ -191,17 +191,31 @@ class _CalendarState extends State<Calendar> {
                         startingDayOfWeek: StartingDayOfWeek.sunday,
                         calendarStyle: const CalendarStyle(
                           outsideDaysVisible: true,
+                          markerDecoration: BoxDecoration(
+                            color: Color.fromARGB(255, 255, 138, 128),
+                            shape: BoxShape.circle,
+                          ),
+                          todayDecoration: BoxDecoration(
+                            color: Color.fromARGB(255, 255, 138, 128),
+                            shape: BoxShape.circle,
+                          ),
+                          selectedDecoration: BoxDecoration(
+                            color: Color.fromARGB(255, 255, 138, 128),
+                            shape: BoxShape.circle,
+                          ),
                         ),
                         headerStyle: const HeaderStyle(
                           titleCentered: true,
                           formatButtonVisible: false,
                           leftChevronIcon: Icon(
                             CupertinoIcons.arrow_left_circle,
-                            color: Color.fromARGB(255, 164, 158, 255),
+                            // color: Color.fromARGB(255, 164, 158, 255),
+                            color: Color.fromARGB(255, 255, 138, 128),
                           ),
                           rightChevronIcon: Icon(
                             CupertinoIcons.arrow_right_circle,
-                            color: Color.fromARGB(255, 164, 158, 255),
+                            // color: Color.fromARGB(255, 164, 158, 255),
+                            color: Color.fromARGB(255, 255, 138, 128),
                           ),
                         ),
                         onDaySelected: _onDaySelected,
@@ -252,9 +266,9 @@ class _CalendarState extends State<Calendar> {
                               value[index].place,
                             ),
                             secondary: Text(
-                              "${value[index].hour}" +
+                              "${value[index].hour.toString().padLeft(2, "0")}" +
                                   " : " +
-                                  "${value[index].minute}",
+                                  "${value[index].minute.toString().padLeft(2, "0")}",
                             ),
                             value: (value[index].isDone == 0) ? false : true,
                             onChanged: (bool? val) {

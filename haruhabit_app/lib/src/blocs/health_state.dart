@@ -16,7 +16,10 @@ import 'package:haruhabit_app/src/models/step_model.dart';
 //   DATA_NOT_DELETED,
 //   STEPS_READY
 // }
-enum HealthStatus { initial, success, failure }
+
+/// authorized, unauthorized 추가할 것
+/// 2023.06.30
+enum HealthStatus { initial, authorized, unauthorized, noData, stepsReady, success, failure }
 
 class HealthState extends Equatable {
   const HealthState({
@@ -28,6 +31,7 @@ class HealthState extends Equatable {
   final StepModel model;
 
   HealthState copyWith({HealthStatus? status, StepModel? model}) {
+    print("현재 State: ${status}");
     return HealthState(
       status: status ?? this.status,
       model: model ?? this.model,

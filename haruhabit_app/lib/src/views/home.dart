@@ -10,6 +10,7 @@ import 'package:haruhabit_app/src/utils/gridcard_util.dart';
 import 'package:haruhabit_app/src/utils/header.dart';
 import 'package:haruhabit_app/src/utils/home_drawer.dart';
 import 'package:haruhabit_app/src/views/calendar.dart';
+import 'package:haruhabit_app/src/views/planner.dart';
 
 import '../blocs/schedule_bloc.dart';
 import '../models/schedule_model.dart';
@@ -68,7 +69,7 @@ class Home extends StatelessWidget {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '${snapshot.data?[index].hour}:${snapshot.data?[index].minute}',
+                                              '${snapshot.data?[index].hour.toString().padLeft(2, "0")} : ${snapshot.data?[index].minute.toString().padLeft(2, "0")}',
                                               style:
                                                   const TextStyle(fontSize: 20),
                                             ),
@@ -194,11 +195,9 @@ class Home extends StatelessWidget {
               foregroundColor: Colors.white,
               // onTap: () => showSearchView(),
               onTap: () {
-                // Navigator.of(context).push(CardDialog(builder: (context) {
-                //   return const CreateHabit();
-                // })).then((_) {
-                //   setState(() {});
-                // });
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const Planner()));
+                // .whenComplete(() => scheduleBloc.fetchAllSchedules());
               },
             ),
             SpeedDialChild(

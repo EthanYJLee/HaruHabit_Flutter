@@ -22,10 +22,6 @@ class Health extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // appBar: AppBar(
-        //   title: const Text("Health"),
-        //   elevation: 0,
-        // ),
         body: Center(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -33,9 +29,17 @@ class Health extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 BlocProvider(
+                  // 새로운 BLoC을 만들고 Fetch Event를 add 해준다.
                   create: (_) => HealthBloc()..add(HealthFetched()),
                   child: BlocBuilder<HealthBloc, HealthState>(
+                    // buildWhen: (previous, current) =>
+                    //     (previous != current) &&
+                    //     current.status == HealthStatus.success,
+                    //     /// return true/false to determine whether or not
+                    //     /// to rebuild the widget with state
+
                     builder: (context, state) {
+                      // 오류 발생 시
                       switch (state.status) {
                         case HealthStatus.failure:
                           return const Center(
@@ -43,14 +47,71 @@ class Health extends StatelessWidget {
                               'failed to fetch posts',
                             ),
                           );
+
+                        case HealthStatus.authorized:
+                          // return const Center(
+                          //   child: Text(
+                          //     'Authorized',
+                          //   ),
+                          // );
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+
+                        /// 걸음 수 데이터 접근 권한 없을 경우
+                        case HealthStatus.unauthorized:
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.3,
+                                  child: const Text(
+                                    "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        case HealthStatus.noData:
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.3,
+                                  child: const Text(
+                                    "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+
                         case HealthStatus.success:
-                          if (state.props.isEmpty) {
-                            return const Center(
-                              child: Text(
-                                'no data',
-                              ),
-                            );
-                          }
+                          return const Center(child: Text("success"));
+
+                        /// 걸음 수 데이터 접근 권한 허용 후
+                        case HealthStatus.stepsReady:
+                          // if (state.props.isEmpty) {
+                          //   return const Center(
+                          //     child: Text(
+                          //       'no data',
+                          //     ),
+                          //   );
+                          // }
                           return Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -100,15 +161,6 @@ class Health extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                // Header(
-                                //     title: 'Workout',
-                                //     destination: HistoryTabbar(
-
-                                //     )),
-                                const GridcardUtil(content: null),
-                                const SizedBox(
-                                  height: 300,
-                                )
                               ],
                             ),
                           );
@@ -120,6 +172,10 @@ class Health extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(
+                  height: 30,
+                ),
+                const GridcardUtil(content: null),
               ],
             ),
           ),
@@ -136,14 +192,6 @@ class Health extends StatelessWidget {
           useRotationAnimation: true,
           animationCurve: Curves.easeInOutQuart,
           children: [
-            // SpeedDialChild(
-            //   child: const Icon(CupertinoIcons.add),
-            //   onTap: () {
-            //     Navigator.of(context).push(CardDialog(builder: (context) {
-            //       return const AddHealth();
-            //     }));
-            //   },
-            // ),
             SpeedDialChild(
               child: const Icon(CupertinoIcons.list_bullet),
               label: "Add Workout",

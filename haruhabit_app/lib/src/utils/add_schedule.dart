@@ -202,7 +202,7 @@ class _AddScheduleState extends State<AddSchedule> {
               // user's locale settings.
               // 기기 설정에 따라 locale 자동 적용
               child: Text(
-                "${hour}".padLeft(2, "0") + " : " + "${minute}".padLeft(2, "0"),
+                "${hour.toString().padLeft(2, "0")} : ${minute.toString().padLeft(2, "0")}",
                 style: TextStyle(
                   fontSize: 18.0,
                   color: Colors.redAccent[100],

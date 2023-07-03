@@ -22,17 +22,16 @@ class App extends StatelessWidget {
         Locale('ko'), // Korean
       ],
       theme: ThemeData(
-        primaryColor: const Color.fromARGB(255, 164, 158, 255),
-        canvasColor: const Color.fromRGBO(223, 221, 255, 1),
+        primaryColor: Color.fromARGB(255, 255, 249, 244),
+        canvasColor: Color.fromARGB(255, 255, 249, 244),
         appBarTheme: AppBarTheme(
-          color: const Color.fromRGBO(223, 221, 255, 1),
+          color: Color.fromARGB(255, 255, 249, 244),
           actionsIconTheme: IconThemeData(color: Colors.redAccent[100]),
           foregroundColor: Colors.redAccent[100],
-          
         ),
         tabBarTheme: const TabBarTheme(),
         bottomAppBarTheme: BottomAppBarTheme(
-          color: Color.fromARGB(255, 164, 158, 255),
+          color: Color.fromARGB(255, 255, 249, 244),
         ),
         fontFamily: 'text',
       ),

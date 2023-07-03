@@ -25,41 +25,49 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 }
 
 class HealthBloc extends Bloc<HealthEvent, HealthState> {
-  // HealthBloc(super.initialState);
   HealthBloc() : super(const HealthState()) {
     on<HealthFetched>(
-      onHealthFetched,
-      //throttle을 사용해 연속된 api콜 방지
+      // (event, emit)
+      _onHealthFetched,
+      // throttle을 사용해 연속된 콜 방지
       transformer: throttleDroppable(const Duration(milliseconds: 100)),
     );
   }
 
+  HealthStatus _state = HealthStatus.initial;
   HealthFactory health = HealthFactory(useHealthConnectIfAvailable: true);
   static final dataTypes = [HealthDataType.STEPS, HealthDataType.WORKOUT];
   final permissions =
       dataTypes.map((e) => HealthDataAccess.READ_WRITE).toList();
   bool isAuthorized = false;
-  final _stepFetcher = PublishSubject<StepModel>();
+  // final _stepFetcher = PublishSubject<StepModel>();
+  // Observable<StepModel> get healthData => _stepFetcher.stream;
   List<HealthDataPoint> _healthDataList = [];
-  static final types = dataTypesIOS;
+  static final type = dataTypesIOS;
 
-  Observable<StepModel> get healthData => _stepFetcher.stream;
-
-  
-  Future<void> onHealthFetched(
+  // Health View draw 시 "BlocProvider(create: (_) => HealthBloc()..add(HealthFetched()))"
+  Future<void> _onHealthFetched(
       HealthFetched event, Emitter<HealthState> emit) async {
     // 불러올 Apple HealthKit Data가 없으면 종료
-    print("on health fetch");
+    print("1. on health fetch");
+    print("현재 State: ${state.status}");
     try {
       if (state.status == HealthStatus.initial) {
-        print("entered");
-        isAuthorized = await authorize();
-        if (isAuthorized) {
+        print("2. initially entered");
+        isAuthorized = await _authorize();
+        if (state.status == HealthStatus.authorized) {
+          print("3. Authorized");
           final stepData = await _fetchStepData();
-          print(stepData.steps);
-          _stepFetcher.sink.add(stepData);
-          return emit(
-              state.copyWith(status: HealthStatus.success, model: stepData));
+          // if (stepData.steps != null) {
+          if (state.status == HealthStatus.stepsReady) {
+            // Step Data 권한 허용했을 경우 (Fetch 성공 시)
+            return emit(state.copyWith(
+                status: HealthStatus.stepsReady, model: stepData));
+            // Step Data 권한 허용 안 했을 경우 (Fetch 실패 시)
+          } else {
+            print("4. Step Data is empty");
+            // return emit(state.copyWith(status: HealthStatus.unauthorized));
+          }
         }
       }
     } catch (_) {
@@ -67,8 +75,9 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     }
   }
 
-  // Desc : 접근 권한 (Check whether permission for Apple HealthKit is granted or not)
-  Future<bool> authorize() async {
+  // Desc : 접근 권한 여부 결정 (Check whether permission for Apple HealthKit is granted or not)
+  Future<bool> _authorize() async {
+    // HealthStatus _state = HealthStatus.initial;
     // Permission
     await Permission.activityRecognition.request();
     await Permission.location.request();
@@ -84,88 +93,104 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
       try {
         authorized = await health.requestAuthorization(dataTypes,
             permissions: permissions);
+        authorized
+            ? emit(state.copyWith(status: HealthStatus.authorized))
+            : emit(state.copyWith(status: HealthStatus.unauthorized));
       } catch (error) {
         print("Exception in authorize: $error");
       }
     }
-    authorized ? print("authorized") : print("unauthorized");
+
     return authorized;
   }
 
-  Future _addWorkoutData(
-      HealthWorkoutActivityType type, DateTime start, DateTime end) async {
-    bool success = true;
-    success &= await health.writeWorkoutData(
-      type,
-      start,
-      end,
-    );
-    // _state = success ? AppState.DATA_ADDED : AppState.DATA_NOT_ADDED;
-    success ? print('Data Added') : print('Data Not Added');
-  }
-
-  // fetch today's step count from the health plugin
+  // Fetch today's step count from the health plugin
   Future<StepModel> _fetchStepData() async {
     // today's data since midnight
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
     late StepModel stepModel;
+    int _noOfSteps;
 
     bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
-    print(requested);
 
     if (requested) {
+      print("4. Accessed to Step Data");
       try {
         stepModel = StepModel(
             steps: await health.getTotalStepsInInterval(midnight, now) as int);
       } catch (error) {
         print("Caught exception in getTotalStepsInInterval: $error");
       }
-      print('Total number of steps: ${stepModel.steps}');
+      print('5. Total number of steps: ${stepModel.steps}');
+      _noOfSteps = (stepModel.steps == null) ? 0 : stepModel.steps;
+      (stepModel.steps == null)
+          ? emit(state.copyWith(status: HealthStatus.noData))
+          : emit(state.copyWith(status: HealthStatus.stepsReady));
+    } else {
+      emit(state.copyWith(status: HealthStatus.unauthorized));
     }
-    // return healthModel;
-    return (stepModel.steps == null)
-        ? const StepModel(steps: 0)
-        : stepModel;
+    // return (stepModel.steps == null) ? const StepModel(steps: 0) : stepModel;
+    // stepModel.steps == null
+    //     ? emit(state.copyWith(status: HealthStatus.unauthorized))
+    //     : emit(state.copyWith(status: HealthStatus.stepsReady));
+    return stepModel;
   }
 
-    /// Fetch data points from the health plugin and show them in the app.
-  Future fetchData() async {
-    // setState(() => _state = AppState.FETCHING_DATA);
+  //**
+  // --------------------- 1 ---------------------
+  // */
+  // // write new workout data to Apple Health
+  // Future _addWorkoutData(
+  //     HealthWorkoutActivityType type, DateTime start, DateTime end) async {
+  //   bool success = true;
+  //   success &= await health.writeWorkoutData(
+  //     type,
+  //     start,
+  //     end,
+  //   );
+  //   // _state = success ? AppState.DATA_ADDED : AppState.DATA_NOT_ADDED;
+  //   success ? print('Data Added') : print('Data Not Added');
+  // }
 
-    // get data within the last 24 hours
-    final now = DateTime.now();
-    final yesterday = now.subtract(Duration(hours: 24));
+  //**
+  // --------------------- 2 ---------------------
+  // */
+  // // Fetch data points from the health plugin and show them in the app.
+  // Future fetchData() async {
+  //   // setState(() => _state = AppState.FETCHING_DATA);
 
-    // Clear old data points
-    _healthDataList.clear();
+  //   // get data within the last 24 hours
+  //   final now = DateTime.now();
+  //   final yesterday = now.subtract(Duration(hours: 24));
 
-    try {
-      // fetch health data
-      List<HealthDataPoint> healthData =
-          await health.getHealthDataFromTypes(yesterday, now, types);
-      print(healthData.length);
+  //   // Clear old data points
+  //   _healthDataList.clear();
 
-      // save all the new data points (only the first 100)
-      _healthDataList.addAll(
-          (healthData.length < 10) ? healthData : healthData.sublist(0, 10));
-    } catch (error) {
-      print("Exception in getHealthDataFromTypes: $error");
-    }
+  //   try {
+  //     // fetch health data
+  //     List<HealthDataPoint> healthData =
+  //         await health.getHealthDataFromTypes(yesterday, now, types);
+  //     print(healthData.length);
 
-    // filter out duplicates
-    _healthDataList = HealthFactory.removeDuplicates(_healthDataList);
+  //     // save all the new data points (only the first 100)
+  //     _healthDataList.addAll(
+  //         (healthData.length < 10) ? healthData : healthData.sublist(0, 10));
+  //   } catch (error) {
+  //     print("Exception in getHealthDataFromTypes: $error");
+  //   }
 
-    // print the results
-    _healthDataList.forEach((x) => print(x));
+  //   // filter out duplicates
+  //   _healthDataList = HealthFactory.removeDuplicates(_healthDataList);
 
-    // update the UI to display the results
-    // setState(() {
-    //   _state = _healthDataList.isEmpty ? AppState.NO_DATA : AppState.DATA_READY;
-    // });
-  }
+  //   // print the results
+  //   _healthDataList.forEach((x) => print(x));
 
-
+  //   // update the UI to display the results
+  //   // setState(() {
+  //   //   _state = _healthDataList.isEmpty ? AppState.NO_DATA : AppState.DATA_READY;
+  //   // });
+  // }
 }
 
 final healthBloc = HealthBloc();
