@@ -35,9 +35,9 @@ class Home extends StatelessWidget {
             child: Column(
               children: [
                 const TimelineUtil(),
-                const Divider(
-                  thickness: 3,
-                ),
+                // const Divider(
+                //   thickness: 3,
+                // ),
                 // Schedule History Header
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 15),
@@ -157,9 +157,9 @@ class Home extends StatelessWidget {
                     ],
                   )),
                 ),
-                const Divider(
-                  thickness: 3,
-                ),
+                // const Divider(
+                //   thickness: 3,
+                // ),
                 // Plan History Header
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 15),

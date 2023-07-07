@@ -10,7 +10,7 @@ class GridcardUtil extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height / 9.5,
+      height: MediaQuery.of(context).size.height / 12,
       width: MediaQuery.of(context).size.width / 1.1,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
@@ -18,7 +18,7 @@ class GridcardUtil extends StatelessWidget {
       child: Card(
         color: Color.fromARGB(255, 255, 238, 225),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(15),
         ),
         elevation: 3,
         child: Column(

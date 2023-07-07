@@ -22,6 +22,10 @@ class _TimelineUtilState extends State<TimelineUtil> {
     scheduleBloc
         .fetchSelectedSchedules(_selectedDate.toString().substring(0, 10));
     return Container(
+      decoration: BoxDecoration(
+          // border: Border.all(),
+          // borderRadius: BorderRadius.circular(10),
+          ),
       child: Column(
         children: [
           _timeline(),
@@ -54,7 +58,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
   Widget _timeline() {
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20),
-      decoration: const BoxDecoration(),
+      decoration: BoxDecoration(),
       child: CalendarTimeline(
         // shrink: true,
         // showYears: true,

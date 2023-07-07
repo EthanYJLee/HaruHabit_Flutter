@@ -183,6 +183,7 @@ class Health extends StatelessWidget {
                     Expanded(
                         child: healthCard(context,
                             title: 'Workout',
+                            data: "0",
                             image: "assets/images/fitness.png")),
                   ],
                 ),
@@ -198,6 +199,7 @@ class Health extends StatelessWidget {
                     Expanded(
                         child: healthCard(context,
                             title: 'Blood Pressure',
+                            data: "0",
                             image: "assets/images/blood-pressure.png")),
                     const SizedBox(
                       width: 10,
@@ -205,6 +207,7 @@ class Health extends StatelessWidget {
                     Expanded(
                         child: healthCard(context,
                             title: 'Energy Burned',
+                            data: "0",
                             image: "assets/images/calories.png")),
                   ],
                 ),

@@ -83,7 +83,7 @@ class _AddHabitState extends State<AddHabit> {
                           const Padding(
                             padding: EdgeInsets.only(bottom: 20),
                             child: Text(
-                              "추가",
+                              "Create New Habit",
                               style: TextStyle(fontSize: 20),
                             ),
                           ),
