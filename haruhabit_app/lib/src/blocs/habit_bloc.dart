@@ -7,10 +7,12 @@ class HabitBloc {
   final DatabaseHandler _handler = DatabaseHandler();
   final _allHabitFetcher = PublishSubject<List<HabitModel>>();
 
-  Future<int> addHabit(String category, String habit, String startDate) async {
+  Future<int> addHabit(
+      String category, String habit, int spending, String startDate) async {
     HabitModel habitModel = HabitModel(
       category: category,
       habit: habit,
+      spending: spending,
       startDate: startDate,
     );
     await _handler.insertHabit(habitModel);

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:haruhabit_app/src/utils/date_picker_item.dart';
-import 'package:haruhabit_app/src/view_models/habit_viewmodel.dart';
 import 'package:intl/intl.dart';
 
 class AddHabit extends StatefulWidget {
@@ -14,14 +13,22 @@ class AddHabit extends StatefulWidget {
 }
 
 class _AddHabitState extends State<AddHabit> {
-  HabitViewModel _habitViewModel = HabitViewModel();
   late TextEditingController _categoryController = TextEditingController();
   late TextEditingController _habitController = TextEditingController();
+  late TextEditingController _spendingController = TextEditingController();
   late String _category = "";
   late String _startDate = "";
   late String _habit = "";
-  late List<String> _categoryList = ["직접 입력", "금연", "금주", "공부"];
-  DateTime date = DateTime.now();
+  late List<String> _categoryList = [
+    "+ Add New",
+    "Quitting Smoking",
+    "Quitting Drinking",
+    "Study",
+    "Save Money",
+    "Read"
+  ];
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
 
   void _showDialog(Widget child) {
     showCupertinoModalPopup<void>(
@@ -66,7 +73,7 @@ class _AddHabitState extends State<AddHabit> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: Container(
-                    height: MediaQuery.of(context).size.height / 2,
+                    height: MediaQuery.of(context).size.height / 1.6,
                     width: MediaQuery.of(context).size.width / 1.1,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -89,7 +96,17 @@ class _AddHabitState extends State<AddHabit> {
                             padding: const EdgeInsets.only(left: 20, right: 20),
                             child: TextField(
                               controller: _habitController,
-                              decoration: const InputDecoration(hintText: "내용"),
+                              decoration:
+                                  const InputDecoration(hintText: "Summary"),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: TextField(
+                              controller: _spendingController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                  hintText: "Daily Savings (Optional)"),
                             ),
                           ),
                           const SizedBox(
@@ -136,16 +153,16 @@ class _AddHabitState extends State<AddHabit> {
                                           const Duration(milliseconds: 500),
                                     ));
                                   } else {
-                                    // ----------------
-                                    _category = _categoryController.text;
-                                    _startDate =
-                                        DateFormat('yyyy-MM-dd').format(date);
-                                    _habit = _habitController.text;
-                                    print(_category);
-                                    print(_startDate);
-                                    print(_habit);
-                                    _habitViewModel.addHabit(
-                                        _category, _habit, _startDate);
+                                    // // ----------------
+                                    // _category = _categoryController.text;
+                                    // _startDate =
+                                    //     DateFormat('yyyy-MM-dd').format(date);
+                                    // _habit = _habitController.text;
+                                    // print(_category);
+                                    // print(_startDate);
+                                    // print(_habit);
+                                    // _habitViewModel.addHabit(
+                                    //     _category, _habit, _startDate);
 
                                     Navigator.pop(context);
                                   }
@@ -166,39 +183,81 @@ class _AddHabitState extends State<AddHabit> {
   }
 
   Widget _datePicker() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        DatePickerItem(
-          children: <Widget>[
-            const Text("시작일"),
-            CupertinoButton(
-              // disabledColor: Color.fromARGB(255, 164, 158, 255),
-              // color: Color.fromARGB(255, 164, 158, 255),
-              // Display a CupertinoDatePicker in date picker mode.
-              onPressed: () => _showDialog(
-                CupertinoDatePicker(
-                  // backgroundColor: Color.fromARGB(255, 164, 158, 255),
-                  initialDateTime: date,
-                  mode: CupertinoDatePickerMode.date,
-                  use24hFormat: true,
-                  // This is called when the user changes the date.
-                  onDateTimeChanged: (DateTime newDate) {
-                    setState(() => date = newDate);
-                    print(DateFormat('yyyy-MM-dd').format(date));
-                  },
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DatePickerItem(
+              children: <Widget>[
+                Text("Start Date"),
+                CupertinoButton(
+                  // disabledColor: Color.fromARGB(255, 164, 158, 255),
+                  // color: Color.fromARGB(255, 164, 158, 255),
+                  // Display a CupertinoDatePicker in date picker mode.
+                  onPressed: () => _showDialog(
+                    CupertinoDatePicker(
+                      // backgroundColor: Color.fromARGB(255, 164, 158, 255),
+                      initialDateTime: startDate,
+                      mode: CupertinoDatePickerMode.date,
+                      use24hFormat: true,
+                      // This is called when the user changes the date.
+                      onDateTimeChanged: (DateTime newDate) {
+                        setState(() => startDate = newDate);
+                        print(DateFormat('yyyy-MM-dd').format(startDate));
+                      },
+                    ),
+                  ),
+                  // In this example, the date is formatted manually. You can
+                  // use the intl package to format the value based on the
+                  // user's locale settings.
+                  child: Text(
+                    '${startDate.year}-${startDate.month.toString().padLeft(2, "0")}-${startDate.day.toString().padLeft(2, "0")}',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.redAccent[100],
+                    ),
+                  ),
                 ),
-              ),
-              // In this example, the date is formatted manually. You can
-              // use the intl package to format the value based on the
-              // user's locale settings.
-              child: Text(
-                '${date.year}-${date.month}-${date.day}',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: Colors.redAccent[100],
+              ],
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DatePickerItem(
+              children: <Widget>[
+                Text("End Date"),
+                CupertinoButton(
+                  // disabledColor: Color.fromARGB(255, 164, 158, 255),
+                  // color: Color.fromARGB(255, 164, 158, 255),
+                  // Display a CupertinoDatePicker in date picker mode.
+                  onPressed: () => _showDialog(
+                    CupertinoDatePicker(
+                      // backgroundColor: Color.fromARGB(255, 164, 158, 255),
+                      initialDateTime: endDate,
+                      mode: CupertinoDatePickerMode.date,
+                      use24hFormat: true,
+                      // This is called when the user changes the date.
+                      onDateTimeChanged: (DateTime newDate) {
+                        setState(() => endDate = newDate);
+                        print(DateFormat('yyyy-MM-dd').format(endDate));
+                      },
+                    ),
+                  ),
+                  // In this example, the date is formatted manually. You can
+                  // use the intl package to format the value based on the
+                  // user's locale settings.
+                  child: Text(
+                    '${endDate.year}-${endDate.month.toString().padLeft(2, "0")}-${endDate.day.toString().padLeft(2, "0")}',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.redAccent[100],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -225,13 +284,13 @@ class _AddHabitState extends State<AddHabit> {
         children: [
           Expanded(
             child: DropdownMenu(
-              menuHeight: 320,
+              menuHeight: MediaQuery.of(context).size.height / 4.2,
               width: MediaQuery.of(context).size.width / 1.5,
               // initialSelection: _categoryList[0],
-              initialSelection: "",
+              initialSelection: "Select Category",
               controller: _categoryController,
               label: const Text(
-                '카테고리',
+                'Select Category',
                 style: TextStyle(
                   color: Colors.black,
                 ),
@@ -239,7 +298,7 @@ class _AddHabitState extends State<AddHabit> {
               inputDecorationTheme: const InputDecorationTheme(filled: true),
               dropdownMenuEntries: categoryEntries,
               onSelected: (value) {
-                if (value == "직접 입력") {
+                if (value == "+ Add New") {
                   _categoryController.text = "";
                 }
                 _category = _categoryController.text;

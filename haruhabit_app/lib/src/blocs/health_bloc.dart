@@ -59,10 +59,10 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
           print("3. Authorized");
           final stepData = await _fetchStepData();
           // if (stepData.steps != null) {
-          if (state.status == HealthStatus.stepsReady) {
+          if (state.status == HealthStatus.dataReady) {
             // Step Data 권한 허용했을 경우 (Fetch 성공 시)
             return emit(state.copyWith(
-                status: HealthStatus.stepsReady, model: stepData));
+                status: HealthStatus.dataReady, model: stepData));
             // Step Data 권한 허용 안 했을 경우 (Fetch 실패 시)
           } else {
             print("4. Step Data is empty");
@@ -104,6 +104,59 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     return authorized;
   }
 
+  // /// Fetch data points from the health plugin and show them in the app.
+  // Future fetchHealthData() async {
+  //   // define the types to get
+  //   final types = [
+  //     HealthDataType.HEART_RATE,
+  //     HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
+  //     HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
+  //     HealthDataType.STEPS,
+  //     HealthDataType.ACTIVE_ENERGY_BURNED,
+  //   ];
+
+  //   // get data within the last 24 hours
+  //   final now = DateTime.now();
+  //   final yesterday = now.subtract(const Duration(days: 1));
+
+  //   // requesting access to the data types before reading them
+  //   bool requested = await health.requestAuthorization(types);
+
+  //   if (requested) {
+  //     try {
+  //       // fetch health data
+  //       healthData = await health.getHealthDataFromTypes(yesterday, now, types);
+
+  //       if (healthData.isNotEmpty) {
+  //         for (HealthDataPoint h in healthData) {
+  //           if (h.type == HealthDataType.HEART_RATE) {
+  //             heartRate = "${h.value}";
+  //           } else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
+  //             bloodPreSys = "${h.value}";
+  //           } else if (h.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC) {
+  //             bloodPreDia = "${h.value}";
+  //           } else if (h.type == HealthDataType.STEPS) {
+  //             steps = "${h.value}";
+  //           } else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
+  //             activeEnergy = "${h.value}";
+  //           }
+  //         }
+  //         if (bloodPreSys != "null" && bloodPreDia != "null") {
+  //           bp = "$bloodPreSys / $bloodPreDia mmHg";
+  //         }
+
+  //         setState(() {});
+  //       }
+  //     } catch (error) {
+  //       print("Exception in getHealthDataFromTypes: $error");
+  //     }
+
+  //     // filter out duplicates
+  //     healthData = HealthFactory.removeDuplicates(healthData);
+  //   } else {
+  //     print("Authorization not granted");
+  //   }
+
   // Fetch today's step count from the health plugin
   Future<StepModel> _fetchStepData() async {
     // today's data since midnight
@@ -113,12 +166,15 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     int _noOfSteps;
 
     bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
+    // bool requested = await health.requestAuthorization([HealthDataType.STEPS, HealthDataType.HEART_RATE, HealthDataType.WORKOUT, HealthDataType.BLOOD_PRESSURE_SYSTOLIC, HealthDataType.BLOOD_PRESSURE_DIASTOLIC, HealthDataType.ACTIVE_ENERGY_BURNED]);
 
     if (requested) {
       print("4. Accessed to Step Data");
       try {
         stepModel = StepModel(
             steps: await health.getTotalStepsInInterval(midnight, now) as int);
+        // print(health.getHealthDataFromTypes(
+        //     midnight, now, [HealthDataType.BLOOD_PRESSURE_SYSTOLIC]));
       } catch (error) {
         print("Caught exception in getTotalStepsInInterval: $error");
       }
@@ -126,7 +182,7 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
       _noOfSteps = (stepModel.steps == null) ? 0 : stepModel.steps;
       (stepModel.steps == null)
           ? emit(state.copyWith(status: HealthStatus.noData))
-          : emit(state.copyWith(status: HealthStatus.stepsReady));
+          : emit(state.copyWith(status: HealthStatus.dataReady));
     } else {
       emit(state.copyWith(status: HealthStatus.unauthorized));
     }

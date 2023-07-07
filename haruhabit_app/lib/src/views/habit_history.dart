@@ -45,6 +45,7 @@ class _HabitHistoryState extends State<HabitHistory> {
                       hId: snapshot.data?[index].hId,
                       category: "${snapshot.data?[index].category}",
                       habit: "${snapshot.data?[index].habit}",
+                      spending: snapshot.data?[index].spending as int,
                       startDate: "${snapshot.data?[index].startDate}",
                       endDate: "${snapshot.data?[index].endDate}",
                     );

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
 import 'package:haruhabit_app/src/utils/header.dart';
@@ -61,6 +62,8 @@ class Home extends StatelessWidget {
                                       width: MediaQuery.of(context).size.width /
                                           3.7,
                                       child: Card(
+                                        color: const Color.fromARGB(
+                                            255, 255, 238, 225),
                                         shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(15))),
@@ -70,35 +73,30 @@ class Home extends StatelessWidget {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '${snapshot.data?[index].hour.toString().padLeft(2, "0")} : ${snapshot.data?[index].minute.toString().padLeft(2, "0")}',
+                                              '${snapshot.data?[index].hour.toString().padLeft(2, "0")}:${snapshot.data?[index].minute.toString().padLeft(2, "0")}',
                                               style:
                                                   const TextStyle(fontSize: 20),
                                             ),
                                             Text(
                                               '${snapshot.data?[index].schedule}',
                                               style:
-                                                  const TextStyle(fontSize: 16),
-                                              maxLines: 4,
+                                                  const TextStyle(fontSize: 20),
                                             ),
+                                            Text(
+                                                'at ${snapshot.data?[index].place}')
                                           ],
                                         ),
                                       ),
                                     ),
                                     // 일정 완료 버튼
-                                    Positioned(
-                                      right: 1,
-                                      top: 1,
-                                      child: IconButton(
-                                          onPressed: () {
-                                            // -----------
-                                          },
-                                          icon: (snapshot.data?[index].isDone ==
-                                                  0)
-                                              ? const Icon(CupertinoIcons
-                                                  .checkmark_alt_circle)
-                                              : const Icon(CupertinoIcons
-                                                  .checkmark_alt_circle_fill)),
-                                    ),
+                                    // Positioned(
+                                    //     right: 1,
+                                    //     top: 1,
+                                    //     child: CheckButton(
+                                    //       isDone: snapshot.data![index].isDone,
+                                    //       sId: snapshot.data![index].sId
+                                    //           .toString(),
+                                    //     )),
                                   ],
                                 );
                               }),
@@ -116,11 +114,13 @@ class Home extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const Calendar(),
-                      ),
-                    );
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (context) => const Calendar(),
+                          ),
+                        )
+                        .whenComplete(() => scheduleBloc.fetchAllSchedules());
                   },
                   child: GridcardUtil(
                       content: Column(
@@ -151,6 +151,9 @@ class Home extends StatelessWidget {
                     //     .push(MaterialPageRoute(
                     //         builder: (context) => const Calendar()))
                     //     .whenComplete(() => scheduleBloc.fetchAllSchedules());
+                    Navigator.of(context).push(CardDialog(builder: (context) {
+                      return const AddHabit();
+                    }));
                   },
                   child: GridcardUtil(
                       content: Column(
@@ -235,3 +238,59 @@ class Home extends StatelessWidget {
     );
   }
 }
+
+// class CheckButton extends StatefulWidget {
+//   const CheckButton({super.key, required this.isDone, required this.sId});
+//   final int isDone;
+//   final String sId;
+
+//   @override
+//   State<CheckButton> createState() => _CheckButtonState();
+// }
+
+// class _CheckButtonState extends State<CheckButton> {
+//   DatabaseHandler _handler = DatabaseHandler();
+//   late bool _isChecked;
+//   late Icon checkIcon = Icon(
+//     CupertinoIcons.checkmark_alt_circle,
+//   );
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//     if (widget.isDone == 0) {
+//       _isChecked = false;
+//       checkIcon = const Icon(
+//         CupertinoIcons.checkmark_alt_circle,
+//       );
+//     } else {
+//       _isChecked = true;
+//       checkIcon = const Icon(
+//         CupertinoIcons.checkmark_alt_circle_fill,
+//       );
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return IconButton(
+//         onPressed: () {
+//           // -----------
+//           setState(() {
+//             _isChecked = !_isChecked;
+//             if (_isChecked) {
+//               _handler.scheduleIsDone(1, widget.sId);
+//               checkIcon = const Icon(
+//                 CupertinoIcons.checkmark_alt_circle_fill,
+//               );
+//             } else {
+//               _handler.scheduleIsDone(0, widget.sId);
+//               checkIcon = const Icon(
+//                 CupertinoIcons.checkmark_alt_circle,
+//               );
+//             }
+//           });
+//         },
+//         icon: checkIcon);
+//   }
+// }

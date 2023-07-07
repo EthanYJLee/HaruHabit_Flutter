@@ -70,7 +70,7 @@ class DatabaseHandler {
     return queryResult.map((e) => ScheduleModel.fromMap(e)).toList();
   }
 
-  // 일정 (Schedule) 체크박스 체크/해제
+  // 일정 (Schedule) 체크박스 체크/해제 (0이면 미완료, 1이면 완료)
   Future<int> scheduleIsDone(int isChecked, String sId) async {
     final Database db = await openDatabase('schedules.db');
     int count = await db.rawUpdate(
@@ -166,8 +166,6 @@ class DatabaseHandler {
     );
     return result;
   }
-
-  
 
   // --------------------------------------------------------------------------------------------------
 

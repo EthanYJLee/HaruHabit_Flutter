@@ -24,189 +24,213 @@ class Health extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         body: Center(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                BlocProvider(
-                  // 새로운 BLoC을 만들고 Fetch Event를 add 해준다.
-                  create: (_) => HealthBloc()..add(HealthFetched()),
-                  child: BlocBuilder<HealthBloc, HealthState>(
-                    // buildWhen: (previous, current) =>
-                    //     (previous != current) &&
-                    //     current.status == HealthStatus.success,
-                    //     /// return true/false to determine whether or not
-                    //     /// to rebuild the widget with state
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              BlocProvider(
+                // 새로운 BLoC을 만들고 Fetch Event를 add 해준다.
+                create: (_) => HealthBloc()..add(HealthFetched()),
+                child: BlocBuilder<HealthBloc, HealthState>(
+                  // buildWhen: (previous, current) =>
+                  //     (previous != current) &&
+                  //     current.status == HealthStatus.success,
+                  //     /// return true/false to determine whether or not
+                  //     /// to rebuild the widget with state
 
-                    builder: (context, state) {
-                      // 오류 발생 시
-                      switch (state.status) {
-                        case HealthStatus.failure:
-                          return const Center(
-                            child: Text(
-                              'failed to fetch posts',
-                            ),
-                          );
+                  builder: (context, state) {
+                    // 오류 발생 시
+                    switch (state.status) {
+                      case HealthStatus.failure:
+                        return const Center(
+                          child: Text(
+                            'failed to fetch posts',
+                          ),
+                        );
 
-                        case HealthStatus.authorized:
-                          // return const Center(
-                          //   child: Text(
-                          //     'Authorized',
-                          //   ),
-                          // );
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                      case HealthStatus.authorized:
+                        // return const Center(
+                        //   child: Text(
+                        //     'Authorized',
+                        //   ),
+                        // );
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
 
-                        /// 걸음 수 데이터 접근 권한 없을 경우
-                        case HealthStatus.unauthorized:
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.3,
-                                  child: const Text(
-                                    "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 5,
+                      /// 걸음 수 데이터 접근 권한 없을 경우
+                      case HealthStatus.unauthorized:
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 1.3,
+                                child: const Text(
+                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  maxLines: 5,
                                 ),
-                              ],
-                            ),
-                          );
-                        case HealthStatus.noData:
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.3,
-                                  child: const Text(
-                                    "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 5,
+                              ),
+                            ],
+                          ),
+                        );
+                      case HealthStatus.noData:
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width / 1.3,
+                                child: const Text(
+                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  maxLines: 5,
                                 ),
-                              ],
-                            ),
-                          );
+                              ),
+                            ],
+                          ),
+                        );
 
-                        case HealthStatus.success:
-                          return const Center(child: Text("success"));
+                      case HealthStatus.success:
+                        return const Center(child: Text("success"));
 
-                        /// 걸음 수 데이터 접근 권한 허용 후
-                        case HealthStatus.stepsReady:
-                          // if (state.props.isEmpty) {
-                          //   return const Center(
-                          //     child: Text(
-                          //       'no data',
-                          //     ),
-                          //   );
-                          // }
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height:
-                                      MediaQuery.of(context).size.height / 6,
-                                  margin: const EdgeInsets.only(
-                                      top: 30, right: 50, left: 50, bottom: 10),
-                                  child: Stack(
-                                    alignment: Alignment.topCenter,
+                      /// 걸음 수 데이터 접근 권한 허용 후
+                      case HealthStatus.dataReady:
+                        // if (state.props.isEmpty) {
+                        //   return const Center(
+                        //     child: Text(
+                        //       'no data',
+                        //     ),
+                        //   );
+                        // }
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height / 4.8,
+                          // margin: const EdgeInsets.only(
+                          //     right: 50, left: 50, bottom: 10),
+                          margin: const EdgeInsets.only(bottom: 30),
+                          padding: const EdgeInsets.all(10),
+                          child: Stack(
+                            // alignment: Alignment.bottomCenter,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.transparent,
+                                      // width: 5,
+                                    ),
+                                    // color: Colors.redAccent[100],
+                                    color: const Color.fromARGB(
+                                        255, 255, 238, 225),
+                                    shape: BoxShape.circle),
+                              ),
+                              Container(
+                                  child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.transparent,
-                                              width: 5,
-                                            ),
-                                            color: Colors.redAccent[100],
-                                            shape: BoxShape.circle),
+                                      const Text("Steps",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 22)),
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.asset(
+                                          "assets/images/footprint.png",
+                                          height: 50,
+                                        ),
                                       ),
-                                      Container(
-                                          child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              const Text(
-                                                "Steps",
-                                                style: TextStyle(fontSize: 22),
-                                              ),
-                                              Text(
-                                                state.model.steps.toString(),
-                                                style: const TextStyle(
-                                                    fontSize: 26,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      )),
+                                      Text(
+                                        state.model.steps.toString(),
+                                        style: const TextStyle(
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        case HealthStatus.initial:
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                      }
-                    },
-                  ),
+                                  )
+                                ],
+                              )),
+                            ],
+                          ),
+                        );
+                      case HealthStatus.initial:
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                    }
+                  },
                 ),
-                Row(
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 1.1,
+                child: Row(
                   children: [
                     Expanded(
                         child: healthCard(context,
                             title: 'Heart Rate',
+                            data: "0",
                             image: "assets/images/heart-attack.png")),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     Expanded(
                         child: healthCard(context,
                             title: 'Workout',
                             image: "assets/images/fitness.png")),
                   ],
                 ),
-                InkWell(
-                  onTap: () {
-                    //-
-                    print(HealthBloc.dataTypes);
-                  },
-                  child: GridcardUtil(
-                      content: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              CupertinoIcons.add_circled,
-                              size: 30,
-                            ),
-                          ]),
-                    ],
-                  )),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                // padding: EdgeInsets.only(left: 20, right: 20),
+                width: MediaQuery.of(context).size.width / 1.1,
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: healthCard(context,
+                            title: 'Blood Pressure',
+                            image: "assets/images/blood-pressure.png")),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                        child: healthCard(context,
+                            title: 'Energy Burned',
+                            image: "assets/images/calories.png")),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              // InkWell(
+              //   onTap: () {
+              //     //-
+              //     print(HealthBloc.dataTypes);
+              //   },
+              //   child: GridcardUtil(
+              //       content: Column(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       Row(
+              //           mainAxisAlignment: MainAxisAlignment.center,
+              //           children: const [
+              //             Icon(
+              //               CupertinoIcons.add_circled,
+              //               size: 30,
+              //             ),
+              //           ]),
+              //     ],
+              //   )),
+              // ),
+            ],
           ),
         ),
         floatingActionButton: SpeedDial(
@@ -248,8 +272,8 @@ class Health extends StatelessWidget {
       required String image}) {
     return Container(
       height: MediaQuery.of(context).size.width / 2.5,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      // margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
           Radius.circular(20),
@@ -267,8 +291,11 @@ class Health extends StatelessWidget {
             Text(title,
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            Image.asset(image, width: 70),
-            Text(data),
+            Image.asset(image, width: 60),
+            Text(
+              data,
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),

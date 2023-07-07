@@ -19,7 +19,7 @@ import 'package:haruhabit_app/src/models/step_model.dart';
 
 /// authorized, unauthorized 추가할 것
 /// 2023.06.30
-enum HealthStatus { initial, authorized, unauthorized, noData, stepsReady, success, failure }
+enum HealthStatus { initial, authorized, unauthorized, noData, dataReady, success, failure }
 
 class HealthState extends Equatable {
   const HealthState({

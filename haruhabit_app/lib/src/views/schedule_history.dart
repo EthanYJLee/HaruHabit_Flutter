@@ -52,9 +52,7 @@ class ScheduleHistory extends StatelessWidget {
                                   subtitle: Text(
                                       "${calendarBloc.kEvents[calendarBloc.kEvents.keys.toList()[index]][i].place}"),
                                   trailing: Text(
-                                      "${calendarBloc.kEvents[calendarBloc.kEvents.keys.toList()[index]][i].hour}" +
-                                          " : " +
-                                          "${calendarBloc.kEvents[calendarBloc.kEvents.keys.toList()[index]][i].minute}"),
+                                      "${calendarBloc.kEvents[calendarBloc.kEvents.keys.toList()[index]][i].hour.toString().padLeft(2, "0")}:${calendarBloc.kEvents[calendarBloc.kEvents.keys.toList()[index]][i].minute.toString().padLeft(2, "0")}"),
                                 ),
                               );
                             }),

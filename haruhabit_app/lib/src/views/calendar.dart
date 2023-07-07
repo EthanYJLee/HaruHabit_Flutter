@@ -18,6 +18,8 @@ import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../blocs/schedule_bloc.dart';
+
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
 
@@ -131,6 +133,9 @@ class _CalendarState extends State<Calendar> {
                 context,
                 MaterialPageRoute(builder: (context) => const Tabbar()),
                 (Route<dynamic> route) => false);
+            setState(() {
+              scheduleBloc.fetchAllSchedules();
+            });
           },
         ),
         title: TextButton(
@@ -271,6 +276,7 @@ class _CalendarState extends State<Calendar> {
                                   "${value[index].minute.toString().padLeft(2, "0")}",
                             ),
                             value: (value[index].isDone == 0) ? false : true,
+                            // value: false,
                             onChanged: (bool? val) {
                               setState(() {
                                 if (val == true) {
@@ -281,6 +287,8 @@ class _CalendarState extends State<Calendar> {
                                 // 체크박스 체크하면 0, 1 (isDone? false/true) 값 업데이트
                                 handler.scheduleIsDone(value[index].isDone,
                                     value[index].sId.toString());
+                                // 완료 여부 업데이트한 뒤 이벤트리스트 다시 가져와야 함!!!!!!
+                                calendarBloc.getEventLists();
                               });
                             },
                           ),
