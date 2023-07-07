@@ -12,6 +12,7 @@ import 'package:haruhabit_app/src/utils/card_dialog.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
 import 'package:haruhabit_app/src/utils/header.dart';
 import 'package:intl/date_time_patterns.dart';
+import 'package:path/path.dart';
 
 import 'history_tabbar.dart';
 
@@ -172,10 +173,38 @@ class Health extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 30,
+                Row(
+                  children: [
+                    Expanded(
+                        child: healthCard(context,
+                            title: 'Heart Rate',
+                            image: "assets/images/heart-attack.png")),
+                    Expanded(
+                        child: healthCard(context,
+                            title: 'Workout',
+                            image: "assets/images/fitness.png")),
+                  ],
                 ),
-                const GridcardUtil(content: null),
+                InkWell(
+                  onTap: () {
+                    //-
+                    print(HealthBloc.dataTypes);
+                  },
+                  child: GridcardUtil(
+                      content: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              CupertinoIcons.add_circled,
+                              size: 30,
+                            ),
+                          ]),
+                    ],
+                  )),
+                ),
               ],
             ),
           ),
@@ -212,4 +241,37 @@ class Health extends StatelessWidget {
   }
 
   // Widget
+  Widget healthCard(BuildContext context,
+      {String title = "",
+      String data = "",
+      Color color = const Color.fromARGB(255, 255, 238, 225),
+      required String image}) {
+    return Container(
+      height: MediaQuery.of(context).size.width / 2.5,
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+      ),
+      child: Card(
+        color: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        elevation: 3,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(title,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            Image.asset(image, width: 70),
+            Text(data),
+          ],
+        ),
+      ),
+    );
+  }
 }

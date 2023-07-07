@@ -1,4 +1,5 @@
 import 'package:calendar_timeline/calendar_timeline.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -51,7 +52,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
 
   Widget _timeline() {
     return Container(
-      padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20),
       decoration: const BoxDecoration(),
       child: CalendarTimeline(
         // shrink: true,
@@ -72,7 +73,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
         activeBackgroundDayColor: Colors.redAccent[100],
         dotsColor: const Color(0xFF333A47),
         // locale: 'ko',
-        locale: 'en',
+        // locale: 'en',
       ),
     );
   }
@@ -103,9 +104,9 @@ class _TimelineUtilState extends State<TimelineUtil> {
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.teal[200]),
             ),
-            child: const Text(
-              'Today',
-              style: TextStyle(
+            child: Text(
+              'today'.tr(),
+              style: const TextStyle(
                   color: Color(0xFF333A47), fontWeight: FontWeight.bold),
             ),
             onPressed: () => setState(() => _resetSelectedDate()),
@@ -114,7 +115,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
             width: 10,
           ),
           Text(
-            "${todo} Schedules",
+            "${todo} " + "schedule".tr(),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

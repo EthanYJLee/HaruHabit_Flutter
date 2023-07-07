@@ -52,6 +52,7 @@ dependencies:
   intl: ^0.17.0
   flutter_localizations:
     sdk: flutter
+  easy_localization: ^3.0.2
   rename: ^2.1.1
   calendar_timeline: ^1.1.2
   table_calendar: ^3.0.8
@@ -83,9 +84,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/translations/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -101,10 +102,10 @@ flutter:
   fonts:
     - family: text
       fonts:
-        - asset: fonts/NanumSquareRoundR.ttf
-        - asset: fonts/NanumSquareRoundEB.ttf
+        - asset: assets/fonts/NanumSquareRoundR.ttf
+        - asset: assets/fonts/NanumSquareRoundEB.ttf
           weight: 700
-        - asset: fonts/NanumSquareRoundL.ttf
+        - asset: assets/fonts/NanumSquareRoundL.ttf
           weight: 300
   #   - family: Schyler
   #     fonts:

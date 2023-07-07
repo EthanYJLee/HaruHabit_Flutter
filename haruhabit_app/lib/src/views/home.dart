@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -36,9 +37,9 @@ class Home extends StatelessWidget {
                 const Divider(
                   thickness: 3,
                 ),
-                const Header(
-                  title: 'To-Do',
-                  destination: HistoryTabbar(
+                Header(
+                  title: "todo".tr(),
+                  destination: const HistoryTabbar(
                     initialView: 0,
                   ),
                 ),
@@ -139,9 +140,9 @@ class Home extends StatelessWidget {
                 const Divider(
                   thickness: 3,
                 ),
-                const Header(
-                    title: 'Plan',
-                    destination: HistoryTabbar(
+                Header(
+                    title: "plan".tr(),
+                    destination: const HistoryTabbar(
                       initialView: 1,
                     )),
                 InkWell(

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -35,6 +36,65 @@ class _TabbarState extends State<Tabbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        actions: [
+          /// 언어 설정 버튼 (English / Korean)
+          /// -------------------------bloc으로 변경-------------------------
+          PopupMenuButton(
+            icon: const Icon(Icons.language),
+            onSelected: (value) {
+              print(value);
+            },
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  onTap: () {
+                    // EasyLocalization.of(context)!.setLocale(
+                    //   const Locale(
+                    //     "en",
+                    //     "US",
+                    //   ),
+                    // );
+                    setState(() {
+                      EasyLocalization.of(context)!.setLocale(
+                        const Locale(
+                          "en",
+                          "US",
+                        ),
+                      );
+                    });
+                  },
+                  child: const Text(
+                    "english",
+                  ),
+                ),
+                PopupMenuItem(
+                  onTap: () {
+                    // EasyLocalization.of(context)!.setLocale(
+                    //   const Locale(
+                    //     "ko",
+                    //     "KR",
+                    //   ),
+                    // );
+                    setState(() {
+                      EasyLocalization.of(context)!.setLocale(
+                        const Locale(
+                          "ko",
+                          "KR",
+                        ),
+                      );
+                    });
+                  },
+                  child: const Text(
+                    "korean",
+                  ),
+                ),
+              ];
+            },
+          )
+        ],
+      ),
       body: tabbarItems[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.redAccent[100],

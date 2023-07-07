@@ -20,7 +20,7 @@ class GridcardUtil extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
-        elevation: 5,
+        elevation: 3,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
