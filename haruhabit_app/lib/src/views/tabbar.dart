@@ -47,6 +47,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
       case AppLifecycleState.detached:
         // DO SOMETHING when app deactivated abnormally
         scheduleBloc.dispose();
+        // Calendar.state.dispose
         print('detached');
         break;
       case AppLifecycleState.paused:
@@ -65,60 +66,63 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
         actions: [
           /// 언어 설정 버튼 (English / Korean)
           /// -------------------------bloc으로 변경-------------------------
-          PopupMenuButton(
-            icon: const Icon(
-              Icons.language,
-              size: 30,
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: PopupMenuButton(
+              icon: const Icon(
+                Icons.language,
+                size: 30,
+              ),
+              onSelected: (value) {
+                print(value);
+              },
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    onTap: () {
+                      // EasyLocalization.of(context)!.setLocale(
+                      //   const Locale(
+                      //     "en",
+                      //     "US",
+                      //   ),
+                      // );
+                      setState(() {
+                        EasyLocalization.of(context)!.setLocale(
+                          const Locale(
+                            "en",
+                            "US",
+                          ),
+                        );
+                      });
+                    },
+                    child: const Text(
+                      "english",
+                    ),
+                  ),
+                  PopupMenuItem(
+                    onTap: () {
+                      // EasyLocalization.of(context)!.setLocale(
+                      //   const Locale(
+                      //     "ko",
+                      //     "KR",
+                      //   ),
+                      // );
+                      setState(() {
+                        EasyLocalization.of(context)!.setLocale(
+                          const Locale(
+                            "ko",
+                            "KR",
+                          ),
+                        );
+                      });
+                    },
+                    child: const Text(
+                      "korean",
+                    ),
+                  ),
+                ];
+              },
             ),
-            onSelected: (value) {
-              print(value);
-            },
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  onTap: () {
-                    // EasyLocalization.of(context)!.setLocale(
-                    //   const Locale(
-                    //     "en",
-                    //     "US",
-                    //   ),
-                    // );
-                    setState(() {
-                      EasyLocalization.of(context)!.setLocale(
-                        const Locale(
-                          "en",
-                          "US",
-                        ),
-                      );
-                    });
-                  },
-                  child: const Text(
-                    "english",
-                  ),
-                ),
-                PopupMenuItem(
-                  onTap: () {
-                    // EasyLocalization.of(context)!.setLocale(
-                    //   const Locale(
-                    //     "ko",
-                    //     "KR",
-                    //   ),
-                    // );
-                    setState(() {
-                      EasyLocalization.of(context)!.setLocale(
-                        const Locale(
-                          "ko",
-                          "KR",
-                        ),
-                      );
-                    });
-                  },
-                  child: const Text(
-                    "korean",
-                  ),
-                ),
-              ];
-            },
           )
         ],
       ),

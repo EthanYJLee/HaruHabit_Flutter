@@ -131,10 +131,9 @@ class _AddScheduleState extends State<AddSchedule> {
                                 _schedule = _scheduleController.text;
                                 _place = _placeController.text;
                                 scheduleBloc.addSchedule(
-                                  widget.selectedDate.toString().substring(
-                                        0,
-                                        10,
-                                      ),
+                                  widget.selectedDate
+                                      .toString()
+                                      .substring(0, 10),
                                   _schedule,
                                   _place,
                                   hour,

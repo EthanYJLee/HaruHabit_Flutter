@@ -16,6 +16,7 @@ class TimelineUtil extends StatefulWidget {
 
 class _TimelineUtilState extends State<TimelineUtil> {
   late DateTime _selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     scheduleBloc
@@ -28,7 +29,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
               stream: scheduleBloc.selectedSchedule,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  // print(_selectedDate.toString().substring(0, 10));
+                  print(_selectedDate.toString().substring(0, 10));
                   // print(snapshot.data!.length);
                   return _todoSummary(snapshot.data!.length);
                 } else if (!snapshot.hasData) {
@@ -45,7 +46,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
     );
   }
 
-  void _resetSelectedDate() {
+  void resetSelectedDate() {
     // _selectedDate = DateTime.now().add(const Duration(days: 2));
     _selectedDate = DateTime.now();
   }
@@ -82,7 +83,7 @@ class _TimelineUtilState extends State<TimelineUtil> {
   /// Date : 2023.06.20
   Widget _todoSummary(int todo) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
+      padding: const EdgeInsets.only(top: 10, left: 30, right: 50),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -109,10 +110,10 @@ class _TimelineUtilState extends State<TimelineUtil> {
               style: const TextStyle(
                   color: Color(0xFF333A47), fontWeight: FontWeight.bold),
             ),
-            onPressed: () => setState(() => _resetSelectedDate()),
+            onPressed: () => setState(() => resetSelectedDate()),
           ),
           const SizedBox(
-            width: 10,
+            width: 30,
           ),
           Text(
             "${todo} " + "schedule".tr(),

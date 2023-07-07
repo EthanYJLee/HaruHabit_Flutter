@@ -10,7 +10,6 @@ import 'package:haruhabit_app/src/blocs/health_state.dart';
 import 'package:haruhabit_app/src/utils/add_health.dart';
 import 'package:haruhabit_app/src/utils/card_dialog.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
-import 'package:haruhabit_app/src/utils/header.dart';
 import 'package:intl/date_time_patterns.dart';
 import 'package:path/path.dart';
 

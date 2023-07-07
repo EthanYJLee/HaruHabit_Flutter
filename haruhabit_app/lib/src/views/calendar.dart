@@ -118,6 +118,7 @@ class _CalendarState extends State<Calendar> {
   @override
   void dispose() {
     // TODO: implement dispose
+    print('events disposed');
     _selectedEvents.dispose();
     super.dispose();
   }
@@ -126,23 +127,10 @@ class _CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(CupertinoIcons.back),
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const Tabbar()),
-                (Route<dynamic> route) => false);
-            setState(() {
-              scheduleBloc.fetchAllSchedules();
-            });
-          },
-        ),
         title: TextButton(
           onPressed: () {
             setState(() {
-              _selectedDay = DateTime.now();
-              _selectedEvents.value = _getEventsForDay(_selectedDay!);
+              _selectedEvents.value = _getEventsForDay(DateTime.now());
             });
           },
           child: Text(
@@ -154,17 +142,13 @@ class _CalendarState extends State<Calendar> {
         ),
         actions: [
           IconButton(
+              // Schedule 추가하고 돌아오면 일정 리스트 다시 불러오기
               onPressed: () {
                 Navigator.of(context).push(CardDialog(builder: (context) {
                   return AddSchedule(selectedDate: _selectedDay!);
                 })).whenComplete(() {
                   calendarBloc.getEventLists();
-                  _getEventsForDay(_selectedDay!);
-                  setState(() {
-                    _selectedEvents.notifyListeners();
-                    // calendarBloc.getEventLists();
-                    // _selectedEvents.value = _getEventsForDay(_selectedDay!);
-                  });
+                  _selectedEvents.value = _getEventsForDay(_selectedDay!);
                 });
               },
               icon: const Icon(CupertinoIcons.add_circled))
@@ -248,6 +232,7 @@ class _CalendarState extends State<Calendar> {
                     /// Desc : 페이지 빌드 후에 addPostFrameCallback()를 통해 비동기로 콜백함수를 호출한다.
                     /// selected 되어있는 날짜의 Event를 ListView로 보여주기 위한 목적.
                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                      calendarBloc.getEventLists();
                       // setState()가 있는 함수 호출
                       _onDaySelected(_selectedDay!, _focusedDay.value);
                     });

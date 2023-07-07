@@ -9,7 +9,6 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
-import 'package:haruhabit_app/src/utils/header.dart';
 import 'package:haruhabit_app/src/utils/home_drawer.dart';
 import 'package:haruhabit_app/src/views/calendar.dart';
 import 'package:haruhabit_app/src/views/planner.dart';
@@ -27,7 +26,8 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 선택되어있는 날짜의 일정 fetch
-    scheduleBloc.fetchAllSchedules();
+    scheduleBloc
+        .fetchSelectedSchedules(DateTime.now().toString().substring(0, 10));
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -38,10 +38,30 @@ class Home extends StatelessWidget {
                 const Divider(
                   thickness: 3,
                 ),
-                Header(
-                  title: "todo".tr(),
-                  destination: const HistoryTabbar(
-                    initialView: 0,
+                // Schedule History Header
+                Container(
+                  padding: const EdgeInsets.only(left: 30, right: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'todo'.tr(),
+                        style: const TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const HistoryTabbar(initialView: 0)))
+                                .whenComplete(() {
+                              scheduleBloc.fetchSelectedSchedules(
+                                  DateTime.now().toString().substring(0, 10));
+                            });
+                          },
+                          icon: const Icon(CupertinoIcons.right_chevron))
+                    ],
                   ),
                 ),
                 StreamBuilder(
@@ -115,12 +135,12 @@ class Home extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(
-                            builder: (context) => const Calendar(),
-                          ),
-                        )
-                        .whenComplete(() => scheduleBloc.fetchAllSchedules());
+                        .push(MaterialPageRoute(
+                            builder: (context) => const Calendar()))
+                        .whenComplete(() {
+                      scheduleBloc.fetchSelectedSchedules(
+                          DateTime.now().toString().substring(0, 10));
+                    });
                   },
                   child: GridcardUtil(
                       content: Column(
@@ -140,17 +160,35 @@ class Home extends StatelessWidget {
                 const Divider(
                   thickness: 3,
                 ),
-                Header(
-                    title: "plan".tr(),
-                    destination: const HistoryTabbar(
-                      initialView: 1,
-                    )),
+                // Plan History Header
+                Container(
+                  padding: const EdgeInsets.only(left: 30, right: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'plan'.tr(),
+                        style: const TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const HistoryTabbar(initialView: 1)))
+                                .whenComplete(() {
+                              scheduleBloc.fetchSelectedSchedules(
+                                  DateTime.now().toString().substring(0, 10));
+                            });
+                          },
+                          icon: const Icon(CupertinoIcons.right_chevron))
+                    ],
+                  ),
+                ),
+
                 InkWell(
                   onTap: () {
-                    // Navigator.of(context)
-                    //     .push(MaterialPageRoute(
-                    //         builder: (context) => const Calendar()))
-                    //     .whenComplete(() => scheduleBloc.fetchAllSchedules());
                     Navigator.of(context).push(CardDialog(builder: (context) {
                       return const AddHabit();
                     }));

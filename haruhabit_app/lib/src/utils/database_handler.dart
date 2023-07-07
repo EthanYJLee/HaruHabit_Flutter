@@ -139,6 +139,15 @@ class DatabaseHandler {
     return result;
   }
 
+  Future deleteSchedule(String sId)async{
+    final db = await initializeDB('schedules');
+    await db.delete(
+      'schedules',
+      where: "sId = ?",
+      whereArgs: [sId],
+    );
+  }
+
   // -------------------- Habits --------------------
 
   // read all habits
