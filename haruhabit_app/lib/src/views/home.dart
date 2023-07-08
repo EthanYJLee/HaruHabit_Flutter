@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:haruhabit_app/src/blocs/habit_bloc.dart';
 import 'package:haruhabit_app/src/utils/calendar_utils.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
@@ -28,6 +29,8 @@ class Home extends StatelessWidget {
     // 선택되어있는 날짜의 일정 fetch
     scheduleBloc
         .fetchSelectedSchedules(DateTime.now().toString().substring(0, 10));
+    // 진행중인 습관 fetch
+    habitBloc.fetchAllHabits();
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -35,19 +38,55 @@ class Home extends StatelessWidget {
             child: Column(
               children: [
                 const TimelineUtil(),
-                // const Divider(
-                //   thickness: 3,
-                // ),
+                Divider(
+                  thickness: 3,
+                ),
                 // Schedule History Header
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'todo'.tr(),
-                        style: const TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                      Row(
+                        children: [
+                          Text(
+                            'todo'.tr(),
+                            style: const TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          // 선택한 날짜의 일정 수 버튼으로 보여주기
+                          StreamBuilder(
+                              stream: scheduleBloc.selectedSchedule,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data!.isNotEmpty) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.width /
+                                              12,
+                                      width:
+                                          MediaQuery.of(context).size.width / 8,
+                                      child: ElevatedButton(
+                                        onPressed: () {},
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.redAccent[100]),
+                                        ),
+                                        child: Text("${snapshot.data!.length}"),
+                                      ),
+                                    );
+                                  }
+                                  return SizedBox();
+                                } else if (snapshot.hasError) {
+                                  return Text(snapshot.error.toString());
+                                }
+                                return SizedBox();
+                              }),
+                        ],
                       ),
                       IconButton(
                           onPressed: () {
@@ -68,7 +107,7 @@ class Home extends StatelessWidget {
                   stream: scheduleBloc.selectedSchedule,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      if (snapshot.data!.length > 0) {
+                      if (snapshot.data!.isNotEmpty) {
                         return Container(
                           height: MediaQuery.of(context).size.height / 6,
                           width: MediaQuery.of(context).size.width / 1.1,
@@ -157,10 +196,6 @@ class Home extends StatelessWidget {
                     ],
                   )),
                 ),
-                // const Divider(
-                //   thickness: 3,
-                // ),
-                // Plan History Header
                 Container(
                   padding: const EdgeInsets.only(left: 30, right: 15),
                   child: Row(
@@ -186,6 +221,40 @@ class Home extends StatelessWidget {
                     ],
                   ),
                 ),
+                // 진행중인 습관 보여주기
+                StreamBuilder(
+                    stream: habitBloc.allHabit,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isNotEmpty) {
+                          // container => Expanded??
+                          return Container(
+                            height: MediaQuery.of(context).size.height / 10,
+                            width: MediaQuery.of(context).size.width / 1.1,
+                            child: ListView.builder(
+                                itemCount: snapshot.data!.length,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (BuildContext context, int index) {
+                                  //   return GridcardUtil(
+                                  //       content:
+                                  //           Text(snapshot.data![index].habit));
+                                  //   // content: ExpansionTile(
+                                  //   //   title: Text(
+                                  //   //       "${snapshot.data![index].habit}"),
+                                  //   // ),
+                                  //   // );
+                                }),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      } else if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }),
 
                 InkWell(
                   onTap: () {

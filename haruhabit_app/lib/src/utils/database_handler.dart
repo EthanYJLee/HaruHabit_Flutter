@@ -22,7 +22,7 @@ class DatabaseHandler {
           ),
           onCreate: (database, version) async {
             await database.execute(
-                'CREATE TABLE IF NOT EXISTS habits (hId INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, habit TEXT, startDate TEXT, endDate TEXT)');
+                'CREATE TABLE IF NOT EXISTS habits (hId INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, habit TEXT, spending INTEGER, currency TEXT, startDate TEXT, endDate TEXT)');
           },
           version: 1,
         );

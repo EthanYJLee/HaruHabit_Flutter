@@ -46,6 +46,7 @@ class _HabitHistoryState extends State<HabitHistory> {
                       category: "${snapshot.data?[index].category}",
                       habit: "${snapshot.data?[index].habit}",
                       spending: snapshot.data?[index].spending as int,
+                      currency: "${snapshot.data?[index].currency}",
                       startDate: "${snapshot.data?[index].startDate}",
                       endDate: "${snapshot.data?[index].endDate}",
                     );
@@ -65,8 +66,8 @@ class _HabitHistoryState extends State<HabitHistory> {
                         Text('id : ${snapshot.data?[index].hId}'),
                         Text('category : ${snapshot.data?[index].category}'),
                         Text('habit : ${snapshot.data?[index].habit}'),
-                        Text(
-                            'date : ${snapshot.data?[index].startDate} ~ ${snapshot.data?[index].endDate}')
+                        // Text(
+                        //     'date : ${snapshot.data?[index].startDate} ~ ${snapshot.data?[index].endDate}')
                       ],
                     ),
                   ),

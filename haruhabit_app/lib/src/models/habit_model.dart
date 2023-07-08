@@ -2,7 +2,8 @@ class HabitModel {
   final int? hId;
   final String category;
   final String habit;
-  final int spending;
+  final int? spending;
+  final String? currency;
   final String startDate;
   final String? endDate;
 
@@ -10,7 +11,8 @@ class HabitModel {
       {this.hId,
       required this.category,
       required this.habit,
-      required this.spending,
+      this.spending,
+      this.currency,
       required this.startDate,
       this.endDate});
 
@@ -19,6 +21,7 @@ class HabitModel {
         category = res['category'],
         habit = res['habit'],
         spending = res['spending'],
+        currency = res['currency'],
         startDate = res['startDate'],
         endDate = res['endDate'];
 
@@ -28,6 +31,7 @@ class HabitModel {
       'category': category,
       'habit': habit,
       'spending': spending,
+      'currency': currency,
       'startDate': startDate,
       'endDate': endDate
     };

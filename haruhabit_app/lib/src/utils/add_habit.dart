@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:haruhabit_app/src/blocs/habit_bloc.dart';
 import 'package:haruhabit_app/src/utils/date_picker_item.dart';
 import 'package:intl/intl.dart';
 
@@ -97,7 +98,7 @@ class _AddHabitState extends State<AddHabit> {
                             child: TextField(
                               controller: _habitController,
                               decoration:
-                                  const InputDecoration(hintText: "Summary"),
+                                  const InputDecoration(hintText: "Details"),
                             ),
                           ),
                           Padding(
@@ -108,6 +109,14 @@ class _AddHabitState extends State<AddHabit> {
                               decoration: const InputDecoration(
                                   hintText: "Daily Savings (Optional)"),
                             ),
+                            // 금액 단위 TextField or Dropdown
+                            //**
+                            //
+                            //
+                            //
+                            //
+                            //
+                            // */
                           ),
                           const SizedBox(
                             height: 20,
@@ -115,8 +124,7 @@ class _AddHabitState extends State<AddHabit> {
                           ElevatedButton(
                               onPressed: () {
                                 // 20자 넘어가면 Snack Bar
-                                if (_categoryController.text.trim().length >
-                                    20) {
+                                if (_categoryController.text.length > 20) {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
                                     content: Column(
@@ -124,7 +132,7 @@ class _AddHabitState extends State<AddHabit> {
                                         SizedBox(
                                             height: 16,
                                             child: Text(
-                                              "20자 이내로 입력해주십시오",
+                                              "Input category up to 20 letters",
                                               textAlign: TextAlign.center,
                                             )),
                                       ],
@@ -143,7 +151,7 @@ class _AddHabitState extends State<AddHabit> {
                                           SizedBox(
                                               height: 16,
                                               child: Text(
-                                                "내용을 입력해주세요",
+                                                "Fill in the category and detail fields",
                                                 textAlign: TextAlign.center,
                                               )),
                                         ],
@@ -154,15 +162,16 @@ class _AddHabitState extends State<AddHabit> {
                                     ));
                                   } else {
                                     // // ----------------
-                                    // _category = _categoryController.text;
-                                    // _startDate =
-                                    //     DateFormat('yyyy-MM-dd').format(date);
-                                    // _habit = _habitController.text;
-                                    // print(_category);
-                                    // print(_startDate);
-                                    // print(_habit);
-                                    // _habitViewModel.addHabit(
-                                    //     _category, _habit, _startDate);
+                                    _category = _categoryController.text;
+                                    _habit = _habitController.text;
+                                    _startDate = DateFormat('yyyy-MM-dd')
+                                        .toString()
+                                        .substring(0, 10);
+                                    print(_category);
+                                    print(_startDate);
+                                    print(_habit);
+                                    habitBloc.addHabit(
+                                        _category, _habit, 0, "", _startDate);
 
                                     Navigator.pop(context);
                                   }
@@ -223,44 +232,44 @@ class _AddHabitState extends State<AddHabit> {
             ),
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            DatePickerItem(
-              children: <Widget>[
-                Text("End Date"),
-                CupertinoButton(
-                  // disabledColor: Color.fromARGB(255, 164, 158, 255),
-                  // color: Color.fromARGB(255, 164, 158, 255),
-                  // Display a CupertinoDatePicker in date picker mode.
-                  onPressed: () => _showDialog(
-                    CupertinoDatePicker(
-                      // backgroundColor: Color.fromARGB(255, 164, 158, 255),
-                      initialDateTime: endDate,
-                      mode: CupertinoDatePickerMode.date,
-                      use24hFormat: true,
-                      // This is called when the user changes the date.
-                      onDateTimeChanged: (DateTime newDate) {
-                        setState(() => endDate = newDate);
-                        print(DateFormat('yyyy-MM-dd').format(endDate));
-                      },
-                    ),
-                  ),
-                  // In this example, the date is formatted manually. You can
-                  // use the intl package to format the value based on the
-                  // user's locale settings.
-                  child: Text(
-                    '${endDate.year}-${endDate.month.toString().padLeft(2, "0")}-${endDate.day.toString().padLeft(2, "0")}',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.redAccent[100],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     DatePickerItem(
+        //       children: <Widget>[
+        //         Text("End Date"),
+        //         CupertinoButton(
+        //           // disabledColor: Color.fromARGB(255, 164, 158, 255),
+        //           // color: Color.fromARGB(255, 164, 158, 255),
+        //           // Display a CupertinoDatePicker in date picker mode.
+        //           onPressed: () => _showDialog(
+        //             CupertinoDatePicker(
+        //               // backgroundColor: Color.fromARGB(255, 164, 158, 255),
+        //               initialDateTime: endDate,
+        //               mode: CupertinoDatePickerMode.date,
+        //               use24hFormat: true,
+        //               // This is called when the user changes the date.
+        //               onDateTimeChanged: (DateTime newDate) {
+        //                 setState(() => endDate = newDate);
+        //                 print(DateFormat('yyyy-MM-dd').format(endDate));
+        //               },
+        //             ),
+        //           ),
+        //           // In this example, the date is formatted manually. You can
+        //           // use the intl package to format the value based on the
+        //           // user's locale settings.
+        //           child: Text(
+        //             '${endDate.year}-${endDate.month.toString().padLeft(2, "0")}-${endDate.day.toString().padLeft(2, "0")}',
+        //             style: TextStyle(
+        //               fontSize: 18.0,
+        //               color: Colors.redAccent[100],
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }
