@@ -6,6 +6,11 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en-US</string>
+		<string>ko-KR</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Haru Habit</string>
 	<key>CFBundleExecutable</key>

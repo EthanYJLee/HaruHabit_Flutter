@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:haruhabit_app/src/blocs/calendar_bloc.dart';
 import 'package:haruhabit_app/src/blocs/schedule_bloc.dart';
 import 'package:haruhabit_app/src/views/calendar.dart';
@@ -18,6 +19,7 @@ class Tabbar extends StatefulWidget {
 }
 
 class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
+  // 현재 선택된 탭
   late int currentIndex;
 
   final List<Widget> tabbarItems = const [
@@ -60,12 +62,12 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Locale : ${context.locale}');
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         actions: [
           /// 언어 설정 버튼 (English / Korean)
-          /// -------------------------bloc으로 변경-------------------------
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: PopupMenuButton(
@@ -79,47 +81,19 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
               itemBuilder: (context) {
                 return [
                   PopupMenuItem(
-                    onTap: () {
-                      // EasyLocalization.of(context)!.setLocale(
-                      //   const Locale(
-                      //     "en",
-                      //     "US",
-                      //   ),
-                      // );
-                      setState(() {
-                        EasyLocalization.of(context)!.setLocale(
-                          const Locale(
-                            "en",
-                            "US",
-                          ),
-                        );
-                      });
-                    },
-                    child: const Text(
-                      "english",
-                    ),
-                  ),
+                      onTap: () async {
+                        await context.setLocale(Locale("en", "US"));
+                        await EasyLocalization.ensureInitialized();
+                        Phoenix.rebirth(context);
+                      },
+                      child: Text("English")),
                   PopupMenuItem(
-                    onTap: () {
-                      // EasyLocalization.of(context)!.setLocale(
-                      //   const Locale(
-                      //     "ko",
-                      //     "KR",
-                      //   ),
-                      // );
-                      setState(() {
-                        EasyLocalization.of(context)!.setLocale(
-                          const Locale(
-                            "ko",
-                            "KR",
-                          ),
-                        );
-                      });
-                    },
-                    child: const Text(
-                      "korean",
-                    ),
-                  ),
+                      onTap: () async {
+                        await context.setLocale(Locale("ko", "KR"));
+                        await EasyLocalization.ensureInitialized();
+                        Phoenix.rebirth(context);
+                      },
+                      child: Text("한국어")),
                 ];
               },
             ),
@@ -169,7 +143,6 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
         onSelected[i] = false;
       }
     }
-
     setState(() {});
   }
 }

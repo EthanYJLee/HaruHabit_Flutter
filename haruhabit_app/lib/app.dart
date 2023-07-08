@@ -13,19 +13,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Haru Habit',
-      // localizationsDelegates: const [
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   GlobalCupertinoLocalizations.delegate,
-      // ],
-      // supportedLocales: const [
-      //   Locale('en'), // English
-      //   Locale('ko'), // Korean
-      // ],
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-
       theme: ThemeData(
         primaryColor: const Color.fromARGB(255, 255, 249, 244),
         canvasColor: const Color.fromARGB(255, 255, 249, 244),
@@ -41,9 +31,6 @@ class App extends StatelessWidget {
         fontFamily: 'text',
       ),
       debugShowCheckedModeBanner: false,
-      // home: const Tabbar(),
-      // home: const Home(),
-      // home: const Steps(),
       home: const Tabbar(),
     );
   }
