@@ -36,7 +36,14 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
 
   HealthStatus _state = HealthStatus.initial;
   HealthFactory health = HealthFactory(useHealthConnectIfAvailable: true);
-  static final dataTypes = [HealthDataType.STEPS, HealthDataType.WORKOUT];
+  static final dataTypes = [
+    HealthDataType.STEPS,
+    HealthDataType.HEART_RATE,
+    // HealthDataType.WORKOUT,
+    HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
+    HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
+    HealthDataType.ACTIVE_ENERGY_BURNED,
+  ];
   final permissions =
       dataTypes.map((e) => HealthDataAccess.READ_WRITE).toList();
   bool isAuthorized = false;
@@ -57,12 +64,15 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
         isAuthorized = await _authorize();
         if (state.status == HealthStatus.authorized) {
           print("3. Authorized");
-          final stepData = await _fetchStepData();
+          // final stepData = await _fetchStepData();
+          final healthData = await _fetchHealthData();
           // if (stepData.steps != null) {
           if (state.status == HealthStatus.dataReady) {
             // Step Data 권한 허용했을 경우 (Fetch 성공 시)
+            // return emit(state.copyWith(
+            //     status: HealthStatus.dataReady, model: stepData));
             return emit(state.copyWith(
-                status: HealthStatus.dataReady, model: stepData));
+                status: HealthStatus.dataReady, model: healthData));
             // Step Data 권한 허용 안 했을 경우 (Fetch 실패 시)
           } else {
             print("4. Step Data is empty");
@@ -100,62 +110,93 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
         print("Exception in authorize: $error");
       }
     }
-
     return authorized;
   }
 
-  // /// Fetch data points from the health plugin and show them in the app.
-  // Future fetchHealthData() async {
-  //   // define the types to get
-  //   final types = [
-  //     HealthDataType.HEART_RATE,
-  //     HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
-  //     HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
-  //     HealthDataType.STEPS,
-  //     HealthDataType.ACTIVE_ENERGY_BURNED,
-  //   ];
+  /// Fetch data points from the health plugin and show them in the app.
+  Future<HealthModel> _fetchHealthData() async {
+    // define the types to get
+    final types = [
+      HealthDataType.STEPS,
+      HealthDataType.HEART_RATE,
+      // HealthDataType.WORKOUT,
+      // HealthDataType.EXERCISE_TIME,
+      HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
+      HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
+      HealthDataType.ACTIVE_ENERGY_BURNED,
+    ];
+    late HealthModel healthModel;
+    late String steps = "0";
+    late String heartRate = "0";
+    late String bloodPreSys = "0";
+    late String bloodPreDia = "0";
+    late String energyBurned = "0";
+    late String bp = "0";
 
-  //   // get data within the last 24 hours
-  //   final now = DateTime.now();
-  //   final yesterday = now.subtract(const Duration(days: 1));
+    // get data within the last 24 hours
+    final now = DateTime.now();
+    final yesterday = now.subtract(const Duration(days: 1));
 
-  //   // requesting access to the data types before reading them
-  //   bool requested = await health.requestAuthorization(types);
+    // requesting access to the data types before reading them
+    bool requested = await health.requestAuthorization(types);
+    List<HealthDataPoint> healthData = [];
 
-  //   if (requested) {
-  //     try {
-  //       // fetch health data
-  //       healthData = await health.getHealthDataFromTypes(yesterday, now, types);
-
-  //       if (healthData.isNotEmpty) {
-  //         for (HealthDataPoint h in healthData) {
-  //           if (h.type == HealthDataType.HEART_RATE) {
-  //             heartRate = "${h.value}";
-  //           } else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
-  //             bloodPreSys = "${h.value}";
-  //           } else if (h.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC) {
-  //             bloodPreDia = "${h.value}";
-  //           } else if (h.type == HealthDataType.STEPS) {
-  //             steps = "${h.value}";
-  //           } else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
-  //             activeEnergy = "${h.value}";
-  //           }
-  //         }
-  //         if (bloodPreSys != "null" && bloodPreDia != "null") {
-  //           bp = "$bloodPreSys / $bloodPreDia mmHg";
-  //         }
-
-  //         setState(() {});
-  //       }
-  //     } catch (error) {
-  //       print("Exception in getHealthDataFromTypes: $error");
-  //     }
-
-  //     // filter out duplicates
-  //     healthData = HealthFactory.removeDuplicates(healthData);
-  //   } else {
-  //     print("Authorization not granted");
-  //   }
+    if (requested) {
+      try {
+        // fetch health data
+        healthData = await health.getHealthDataFromTypes(yesterday, now, types);
+        if (healthData.isNotEmpty) {
+          for (HealthDataPoint h in healthData) {
+            if (h.type == HealthDataType.STEPS) {
+              steps = "${h.value}";
+              print(steps);
+            } else if (h.type == HealthDataType.HEART_RATE) {
+              heartRate = "${h.value}";
+              print(heartRate);
+            }
+            //  else if (h.type == HealthDataType.WORKOUT) {
+            //   workout = "${h.dateFrom}";
+            //   print(workout);
+            // }
+            else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
+              bloodPreSys = "${h.value}";
+              print(bloodPreSys);
+            } else if (h.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC) {
+              bloodPreDia = "${h.value}";
+              print(bloodPreDia);
+            }
+            //  else if (h.type == HealthDataType.STEPS) {
+            //   steps = "${h.value}";
+            // }
+            else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
+              energyBurned = "${h.value}";
+            }
+          }
+          if (bloodPreSys != "null" && bloodPreDia != "null") {
+            bp = "$bloodPreSys / $bloodPreDia mmHg";
+          }
+          // setState(() {});
+        }
+        healthModel = HealthModel(
+            steps: steps,
+            heartRate: heartRate,
+            // workout: workout,
+            bloodPreSys: bloodPreSys,
+            bloodPreDia: bloodPreDia,
+            energyBurned: energyBurned,
+            bp: bp);
+        emit(state.copyWith(status: HealthStatus.dataReady));
+      } catch (error) {
+        print("Exception in getHealthDataFromTypes: $error");
+      }
+      // filter out duplicates
+      healthData = HealthFactory.removeDuplicates(healthData);
+    } else {
+      emit(state.copyWith(status: HealthStatus.unauthorized));
+      print("Authorization not granted");
+    }
+    return healthModel;
+  }
 
   // Fetch today's step count from the health plugin
   Future<StepModel> _fetchStepData() async {
