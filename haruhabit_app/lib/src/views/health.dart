@@ -151,7 +151,7 @@ class Health extends StatelessWidget {
                                             data: state.model.steps
                                                     .toString()
                                                     .split('.')[0] +
-                                                " steps",
+                                                " Steps",
                                             image:
                                                 "assets/images/footprint.png")),
                                     const SizedBox(
@@ -209,9 +209,6 @@ class Health extends StatelessWidget {
                     }
                   },
                 ),
-              ),
-              SizedBox(
-                height: 30,
               ),
               Container(
                 padding: const EdgeInsets.only(left: 30, right: 15),

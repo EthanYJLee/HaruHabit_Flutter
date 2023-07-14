@@ -71,6 +71,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: PopupMenuButton(
+              color: Colors.redAccent[100],
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(20.0),
@@ -86,19 +87,28 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
               itemBuilder: (context) {
                 return [
                   PopupMenuItem(
-                      onTap: () async {
-                        await context.setLocale(const Locale("en", "US"));
-                        await EasyLocalization.ensureInitialized();
-                        Phoenix.rebirth(context);
-                      },
-                      child: const Text("English")),
+                    onTap: () async {
+                      await context.setLocale(const Locale("en", "US"));
+                      await EasyLocalization.ensureInitialized();
+                      Phoenix.rebirth(context);
+                    },
+                    child: const Text(
+                      "English",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w500),
+                    ),
+                  ),
                   PopupMenuItem(
                       onTap: () async {
                         await context.setLocale(const Locale("ko", "KR"));
                         await EasyLocalization.ensureInitialized();
                         Phoenix.rebirth(context);
                       },
-                      child: const Text("한국어")),
+                      child: const Text(
+                        "한국어",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w500),
+                      )),
                 ];
               },
             ),

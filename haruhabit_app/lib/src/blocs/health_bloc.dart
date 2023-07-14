@@ -64,18 +64,14 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
         isAuthorized = await _authorize();
         if (state.status == HealthStatus.authorized) {
           print("3. Authorized");
-          // final stepData = await _fetchStepData();
           final healthData = await _fetchHealthData();
-          // if (stepData.steps != null) {
           if (state.status == HealthStatus.dataReady) {
             // Step Data 권한 허용했을 경우 (Fetch 성공 시)
-            // return emit(state.copyWith(
-            //     status: HealthStatus.dataReady, model: stepData));
             return emit(state.copyWith(
                 status: HealthStatus.dataReady, model: healthData));
             // Step Data 권한 허용 안 했을 경우 (Fetch 실패 시)
           } else {
-            print("4. Step Data is empty");
+            print("4. Health Data is empty");
             // return emit(state.copyWith(status: HealthStatus.unauthorized));
           }
         }
@@ -87,7 +83,6 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
 
   // Desc : 접근 권한 여부 결정 (Check whether permission for Apple HealthKit is granted or not)
   Future<bool> _authorize() async {
-    // HealthStatus _state = HealthStatus.initial;
     // Permission
     await Permission.activityRecognition.request();
     await Permission.location.request();
@@ -119,8 +114,6 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     final types = [
       HealthDataType.STEPS,
       HealthDataType.HEART_RATE,
-      // HealthDataType.WORKOUT,
-      // HealthDataType.EXERCISE_TIME,
       HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
       HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
       HealthDataType.ACTIVE_ENERGY_BURNED,
@@ -135,7 +128,8 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
 
     // get data within the last 24 hours
     final now = DateTime.now();
-    final yesterday = now.subtract(const Duration(days: 1));
+    // final yesterday = now.subtract(const Duration(days: 1));
+    final midnight = DateTime(now.year, now.month, now.day);
 
     // requesting access to the data types before reading them
     bool requested = await health.requestAuthorization(types);
@@ -144,7 +138,7 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     if (requested) {
       try {
         // fetch health data
-        healthData = await health.getHealthDataFromTypes(yesterday, now, types);
+        healthData = await health.getHealthDataFromTypes(midnight, now, types);
         if (healthData.isNotEmpty) {
           for (HealthDataPoint h in healthData) {
             if (h.type == HealthDataType.STEPS) {
@@ -153,34 +147,23 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
             } else if (h.type == HealthDataType.HEART_RATE) {
               heartRate = "${h.value}";
               print(heartRate);
-            }
-            //  else if (h.type == HealthDataType.WORKOUT) {
-            //   workout = "${h.dateFrom}";
-            //   print(workout);
-            // }
-            else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
+            } else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
               bloodPreSys = "${h.value}";
               print(bloodPreSys);
             } else if (h.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC) {
               bloodPreDia = "${h.value}";
               print(bloodPreDia);
-            }
-            //  else if (h.type == HealthDataType.STEPS) {
-            //   steps = "${h.value}";
-            // }
-            else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
+            } else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
               energyBurned = "${h.value}";
             }
           }
           if (bloodPreSys != "null" && bloodPreDia != "null") {
             bp = "$bloodPreSys / $bloodPreDia mmHg";
           }
-          // setState(() {});
         }
         healthModel = HealthModel(
             steps: steps,
             heartRate: heartRate,
-            // workout: workout,
             bloodPreSys: bloodPreSys,
             bloodPreDia: bloodPreDia,
             energyBurned: energyBurned,
@@ -198,96 +181,55 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     return healthModel;
   }
 
-  // Fetch today's step count from the health plugin
-  Future<StepModel> _fetchStepData() async {
-    // today's data since midnight
-    final now = DateTime.now();
-    final midnight = DateTime(now.year, now.month, now.day);
-    late StepModel stepModel;
-    int _noOfSteps;
-
-    bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
-    // bool requested = await health.requestAuthorization([HealthDataType.STEPS, HealthDataType.HEART_RATE, HealthDataType.WORKOUT, HealthDataType.BLOOD_PRESSURE_SYSTOLIC, HealthDataType.BLOOD_PRESSURE_DIASTOLIC, HealthDataType.ACTIVE_ENERGY_BURNED]);
-
-    if (requested) {
-      print("4. Accessed to Step Data");
-      try {
-        stepModel = StepModel(
-            steps: await health.getTotalStepsInInterval(midnight, now) as int);
-        // print(health.getHealthDataFromTypes(
-        //     midnight, now, [HealthDataType.BLOOD_PRESSURE_SYSTOLIC]));
-      } catch (error) {
-        print("Caught exception in getTotalStepsInInterval: $error");
-      }
-      print('5. Total number of steps: ${stepModel.steps}');
-      _noOfSteps = (stepModel.steps == null) ? 0 : stepModel.steps;
-      (stepModel.steps == null)
-          ? emit(state.copyWith(status: HealthStatus.noData))
-          : emit(state.copyWith(status: HealthStatus.dataReady));
-    } else {
-      emit(state.copyWith(status: HealthStatus.unauthorized));
-    }
-    // return (stepModel.steps == null) ? const StepModel(steps: 0) : stepModel;
-    // stepModel.steps == null
-    //     ? emit(state.copyWith(status: HealthStatus.unauthorized))
-    //     : emit(state.copyWith(status: HealthStatus.stepsReady));
-    return stepModel;
-  }
-
-  //**
-  // --------------------- 1 ---------------------
-  // */
-  // // write new workout data to Apple Health
-  // Future _addWorkoutData(
-  //     HealthWorkoutActivityType type, DateTime start, DateTime end) async {
-  //   bool success = true;
-  //   success &= await health.writeWorkoutData(
-  //     type,
-  //     start,
-  //     end,
-  //   );
-  //   // _state = success ? AppState.DATA_ADDED : AppState.DATA_NOT_ADDED;
-  //   success ? print('Data Added') : print('Data Not Added');
-  // }
-
-  //**
-  // --------------------- 2 ---------------------
-  // */
-  // // Fetch data points from the health plugin and show them in the app.
-  // Future fetchData() async {
-  //   // setState(() => _state = AppState.FETCHING_DATA);
-
-  //   // get data within the last 24 hours
+  // // Fetch today's step count from the health plugin
+  // Future<StepModel> _fetchStepData() async {
+  //   // today's data since midnight
   //   final now = DateTime.now();
-  //   final yesterday = now.subtract(Duration(hours: 24));
+  //   final midnight = DateTime(now.year, now.month, now.day);
+  //   late StepModel stepModel;
+  //   int _noOfSteps;
 
-  //   // Clear old data points
-  //   _healthDataList.clear();
+  //   bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
+  //   // bool requested = await health.requestAuthorization([HealthDataType.STEPS, HealthDataType.HEART_RATE, HealthDataType.WORKOUT, HealthDataType.BLOOD_PRESSURE_SYSTOLIC, HealthDataType.BLOOD_PRESSURE_DIASTOLIC, HealthDataType.ACTIVE_ENERGY_BURNED]);
 
-  //   try {
-  //     // fetch health data
-  //     List<HealthDataPoint> healthData =
-  //         await health.getHealthDataFromTypes(yesterday, now, types);
-  //     print(healthData.length);
-
-  //     // save all the new data points (only the first 100)
-  //     _healthDataList.addAll(
-  //         (healthData.length < 10) ? healthData : healthData.sublist(0, 10));
-  //   } catch (error) {
-  //     print("Exception in getHealthDataFromTypes: $error");
+  //   if (requested) {
+  //     print("4. Accessed to Step Data");
+  //     try {
+  //       stepModel = StepModel(
+  //           steps: await health.getTotalStepsInInterval(midnight, now) as int);
+  //     } catch (error) {
+  //       print("Caught exception in getTotalStepsInInterval: $error");
+  //     }
+  //     print('5. Total number of steps: ${stepModel.steps}');
+  //     _noOfSteps = (stepModel.steps == null) ? 0 : stepModel.steps;
+  //     (stepModel.steps == null)
+  //         ? emit(state.copyWith(status: HealthStatus.noData))
+  //         : emit(state.copyWith(status: HealthStatus.dataReady));
+  //   } else {
+  //     emit(state.copyWith(status: HealthStatus.unauthorized));
   //   }
-
-  //   // filter out duplicates
-  //   _healthDataList = HealthFactory.removeDuplicates(_healthDataList);
-
-  //   // print the results
-  //   _healthDataList.forEach((x) => print(x));
-
-  //   // update the UI to display the results
-  //   // setState(() {
-  //   //   _state = _healthDataList.isEmpty ? AppState.NO_DATA : AppState.DATA_READY;
-  //   // });
+  //   // return (stepModel.steps == null) ? const StepModel(steps: 0) : stepModel;
+  //   // stepModel.steps == null
+  //   //     ? emit(state.copyWith(status: HealthStatus.unauthorized))
+  //   //     : emit(state.copyWith(status: HealthStatus.stepsReady));
+  //   return stepModel;
   // }
+
+  // write new workout data to Apple Health
+  Future _addWorkoutData(
+      HealthWorkoutActivityType type, DateTime start, DateTime end) async {
+    bool success = true;
+    success &= await health.writeWorkoutData(
+      type,
+      start,
+      end,
+    );
+    // _state = success ? AppState.DATA_ADDED : AppState.DATA_NOT_ADDED;
+    // success
+    //     ? emit(state.copyWith(status: HealthStatus.success))
+    //     : emit(state.copyWith(status: HealthStatus.failure));
+    success ? print('Data Added') : print('Data Not Added');
+  }
 }
 
 final healthBloc = HealthBloc();

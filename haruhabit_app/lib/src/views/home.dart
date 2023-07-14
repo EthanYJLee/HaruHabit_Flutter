@@ -221,7 +221,6 @@ class Home extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         if (snapshot.data!.isNotEmpty) {
-                          // container => Expanded??
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
