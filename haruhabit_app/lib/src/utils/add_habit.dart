@@ -164,9 +164,9 @@ class _AddHabitState extends State<AddHabit> {
                                     // // ----------------
                                     _category = _categoryController.text;
                                     _habit = _habitController.text;
-                                    _startDate = DateFormat('yyyy-MM-dd')
-                                        .toString()
-                                        .substring(0, 10);
+                                    _startDate =
+                                        startDate.toString().substring(0, 10);
+                                    print(startDate);
                                     print(_category);
                                     print(_startDate);
                                     print(_habit);

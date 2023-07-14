@@ -38,7 +38,7 @@ class Home extends StatelessWidget {
             child: Column(
               children: [
                 const TimelineUtil(),
-                Divider(
+                const Divider(
                   thickness: 3,
                 ),
                 // Schedule History Header
@@ -80,11 +80,11 @@ class Home extends StatelessWidget {
                                       ),
                                     );
                                   }
-                                  return SizedBox();
+                                  return const SizedBox();
                                 } else if (snapshot.hasError) {
                                   return Text(snapshot.error.toString());
                                 }
-                                return SizedBox();
+                                return const SizedBox();
                               }),
                         ],
                       ),
@@ -136,26 +136,20 @@ class Home extends StatelessWidget {
                                               style:
                                                   const TextStyle(fontSize: 20),
                                             ),
-                                            Text(
-                                              '${snapshot.data?[index].schedule}',
-                                              style:
-                                                  const TextStyle(fontSize: 20),
+                                            Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Text(
+                                                '${snapshot.data?[index].schedule}',
+                                                style: const TextStyle(
+                                                    fontSize: 16),
+                                              ),
                                             ),
                                             Text(
-                                                'at ${snapshot.data?[index].place}')
+                                                '@${snapshot.data?[index].place}')
                                           ],
                                         ),
                                       ),
                                     ),
-                                    // 일정 완료 버튼
-                                    // Positioned(
-                                    //     right: 1,
-                                    //     top: 1,
-                                    //     child: CheckButton(
-                                    //       isDone: snapshot.data![index].isDone,
-                                    //       sId: snapshot.data![index].sId
-                                    //           .toString(),
-                                    //     )),
                                   ],
                                 );
                               }),
@@ -202,7 +196,7 @@ class Home extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'plan'.tr(),
+                        'habit'.tr(),
                         style: const TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
@@ -228,22 +222,118 @@ class Home extends StatelessWidget {
                       if (snapshot.hasData) {
                         if (snapshot.data!.isNotEmpty) {
                           // container => Expanded??
-                          return Container(
-                            height: MediaQuery.of(context).size.height / 10,
-                            width: MediaQuery.of(context).size.width / 1.1,
-                            child: ListView.builder(
-                                itemCount: snapshot.data!.length,
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: (BuildContext context, int index) {
-                                  //   return GridcardUtil(
-                                  //       content:
-                                  //           Text(snapshot.data![index].habit));
-                                  //   // content: ExpansionTile(
-                                  //   //   title: Text(
-                                  //   //       "${snapshot.data![index].habit}"),
-                                  //   // ),
-                                  //   // );
-                                }),
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                height: MediaQuery.of(context).size.height / 7,
+                                width: MediaQuery.of(context).size.width / 1.1,
+                                child: ListView.builder(
+                                    itemCount: snapshot.data!.length,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                3.7,
+                                        child: Card(
+                                          color: const Color.fromARGB(
+                                              255, 255, 238, 225),
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(15))),
+                                          elevation: 3,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Text(
+                                                      '${snapshot.data?[index].habit}',
+                                                      style: const TextStyle(
+                                                          fontSize: 16),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Stack(
+                                                children: [
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            15),
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: Colors.black,
+                                                          width: 1,
+                                                        ),
+                                                        // color: Colors
+                                                        //     .redAccent[100],
+                                                        color: Colors.white,
+                                                        // color: const Color
+                                                        //         .fromARGB(
+                                                        //     255, 255, 238, 225),
+                                                        shape: BoxShape.circle),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        (DateTime.now()
+                                                                    .difference(DateTime.parse(snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .startDate))
+                                                                    .inDays >=
+                                                                0)
+                                                            ? Text(
+                                                                "+" +
+                                                                    DateTime.now()
+                                                                        .difference(DateTime.parse(snapshot
+                                                                            .data![index]
+                                                                            .startDate))
+                                                                        .inDays
+                                                                        .toString(),
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            16),
+                                                              )
+                                                            : Text(
+                                                                DateTime.now()
+                                                                    .difference(DateTime.parse(snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .startDate))
+                                                                    .inDays
+                                                                    .toString(),
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            16)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ],
                           );
                         } else {
                           return Container();

@@ -63,9 +63,11 @@ class Health extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: MediaQuery.of(context).size.width / 1.3,
+                                width: MediaQuery.of(context).size.width / 1.5,
+                                padding:
+                                    const EdgeInsets.only(top: 50, bottom: 50),
                                 child: const Text(
-                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
+                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -82,9 +84,11 @@ class Health extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: MediaQuery.of(context).size.width / 1.3,
+                                width: MediaQuery.of(context).size.width / 1.5,
+                                padding:
+                                    const EdgeInsets.only(top: 50, bottom: 50),
                                 child: const Text(
-                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your data",
+                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -109,54 +113,113 @@ class Health extends StatelessWidget {
                         //   );
                         // }
                         return Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 4.8,
-                          // margin: const EdgeInsets.only(
-                          //     right: 50, left: 50, bottom: 10),
-                          margin: const EdgeInsets.only(bottom: 30),
-                          padding: const EdgeInsets.all(10),
-                          child: Stack(
-                            // alignment: Alignment.bottomCenter,
+                          child: Column(
                             children: [
                               Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.transparent,
-                                      // width: 5,
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height / 4.8,
+                                // margin: const EdgeInsets.only(
+                                //     right: 50, left: 50, bottom: 10),
+                                margin: const EdgeInsets.only(bottom: 30),
+                                padding: const EdgeInsets.all(10),
+                                child: Stack(
+                                  // alignment: Alignment.bottomCenter,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Color.fromARGB(
+                                                0, 199, 165, 165),
+                                            // width: 5,
+                                          ),
+                                          // color: Colors.redAccent[100],
+                                          color: const Color.fromARGB(
+                                              255, 255, 238, 225),
+                                          shape: BoxShape.circle),
                                     ),
-                                    // color: Colors.redAccent[100],
-                                    color: const Color.fromARGB(
-                                        255, 255, 238, 225),
-                                    shape: BoxShape.circle),
+                                    Container(
+                                        child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Text("Steps",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 22)),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(10.0),
+                                              child: Image.asset(
+                                                "assets/images/footprint.png",
+                                                height: 50,
+                                              ),
+                                            ),
+                                            Text(
+                                              state.model.steps.toString(),
+                                              style: const TextStyle(
+                                                  fontSize: 26,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                                  ],
+                                ),
                               ),
                               Container(
-                                  child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text("Steps",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 22)),
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Image.asset(
-                                          "assets/images/footprint.png",
-                                          height: 50,
-                                        ),
-                                      ),
-                                      Text(
-                                        state.model.steps.toString(),
-                                        style: const TextStyle(
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              )),
+                                width: MediaQuery.of(context).size.width / 1.1,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                        child: healthCard(context,
+                                            title: 'Heart Rate',
+                                            data: "0",
+                                            image:
+                                                "assets/images/heart-attack.png")),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                        child: healthCard(context,
+                                            title: 'Workout',
+                                            data: "0",
+                                            image:
+                                                "assets/images/fitness.png")),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                // padding: EdgeInsets.only(left: 20, right: 20),
+                                width: MediaQuery.of(context).size.width / 1.1,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                        child: healthCard(context,
+                                            title: 'Blood Pressure',
+                                            data: "0",
+                                            image:
+                                                "assets/images/blood-pressure.png")),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                        child: healthCard(context,
+                                            title: 'Energy Burned',
+                                            data: "0",
+                                            image:
+                                                "assets/images/calories.png")),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         );
@@ -168,50 +231,50 @@ class Health extends StatelessWidget {
                   },
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width / 1.1,
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: healthCard(context,
-                            title: 'Heart Rate',
-                            data: "0",
-                            image: "assets/images/heart-attack.png")),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                        child: healthCard(context,
-                            title: 'Workout',
-                            data: "0",
-                            image: "assets/images/fitness.png")),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                // padding: EdgeInsets.only(left: 20, right: 20),
-                width: MediaQuery.of(context).size.width / 1.1,
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: healthCard(context,
-                            title: 'Blood Pressure',
-                            data: "0",
-                            image: "assets/images/blood-pressure.png")),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                        child: healthCard(context,
-                            title: 'Energy Burned',
-                            data: "0",
-                            image: "assets/images/calories.png")),
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width / 1.1,
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //           child: healthCard(context,
+              //               title: 'Heart Rate',
+              //               data: "0",
+              //               image: "assets/images/heart-attack.png")),
+              //       const SizedBox(
+              //         width: 10,
+              //       ),
+              //       Expanded(
+              //           child: healthCard(context,
+              //               title: 'Workout',
+              //               data: "0",
+              //               image: "assets/images/fitness.png")),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // Container(
+              //   // padding: EdgeInsets.only(left: 20, right: 20),
+              //   width: MediaQuery.of(context).size.width / 1.1,
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //           child: healthCard(context,
+              //               title: 'Blood Pressure',
+              //               data: "0",
+              //               image: "assets/images/blood-pressure.png")),
+              //       const SizedBox(
+              //         width: 10,
+              //       ),
+              //       Expanded(
+              //           child: healthCard(context,
+              //               title: 'Energy Burned',
+              //               data: "0",
+              //               image: "assets/images/calories.png")),
+              //     ],
+              //   ),
+              // ),
               // InkWell(
               //   onTap: () {
               //     //-

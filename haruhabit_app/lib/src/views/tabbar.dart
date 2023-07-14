@@ -23,9 +23,9 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
   late int currentIndex;
 
   final List<Widget> tabbarItems = const [
-    Health(),
     Home(),
-    MyPage(),
+    Health(),
+    // MyPage(),
   ];
   late List<bool> onSelected;
 
@@ -34,8 +34,8 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    currentIndex = 1;
-    onSelected = [false, true, false];
+    currentIndex = 0;
+    onSelected = [true, false];
   }
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -119,22 +119,26 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
         items: [
           BottomNavigationBarItem(
             icon: onSelected[0]
+                // ? const Icon(CupertinoIcons.heart_circle_fill)
+                // : const Icon(CupertinoIcons.heart_circle),
+                ? const Icon(CupertinoIcons.square_list_fill)
+                : const Icon(CupertinoIcons.square_list),
+            label: "To do",
+          ),
+          BottomNavigationBarItem(
+            icon: onSelected[1]
+                // ? const Icon(CupertinoIcons.house_fill)
+                // : const Icon(CupertinoIcons.house),
                 ? const Icon(CupertinoIcons.heart_circle_fill)
                 : const Icon(CupertinoIcons.heart_circle),
             label: "Health",
           ),
-          BottomNavigationBarItem(
-            icon: onSelected[1]
-                ? const Icon(CupertinoIcons.house_fill)
-                : const Icon(CupertinoIcons.house),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: onSelected[2]
-                ? const Icon(CupertinoIcons.person_fill)
-                : const Icon(CupertinoIcons.person),
-            label: "My Page",
-          ),
+          // BottomNavigationBarItem(
+          //   icon: onSelected[2]
+          //       ? const Icon(CupertinoIcons.person_fill)
+          //       : const Icon(CupertinoIcons.person),
+          //   label: "My Page",
+          // ),
         ],
       ),
     );

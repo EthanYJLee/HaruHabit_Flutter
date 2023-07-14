@@ -66,6 +66,7 @@ class _HabitHistoryState extends State<HabitHistory> {
                         Text('id : ${snapshot.data?[index].hId}'),
                         Text('category : ${snapshot.data?[index].category}'),
                         Text('habit : ${snapshot.data?[index].habit}'),
+                        Text('habit : ${snapshot.data?[index].startDate}'),
                         // Text(
                         //     'date : ${snapshot.data?[index].startDate} ~ ${snapshot.data?[index].endDate}')
                       ],

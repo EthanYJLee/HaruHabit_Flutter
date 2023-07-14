@@ -1,6 +1,7 @@
 {
-    "today":"Today",
-    "schedule":"Schedule",
-    "todo":"To Do",
-    "plan":"Plan on Progress"
+    "today": "Today",
+    "schedule": "Schedule",
+    "todo": "To Do",
+    "plan": "Plan on Progress",
+    "habit": "Habits on Progress"
 }

@@ -185,7 +185,7 @@ class _CalendarState extends State<Calendar> {
                             shape: BoxShape.circle,
                           ),
                           todayDecoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 138, 128),
+                            color: Color.fromARGB(255, 255, 189, 183),
                             shape: BoxShape.circle,
                           ),
                           selectedDecoration: BoxDecoration(
