@@ -124,7 +124,7 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     late String bloodPreSys = "0";
     late String bloodPreDia = "0";
     late String energyBurned = "0";
-    late String bp = "0";
+    late String bp = "0 / 0 mmHg";
 
     // get data within the last 24 hours
     final now = DateTime.now();

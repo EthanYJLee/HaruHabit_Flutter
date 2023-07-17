@@ -22,8 +22,8 @@ class _AddHabitState extends State<AddHabit> {
   late String _habit = "";
   late List<String> _categoryList = [
     "+ Add New",
-    "Quitting Smoking",
-    "Quitting Drinking",
+    "Quit Smoking",
+    "Quit Drinking",
     "Study",
     "Save Money",
     "Read"
@@ -177,7 +177,7 @@ class _AddHabitState extends State<AddHabit> {
                                   }
                                 }
                               },
-                              child: const Text("추가"))
+                              child: const Text("Add"))
                         ],
                       ),
                     ),

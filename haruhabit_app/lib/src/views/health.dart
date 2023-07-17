@@ -22,10 +22,12 @@ class Health extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              const Divider(thickness: 2, color: Colors.white),
               Container(
                 padding: const EdgeInsets.only(left: 30, right: 15),
                 child: Row(
@@ -34,7 +36,9 @@ class Health extends StatelessWidget {
                     Text(
                       'Health',
                       style: const TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.bold),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                     IconButton(
                         onPressed: () {
@@ -94,9 +98,9 @@ class Health extends StatelessWidget {
                                 child: const Text(
                                   "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
                                   style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
                                   maxLines: 5,
                                 ),
                               ),
@@ -115,9 +119,9 @@ class Health extends StatelessWidget {
                                 child: const Text(
                                   "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
                                   style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
                                   maxLines: 5,
                                 ),
                               ),
@@ -179,9 +183,7 @@ class Health extends StatelessWidget {
                                     Expanded(
                                         child: healthCard(context,
                                             title: 'Blood Pressure',
-                                            data: state.model.bp
-                                                .toString()
-                                                .split('.')[0],
+                                            data: state.model.bp.toString(),
                                             image:
                                                 "assets/images/blood-pressure.png")),
                                     const SizedBox(
@@ -210,6 +212,7 @@ class Health extends StatelessWidget {
                   },
                 ),
               ),
+              const Divider(thickness: 2, color: Colors.white),
               Container(
                 padding: const EdgeInsets.only(left: 30, right: 15),
                 child: Row(
@@ -218,33 +221,18 @@ class Health extends StatelessWidget {
                     Text(
                       'Workout',
                       style: const TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.bold),
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                     IconButton(
-                        onPressed: () {
-                          // Navigator.of(context)
-                          //     .push(MaterialPageRoute(
-                          //         builder: (context) =>
-                          //             const HistoryTabbar(initialView: 1)))
-                          //     .whenComplete(() {
-                          //   scheduleBloc.fetchSelectedSchedules(
-                          //       DateTime.now().toString().substring(0, 10));
-                          // });
-                        },
+                        onPressed: () {},
                         icon: const Icon(CupertinoIcons.right_chevron))
                   ],
                 ),
               ),
               InkWell(
-                onTap: () {
-                  // Navigator.of(context).push(
-                  //   CardDialog(
-                  //     builder: (context) {
-                  //       return const AddHabit();
-                  //     },
-                  //   ),
-                  // );
-                },
+                onTap: () {},
                 child: GridcardUtil(
                     content: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -263,33 +251,33 @@ class Health extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: SpeedDial(
-          backgroundColor: Colors.redAccent[100],
-          overlayColor: Colors.black,
-          icon: Icons.add,
-          activeIcon: Icons.close,
-          direction: SpeedDialDirection.up,
-          childPadding: const EdgeInsets.all(5),
-          spaceBetweenChildren: 4,
-          spacing: 3,
-          useRotationAnimation: true,
-          animationCurve: Curves.easeInOutQuart,
-          children: [
-            SpeedDialChild(
-              child: const Icon(CupertinoIcons.list_bullet),
-              label: "Add Workout",
-              labelBackgroundColor: Colors.redAccent[100],
-              labelStyle: const TextStyle(color: Colors.white),
-              backgroundColor: Colors.redAccent[100],
-              foregroundColor: Colors.white,
-              onTap: () {
-                Navigator.of(context).push(CardDialog(builder: (context) {
-                  return const AddHealth();
-                }));
-              },
-            ),
-          ],
-        ),
+        // floatingActionButton: SpeedDial(
+        //   backgroundColor: Colors.redAccent[100],
+        //   overlayColor: Colors.black,
+        //   icon: Icons.add,
+        //   activeIcon: Icons.close,
+        //   direction: SpeedDialDirection.up,
+        //   childPadding: const EdgeInsets.all(5),
+        //   spaceBetweenChildren: 4,
+        //   spacing: 3,
+        //   useRotationAnimation: true,
+        //   animationCurve: Curves.easeInOutQuart,
+        //   children: [
+        //     SpeedDialChild(
+        //       child: const Icon(CupertinoIcons.list_bullet),
+        //       label: "Add Workout",
+        //       labelBackgroundColor: Colors.redAccent[100],
+        //       labelStyle: const TextStyle(color: Colors.white),
+        //       backgroundColor: Colors.redAccent[100],
+        //       foregroundColor: Colors.white,
+        //       onTap: () {
+        //         Navigator.of(context).push(CardDialog(builder: (context) {
+        //           return const AddHealth();
+        //         }));
+        //       },
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }

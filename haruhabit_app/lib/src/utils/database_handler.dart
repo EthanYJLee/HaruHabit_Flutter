@@ -139,7 +139,7 @@ class DatabaseHandler {
     return result;
   }
 
-  Future deleteSchedule(String sId)async{
+  Future deleteSchedule(String sId) async {
     final db = await initializeDB('schedules');
     await db.delete(
       'schedules',
@@ -174,6 +174,15 @@ class DatabaseHandler {
       // conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return result;
+  }
+
+  Future deleteHabit(String hId) async {
+    final db = await initializeDB('habits');
+    await db.delete(
+      'habits',
+      where: "hId = ?",
+      whereArgs: [hId],
+    );
   }
 
   // --------------------------------------------------------------------------------------------------

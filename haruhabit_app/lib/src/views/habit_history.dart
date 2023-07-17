@@ -37,6 +37,7 @@ class _HabitHistoryState extends State<HabitHistory> {
             (BuildContext context, AsyncSnapshot<List<HabitModel>> snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
+              shrinkWrap: true,
               itemCount: snapshot.data?.length,
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(

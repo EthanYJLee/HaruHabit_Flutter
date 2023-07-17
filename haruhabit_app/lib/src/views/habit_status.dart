@@ -1,38 +1,29 @@
 import 'dart:collection';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:haruhabit_app/src/blocs/calendar_bloc.dart';
-import 'package:haruhabit_app/src/models/schedule_model.dart';
-import 'package:haruhabit_app/src/utils/calendar_utils.dart';
-import 'package:haruhabit_app/src/utils/card_dialog.dart';
-import 'package:haruhabit_app/src/utils/add_habit.dart';
-import 'package:haruhabit_app/src/utils/add_schedule.dart';
-import 'package:haruhabit_app/src/utils/database_handler.dart';
-import 'package:haruhabit_app/src/views/home.dart';
-import 'package:haruhabit_app/src/views/tabbar.dart';
-import 'package:intl/date_time_patterns.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../blocs/schedule_bloc.dart';
+import '../blocs/calendar_bloc.dart';
+import '../models/schedule_model.dart';
+import '../utils/calendar_utils.dart';
+import '../utils/card_dialog.dart';
 
-class Calendar extends StatefulWidget {
-  const Calendar({super.key, required this.day});
-  final DateTime day;
+class HabitStatus extends StatefulWidget {
+  const HabitStatus({super.key, required this.hId});
+  final String hId;
 
   @override
-  State<Calendar> createState() => _CalendarState();
+  State<HabitStatus> createState() => _HabitStatusState();
 }
 
-class _CalendarState extends State<Calendar> {
+class _HabitStatusState extends State<HabitStatus> {
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  late ValueNotifier<DateTime> _focusedDay = ValueNotifier(widget.day);
-  // final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
+  final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
   DateTime? _selectedDay;
   late List<ScheduleModel> scheduleModel;
   final Set<DateTime> _selectedDays = LinkedHashSet<DateTime>(
@@ -146,12 +137,12 @@ class _CalendarState extends State<Calendar> {
           IconButton(
               // Schedule 추가하고 돌아오면 일정 리스트 다시 불러오기
               onPressed: () {
-                Navigator.of(context).push(CardDialog(builder: (context) {
-                  return AddSchedule(selectedDate: _selectedDay!);
-                })).whenComplete(() {
-                  calendarBloc.getEventLists();
-                  _selectedEvents.value = _getEventsForDay(_selectedDay!);
-                });
+                // Navigator.of(context).push(CardDialog(builder: (context) {
+                //   return AddSchedule(selectedDate: _selectedDay!);
+                // })).whenComplete(() {
+                //   calendarBloc.getEventLists();
+                //   _selectedEvents.value = _getEventsForDay(_selectedDay!);
+                // });
               },
               icon: const Icon(CupertinoIcons.add_circled))
         ],

@@ -63,93 +63,105 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     debugPrint('Locale : ${context.locale}');
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        actions: [
-          /// 언어 설정 버튼 (English / Korean)
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: PopupMenuButton(
-              color: Colors.redAccent[100],
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20.0),
-                ),
-              ),
-              icon: const Icon(
-                Icons.language,
-                size: 30,
-              ),
-              onSelected: (value) {
-                print(value);
-              },
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    onTap: () async {
-                      await context.setLocale(const Locale("en", "US"));
-                      await EasyLocalization.ensureInitialized();
-                      Phoenix.rebirth(context);
-                    },
-                    child: const Text(
-                      "English",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w500),
-                    ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage('assets/images/wallpaper.jpg'), // 배경 이미지
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          actions: [
+            /// 언어 설정 버튼 (English / Korean)
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: PopupMenuButton(
+                color: Colors.redAccent[100],
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20.0),
                   ),
-                  PopupMenuItem(
+                ),
+                icon: const Icon(
+                  Icons.language,
+                  size: 30,
+                ),
+                onSelected: (value) {
+                  print(value);
+                },
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
                       onTap: () async {
-                        await context.setLocale(const Locale("ko", "KR"));
+                        await context.setLocale(const Locale("en", "US"));
                         await EasyLocalization.ensureInitialized();
                         Phoenix.rebirth(context);
                       },
                       child: const Text(
-                        "한국어",
+                        "English",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w500),
-                      )),
-                ];
-              },
+                      ),
+                    ),
+                    PopupMenuItem(
+                        onTap: () async {
+                          await context.setLocale(const Locale("ko", "KR"));
+                          await EasyLocalization.ensureInitialized();
+                          Phoenix.rebirth(context);
+                        },
+                        child: const Text(
+                          "한국어",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w500),
+                        )),
+                  ];
+                },
+              ),
+            )
+          ],
+        ),
+        body: tabbarItems[currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          selectedItemColor: Colors.redAccent[100],
+          unselectedItemColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: currentIndex,
+          onTap: (value) {
+            setState(() {
+              currentIndex = value;
+            });
+            _changeOnselected(value);
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: onSelected[0]
+                  // ? const Icon(CupertinoIcons.heart_circle_fill)
+                  // : const Icon(CupertinoIcons.heart_circle),
+                  ? const Icon(CupertinoIcons.square_list_fill)
+                  : const Icon(CupertinoIcons.square_list),
+              label: "To do",
             ),
-          )
-        ],
-      ),
-      body: tabbarItems[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.redAccent[100],
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentIndex,
-        onTap: (value) {
-          setState(() {
-            currentIndex = value;
-          });
-          _changeOnselected(value);
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: onSelected[0]
-                // ? const Icon(CupertinoIcons.heart_circle_fill)
-                // : const Icon(CupertinoIcons.heart_circle),
-                ? const Icon(CupertinoIcons.square_list_fill)
-                : const Icon(CupertinoIcons.square_list),
-            label: "To do",
-          ),
-          BottomNavigationBarItem(
-            icon: onSelected[1]
-                // ? const Icon(CupertinoIcons.house_fill)
-                // : const Icon(CupertinoIcons.house),
-                ? const Icon(CupertinoIcons.heart_circle_fill)
-                : const Icon(CupertinoIcons.heart_circle),
-            label: "Health",
-          ),
-          // BottomNavigationBarItem(
-          //   icon: onSelected[2]
-          //       ? const Icon(CupertinoIcons.person_fill)
-          //       : const Icon(CupertinoIcons.person),
-          //   label: "My Page",
-          // ),
-        ],
+            BottomNavigationBarItem(
+              icon: onSelected[1]
+                  // ? const Icon(CupertinoIcons.house_fill)
+                  // : const Icon(CupertinoIcons.house),
+                  ? const Icon(CupertinoIcons.heart_circle_fill)
+                  : const Icon(CupertinoIcons.heart_circle),
+              label: "Health",
+            ),
+            // BottomNavigationBarItem(
+            //   icon: onSelected[2]
+            //       ? const Icon(CupertinoIcons.person_fill)
+            //       : const Icon(CupertinoIcons.person),
+            //   label: "My Page",
+            // ),
+          ],
+        ),
       ),
     );
   }
