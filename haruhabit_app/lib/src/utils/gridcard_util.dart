@@ -16,7 +16,8 @@ class GridcardUtil extends StatelessWidget {
         borderRadius: BorderRadius.circular(50),
       ),
       child: Card(
-        color: Color.fromARGB(255, 255, 238, 225),
+        // color: Color.fromARGB(255, 255, 238, 225),
+        color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),

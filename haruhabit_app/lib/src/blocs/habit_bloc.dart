@@ -6,13 +6,24 @@ import '../models/habit_model.dart';
 class HabitBloc {
   final DatabaseHandler _handler = DatabaseHandler();
   final _allHabitFetcher = PublishSubject<List<HabitModel>>();
+  final _habitOnProgressFetcher = PublishSubject<List<HabitModel>>();
 
   Observable<List<HabitModel>> get allHabit => _allHabitFetcher.stream;
+  Observable<List<HabitModel>> get habitOnProgress =>
+      _habitOnProgressFetcher.stream;
 
-  fetchAllHabits() async{
+  fetchAllHabits() async {
     List<HabitModel> habitModel = await _handler.queryAllHabits();
+    for (HabitModel h in habitModel) {
+      print(h.category.toString());
+    }
     _allHabitFetcher.sink.add(habitModel);
   }
+
+  // fetchHabitsOnProgress(String today) async {
+  //   List<HabitModel> _model = await _handler.queryHabitsOnProgress(today);
+  //   _habitOnProgressFetcher.sink.add(_model);
+  // }
 
   Future<int> addHabit(String category, String habit, int? spending,
       String? currency, String startDate) async {

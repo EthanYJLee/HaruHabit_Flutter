@@ -43,6 +43,7 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
     HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
     HealthDataType.ACTIVE_ENERGY_BURNED,
+    HealthDataType.BASAL_ENERGY_BURNED
   ];
   final permissions =
       dataTypes.map((e) => HealthDataAccess.READ_WRITE).toList();
@@ -117,63 +118,114 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
       HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
       HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
       HealthDataType.ACTIVE_ENERGY_BURNED,
+      HealthDataType.BASAL_ENERGY_BURNED
     ];
     late HealthModel healthModel;
-    late String steps = "0";
+    late double steps = 0;
     late String heartRate = "0";
     late String bloodPreSys = "0";
     late String bloodPreDia = "0";
-    late String energyBurned = "0";
+    late double activeEnergyBurned = 0;
+    late double basalEnergyBurned = 0;
+    late double totalEnergyBurned = 0;
     late String bp = "0 / 0 mmHg";
+    String? platform;
 
     // get data within the last 24 hours
     final now = DateTime.now();
-    // final yesterday = now.subtract(const Duration(days: 1));
     final midnight = DateTime(now.year, now.month, now.day);
 
     // requesting access to the data types before reading them
     bool requested = await health.requestAuthorization(types);
-    List<HealthDataPoint> healthData = [];
+    List<HealthDataPoint> _healthDataList = [];
+    // List<HealthDataPoint> healthData = [];
 
     if (requested) {
       try {
         // fetch health data
-        healthData = await health.getHealthDataFromTypes(midnight, now, types);
+        print("fetching...");
+        List<HealthDataPoint> healthData =
+            await health.getHealthDataFromTypes(midnight, now, types);
+        _healthDataList.addAll(healthData);
+        //** To join all the step counts from different time ranges (different data sources)
+        // Get list of all different data sources
+        List<String> sources = [];
+        _healthDataList.forEach((element) {
+          sources.add(element.sourceId);
+        });
+        sources = sources.toSet().toList(); // Get unique values only
+        // Set up the variables to store steps in
+        Map stepCount = {for (String item in sources) '$item': 0};
+        Map stepsKnown = {for (String item in sources) '$item': false};
+        Map stepsSourceName = {for (String item in sources) '$item': ""};
+        // Set up the variables to store active energy burned in
+        Map activeEnergyBurnedCount = {for (String item in sources) '$item': 0};
+        Map activeEnergyBurnedKnown = {
+          for (String item in sources) '$item': false
+        };
+        Map activeEnergyBurnedSourceName = {
+          for (String item in sources) '$item': ""
+        };
+        // */
+        // Set up the variables to store basal energy burned in
+        Map basalEnergyBurnedCount = {for (String item in sources) '$item': 0};
+        Map basalEnergyBurnedKnown = {
+          for (String item in sources) '$item': false
+        };
+        Map basalEnergyBurnedSourceName = {
+          for (String item in sources) '$item': ""
+        };
+        // */
         if (healthData.isNotEmpty) {
           for (HealthDataPoint h in healthData) {
             if (h.type == HealthDataType.STEPS) {
-              steps = "${h.value}";
-              print(steps);
+              stepsKnown[h.sourceId] = true;
+              stepCount[h.sourceId] =
+                  stepCount[h.sourceId] + double.parse("${h.value}");
+              stepsSourceName[h.sourceId] = h.sourceName;
+              steps = stepCount[h.sourceId];
             } else if (h.type == HealthDataType.HEART_RATE) {
               heartRate = "${h.value}";
-              print(heartRate);
             } else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
               bloodPreSys = "${h.value}";
-              print(bloodPreSys);
             } else if (h.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC) {
               bloodPreDia = "${h.value}";
-              print(bloodPreDia);
             } else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
-              energyBurned = "${h.value}";
+              activeEnergyBurnedKnown[h.sourceId] = true;
+              activeEnergyBurnedCount[h.sourceId] =
+                  activeEnergyBurnedCount[h.sourceId] +
+                      double.parse("${h.value}");
+              activeEnergyBurnedSourceName[h.sourceId] = h.sourceName;
+              // platform = h.platform.name;
+              activeEnergyBurned = activeEnergyBurnedCount[h.sourceId];
+            } else if (h.type == HealthDataType.BASAL_ENERGY_BURNED) {
+              basalEnergyBurnedKnown[h.sourceId] = true;
+              basalEnergyBurnedCount[h.sourceId] =
+                  basalEnergyBurnedCount[h.sourceId] +
+                      double.parse("${h.value}");
+              basalEnergyBurnedSourceName[h.sourceId] = h.sourceName;
+              // platform = h.platform.name;
+              basalEnergyBurned = basalEnergyBurnedCount[h.sourceId];
             }
+            totalEnergyBurned = activeEnergyBurned + basalEnergyBurned;
           }
           if (bloodPreSys != "null" && bloodPreDia != "null") {
             bp = "$bloodPreSys / $bloodPreDia mmHg";
           }
         }
         healthModel = HealthModel(
-            steps: steps,
+            steps: steps.toString(),
             heartRate: heartRate,
             bloodPreSys: bloodPreSys,
             bloodPreDia: bloodPreDia,
-            energyBurned: energyBurned,
+            energyBurned: totalEnergyBurned.toStringAsFixed(2).toString(),
             bp: bp);
         emit(state.copyWith(status: HealthStatus.dataReady));
       } catch (error) {
         print("Exception in getHealthDataFromTypes: $error");
       }
       // filter out duplicates
-      healthData = HealthFactory.removeDuplicates(healthData);
+      _healthDataList = HealthFactory.removeDuplicates(_healthDataList);
     } else {
       emit(state.copyWith(status: HealthStatus.unauthorized));
       print("Authorization not granted");

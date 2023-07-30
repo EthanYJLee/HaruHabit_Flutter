@@ -17,17 +17,10 @@ class _AddHabitState extends State<AddHabit> {
   late TextEditingController _categoryController = TextEditingController();
   late TextEditingController _habitController = TextEditingController();
   late TextEditingController _spendingController = TextEditingController();
-  late String _category = "";
+  late String _category = "smoke free";
   late String _startDate = "";
   late String _habit = "";
-  late List<String> _categoryList = [
-    "+ Add New",
-    "Quit Smoking",
-    "Quit Drinking",
-    "Study",
-    "Save Money",
-    "Read"
-  ];
+  int _selectedRadio = 0;
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
@@ -74,25 +67,60 @@ class _AddHabitState extends State<AddHabit> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   child: Container(
-                    height: MediaQuery.of(context).size.height / 1.6,
+                    height: MediaQuery.of(context).size.height / 2.1,
                     width: MediaQuery.of(context).size.width / 1.1,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: Text(
-                              "Create New Habit",
-                              style: TextStyle(fontSize: 20),
-                            ),
+                          const Text(
+                            "Create New Habit",
+                            style: TextStyle(fontSize: 20),
                           ),
                           const SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
-                          _dropdownArea(),
                           _datePicker(),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          // _dropdownArea(),
+                          Divider(thickness: 2, color: Colors.grey[300]),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _iconRadio(0,
+                                    text: "Smoke \n Free",
+                                    icon: Icons.smoke_free,
+                                    category: 'smoke free'),
+                                _iconRadio(1,
+                                    text: "No \n Drinks",
+                                    icon: Icons.no_drinks,
+                                    category: 'no drinks'),
+                                _iconRadio(2,
+                                    text: "Drink \n Water",
+                                    icon: Icons.water_drop_outlined,
+                                    category: 'drink water'),
+                                _iconRadio(3,
+                                    text: "Save \n Money",
+                                    icon: Icons.attach_money,
+                                    category: 'save money'),
+                                _iconRadio(4,
+                                    text: "Workout \n /Exercise",
+                                    icon: Icons.fitness_center,
+                                    category: 'workout'),
+                                _iconRadio(5,
+                                    text: "Create \n Your Own",
+                                    icon: Icons.add_task,
+                                    category: 'custom'),
+                              ],
+                            ),
+                          ),
+                          Divider(thickness: 2, color: Colors.grey[300]),
+
                           Padding(
                             padding: const EdgeInsets.only(left: 20, right: 20),
                             child: TextField(
@@ -142,8 +170,7 @@ class _AddHabitState extends State<AddHabit> {
                                   ));
                                 } else {
                                   // 빈 Text Field가 있으면
-                                  if (_categoryController.text == "" ||
-                                      _habitController.text == "") {
+                                  if (_habitController.text == "") {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(
                                       content: Column(
@@ -162,7 +189,7 @@ class _AddHabitState extends State<AddHabit> {
                                     ));
                                   } else {
                                     // // ----------------
-                                    _category = _categoryController.text;
+                                    // _category = _categoryController.text;
                                     _habit = _habitController.text;
                                     _startDate =
                                         startDate.toString().substring(0, 10);
@@ -177,7 +204,12 @@ class _AddHabitState extends State<AddHabit> {
                                   }
                                 }
                               },
-                              child: const Text("Add"))
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent[100],
+                              ),
+                              child: const Text(
+                                "Add",
+                              ))
                         ],
                       ),
                     ),
@@ -274,47 +306,79 @@ class _AddHabitState extends State<AddHabit> {
     );
   }
 
-  /// Desc : 카테고리 선택하는 Dropdown Area
-  /// Date : 2023.05.24
-  /// Author : youngjin
-  Widget _dropdownArea() {
-    // 요청사항 dropdown list
-    final List<DropdownMenuEntry<String>> categoryEntries =
-        <DropdownMenuEntry<String>>[];
-    for (final _category in _categoryList) {
-      categoryEntries
-          .add(DropdownMenuEntry<String>(value: _category, label: _category));
-    }
+  // /// Desc : 카테고리 선택하는 Dropdown Area
+  // /// Date : 2023.05.24
+  // /// Author : youngjin
+  // Widget _dropdownArea() {
+  //   // 요청사항 dropdown list
+  //   final List<DropdownMenuEntry<String>> categoryEntries =
+  //       <DropdownMenuEntry<String>>[];
+  //   for (final _category in _categoryList) {
+  //     categoryEntries
+  //         .add(DropdownMenuEntry<String>(value: _category, label: _category));
+  //   }
 
-    return Container(
-      height: MediaQuery.of(context).size.height / 14,
-      width: MediaQuery.of(context).size.width / 1.1,
-      child: Column(
-        children: [
-          Expanded(
-            child: DropdownMenu(
-              menuHeight: MediaQuery.of(context).size.height / 4.2,
-              width: MediaQuery.of(context).size.width / 1.5,
-              // initialSelection: _categoryList[0],
-              initialSelection: "Select Category",
-              controller: _categoryController,
-              label: const Text(
-                'Select Category',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-              inputDecorationTheme: const InputDecorationTheme(filled: true),
-              dropdownMenuEntries: categoryEntries,
-              onSelected: (value) {
-                if (value == "+ Add New") {
-                  _categoryController.text = "";
-                }
-                _category = _categoryController.text;
-              },
+  //   return Container(
+  //     height: MediaQuery.of(context).size.height / 14,
+  //     width: MediaQuery.of(context).size.width / 1.1,
+  //     child: Column(
+  //       children: [
+  //         Expanded(
+  //           child: DropdownMenu(
+  //             menuHeight: MediaQuery.of(context).size.height / 4.2,
+  //             width: MediaQuery.of(context).size.width / 1.5,
+  //             // initialSelection: _categoryList[0],
+  //             initialSelection: "Select Category",
+  //             controller: _categoryController,
+  //             label: const Text(
+  //               'Select Category',
+  //               style: TextStyle(
+  //                 color: Colors.black,
+  //               ),
+  //             ),
+  //             inputDecorationTheme: const InputDecorationTheme(filled: true),
+  //             dropdownMenuEntries: categoryEntries,
+  //             onSelected: (value) {
+  //               if (value == "+ Add New") {
+  //                 _categoryController.text = "";
+  //               }
+  //               _category = _categoryController.text;
+  //             },
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _iconRadio(int index,
+      {required String text,
+      required IconData icon,
+      required String category}) {
+    return Padding(
+      // padding: const EdgeInsets.all(10.0),
+      padding: EdgeInsets.only(left: 15, right: 15),
+      child: InkResponse(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: _selectedRadio == index ? Colors.red : null,
+              size: 24,
             ),
-          ),
-        ],
+            Text(text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: _selectedRadio == index ? Colors.red : null)),
+          ],
+        ),
+        onTap: () => setState(
+          () {
+            _selectedRadio = index;
+            _category = category;
+          },
+        ),
       ),
     );
   }

@@ -36,6 +36,11 @@ class ScheduleBloc {
     return 0;
   }
 
+  Future<int> scheduleIsDone(int isChecked, String sId) async{
+    int result = await _handler.scheduleIsDone(isChecked, sId);
+    return result;
+  }
+
   dispose() {
     _allScheduleFetcher.close();
     _selectedScheduleFetcher.close();

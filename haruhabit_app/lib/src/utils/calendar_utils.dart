@@ -25,6 +25,17 @@ class Event {
   String toString() => schedule;
 }
 
+class HabitStatus {
+  String stId;
+  String hId;
+  String date;
+
+  HabitStatus(this.stId, this.hId, this.date);
+
+  @override
+  String toString() => date;
+}
+
 final DatabaseHandler handler = DatabaseHandler();
 
 // /// Example events.

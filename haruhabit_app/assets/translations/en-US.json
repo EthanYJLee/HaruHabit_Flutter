@@ -3,5 +3,9 @@
     "schedule": "Schedule",
     "todo": "To Do",
     "plan": "Plan on Progress",
-    "habit": "Habits"
+    "habit": "Habits",
+    "stepCount": "Step Count",
+    "heartRate": "Heart Rate",
+    "bloodPressure": "Blood Pressure",
+    "energyBurned": "Energy Burned"
 }

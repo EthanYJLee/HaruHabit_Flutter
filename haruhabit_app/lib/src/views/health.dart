@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -33,9 +34,9 @@ class Health extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Health',
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
@@ -71,7 +72,7 @@ class Health extends StatelessWidget {
                       case HealthStatus.failure:
                         return const Center(
                           child: Text(
-                            'failed to fetch posts',
+                            'Failed to fetch Health Data',
                           ),
                         );
 
@@ -151,7 +152,7 @@ class Health extends StatelessWidget {
                                   children: [
                                     Expanded(
                                         child: healthCard(context,
-                                            title: 'Step Count',
+                                            title: 'stepCount'.tr(),
                                             data: state.model.steps
                                                     .toString()
                                                     .split('.')[0] +
@@ -163,7 +164,7 @@ class Health extends StatelessWidget {
                                     ),
                                     Expanded(
                                         child: healthCard(context,
-                                            title: 'Heart Rate',
+                                            title: 'heartRate'.tr(),
                                             data: state.model.heartRate
                                                     .toString()
                                                     .split('.')[0] +
@@ -182,7 +183,7 @@ class Health extends StatelessWidget {
                                   children: [
                                     Expanded(
                                         child: healthCard(context,
-                                            title: 'Blood Pressure',
+                                            title: 'bloodPressure'.tr(),
                                             data: state.model.bp.toString(),
                                             image:
                                                 "assets/images/blood-pressure.png")),
@@ -191,10 +192,9 @@ class Health extends StatelessWidget {
                                     ),
                                     Expanded(
                                         child: healthCard(context,
-                                            title: 'Energy Burned',
+                                            title: 'energyBurned'.tr(),
                                             data: state.model.energyBurned
-                                                    .toString()
-                                                    .split('.')[0] +
+                                                    .toString() +
                                                 " cal",
                                             image:
                                                 "assets/images/calories.png")),
@@ -206,7 +206,9 @@ class Health extends StatelessWidget {
                         );
                       case HealthStatus.initial:
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.white,
+                          ),
                         );
                     }
                   },
@@ -286,7 +288,8 @@ class Health extends StatelessWidget {
   Widget healthCard(BuildContext context,
       {String title = "",
       String data = "",
-      Color color = const Color.fromARGB(255, 255, 238, 225),
+      // Color color = const Color.fromARGB(255, 255, 238, 225),
+      Color color = Colors.white,
       required String image}) {
     return Container(
       height: MediaQuery.of(context).size.width / 2.5,

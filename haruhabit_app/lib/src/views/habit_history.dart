@@ -32,7 +32,7 @@ class _HabitHistoryState extends State<HabitHistory> {
         child: Scaffold(
       body: FutureBuilder(
         future:
-            handler.queryAllHabits(), // handler가 queryStudents 실행하면서 view 생성
+            handler.queryAllHabits(), // handler가 queryAllHabits 실행하면서 view 생성
         builder:
             (BuildContext context, AsyncSnapshot<List<HabitModel>> snapshot) {
           if (snapshot.hasData) {
@@ -64,10 +64,10 @@ class _HabitHistoryState extends State<HabitHistory> {
                     elevation: 5,
                     child: Column(
                       children: [
-                        Text('id : ${snapshot.data?[index].hId}'),
-                        Text('category : ${snapshot.data?[index].category}'),
-                        Text('habit : ${snapshot.data?[index].habit}'),
-                        Text('habit : ${snapshot.data?[index].startDate}'),
+                        // Text('id : ${snapshot.data?[index].hId}'),
+                        Text('Category : ${snapshot.data?[index].category}'),
+                        Text('Habit : ${snapshot.data?[index].habit}'),
+                        Text('Start Date : ${snapshot.data?[index].startDate}'),
                         // Text(
                         //     'date : ${snapshot.data?[index].startDate} ~ ${snapshot.data?[index].endDate}')
                       ],

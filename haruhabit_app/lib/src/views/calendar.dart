@@ -127,166 +127,182 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: TextButton(
-          onPressed: () {
-            setState(() {
-              _selectedEvents.value = _getEventsForDay(DateTime.now());
-            });
-          },
-          child: Text(
-            "Today",
-            style: TextStyle(
-              color: Colors.redAccent[100],
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage('assets/images/wallpaper.jpg'), // 배경 이미지
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: TextButton(
+            onPressed: () {
+              setState(() {
+                // _selectedEvents.value = _getEventsForDay(DateTime.now());
+                _selectedDay = DateTime.now();
+              });
+            },
+            child: Text(
+              "Today",
+              style: TextStyle(
+                color: Colors.redAccent[100],
+              ),
             ),
           ),
-        ),
-        actions: [
-          IconButton(
-              // Schedule 추가하고 돌아오면 일정 리스트 다시 불러오기
-              onPressed: () {
-                Navigator.of(context).push(CardDialog(builder: (context) {
-                  return AddSchedule(selectedDate: _selectedDay!);
-                })).whenComplete(() {
-                  calendarBloc.getEventLists();
-                  _selectedEvents.value = _getEventsForDay(_selectedDay!);
-                });
-              },
-              icon: const Icon(CupertinoIcons.add_circled))
-        ],
-        elevation: 0,
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 30, right: 30, bottom: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(),
-                    borderRadius: BorderRadius.circular(15)),
-                child: StreamBuilder(
-                  stream: calendarBloc.eventList,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return TableCalendar<Event>(
-                        locale: "en",
-                        firstDay: kFirstDay,
-                        lastDay: kLastDay,
-                        focusedDay: _focusedDay.value,
-                        selectedDayPredicate: (day) =>
-                            isSameDay(_selectedDay, day),
-                        calendarFormat: _calendarFormat,
-                        eventLoader: _getEventsForDay,
-                        startingDayOfWeek: StartingDayOfWeek.sunday,
-                        calendarStyle: const CalendarStyle(
-                          outsideDaysVisible: true,
-                          markerDecoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 138, 128),
-                            shape: BoxShape.circle,
-                          ),
-                          todayDecoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 189, 183),
-                            shape: BoxShape.circle,
-                          ),
-                          selectedDecoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 138, 128),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        headerStyle: const HeaderStyle(
-                          titleCentered: true,
-                          formatButtonVisible: false,
-                          leftChevronIcon: Icon(
-                            CupertinoIcons.arrow_left_circle,
-                            // color: Color.fromARGB(255, 164, 158, 255),
-                            color: Color.fromARGB(255, 255, 138, 128),
-                          ),
-                          rightChevronIcon: Icon(
-                            CupertinoIcons.arrow_right_circle,
-                            // color: Color.fromARGB(255, 164, 158, 255),
-                            color: Color.fromARGB(255, 255, 138, 128),
-                          ),
-                        ),
-                        onDaySelected: _onDaySelected,
-                        onPageChanged: (focusedDay) =>
-                            _focusedDay.value = focusedDay,
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text(snapshot.error.toString());
-                    }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            // ----------------------------------------------------
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.only(left: 30, right: 30),
-                child: ValueListenableBuilder<List<Event>>(
-                  valueListenable: _selectedEvents,
-                  builder: (context, value, _) {
-                    /// Desc : 페이지 빌드 후에 addPostFrameCallback()를 통해 비동기로 콜백함수를 호출한다.
-                    /// selected 되어있는 날짜의 Event를 ListView로 보여주기 위한 목적.
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      calendarBloc.getEventLists();
-                      // setState()가 있는 함수 호출
-                      _onDaySelected(_selectedDay!, _focusedDay.value);
-                    });
-                    // value = _selectedEvents로 적용
-                    return ListView.builder(
-                      itemCount: value.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 5.0,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: CheckboxListTile(
-                            title: Text(
-                              value[index].schedule,
-                            ),
-                            subtitle: Text(
-                              value[index].place,
-                            ),
-                            secondary: Text(
-                              "${value[index].hour.toString().padLeft(2, "0")}" +
-                                  " : " +
-                                  "${value[index].minute.toString().padLeft(2, "0")}",
-                            ),
-                            value: (value[index].isDone == 0) ? false : true,
-                            // value: false,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                if (val == true) {
-                                  value[index].isDone = 1;
-                                } else {
-                                  value[index].isDone = 0;
-                                }
-                                // 체크박스 체크하면 0, 1 (isDone? false/true) 값 업데이트
-                                handler.scheduleIsDone(value[index].isDone,
-                                    value[index].sId.toString());
-                                // 완료 여부 업데이트한 뒤 이벤트리스트 다시 가져와야 함!!!!!!
-                                calendarBloc.getEventLists();
-                              });
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
+          actions: [
+            IconButton(
+                // Schedule 추가하고 돌아오면 일정 리스트 다시 불러오기
+                onPressed: () {
+                  Navigator.of(context).push(CardDialog(builder: (context) {
+                    return AddSchedule(selectedDate: _selectedDay!);
+                  })).whenComplete(() {
+                    calendarBloc.getEventLists();
+                    _selectedEvents.value = _getEventsForDay(_selectedDay!);
+                  });
+                },
+                icon: const Icon(CupertinoIcons.add_circled))
           ],
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(left: 30, right: 30, bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(),
+                      borderRadius: BorderRadius.circular(15)),
+                  child: StreamBuilder(
+                    stream: calendarBloc.eventList,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return TableCalendar<Event>(
+                          locale: "en",
+                          firstDay: kFirstDay,
+                          lastDay: kLastDay,
+                          focusedDay: _focusedDay.value,
+                          selectedDayPredicate: (day) =>
+                              isSameDay(_selectedDay, day),
+                          calendarFormat: _calendarFormat,
+                          eventLoader: _getEventsForDay,
+                          startingDayOfWeek: StartingDayOfWeek.sunday,
+                          calendarStyle: const CalendarStyle(
+                            outsideDaysVisible: true,
+                            markerDecoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 138, 128),
+                              shape: BoxShape.circle,
+                            ),
+                            todayDecoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 189, 183),
+                              shape: BoxShape.circle,
+                            ),
+                            selectedDecoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 138, 128),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          headerStyle: const HeaderStyle(
+                            titleCentered: true,
+                            formatButtonVisible: false,
+                            leftChevronIcon: Icon(
+                              CupertinoIcons.arrow_left_circle,
+                              // color: Color.fromARGB(255, 164, 158, 255),
+                              color: Color.fromARGB(255, 255, 138, 128),
+                            ),
+                            rightChevronIcon: Icon(
+                              CupertinoIcons.arrow_right_circle,
+                              // color: Color.fromARGB(255, 164, 158, 255),
+                              color: Color.fromARGB(255, 255, 138, 128),
+                            ),
+                          ),
+                          onDaySelected: _onDaySelected,
+                          onPageChanged: (focusedDay) =>
+                              _focusedDay.value = focusedDay,
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              // ----------------------------------------------------
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(color: Colors.transparent),
+                  padding: const EdgeInsets.only(left: 30, right: 30),
+                  child: ValueListenableBuilder<List<Event>>(
+                    valueListenable: _selectedEvents,
+                    builder: (context, value, _) {
+                      /// Desc : 페이지 빌드 후에 addPostFrameCallback()를 통해 비동기로 콜백함수를 호출한다.
+                      /// selected 되어있는 날짜의 Event를 ListView로 보여주기 위한 목적.
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        calendarBloc.getEventLists();
+                        // setState()가 있는 함수 호출
+                        _onDaySelected(_selectedDay!, _focusedDay.value);
+                      });
+                      // value = _selectedEvents로 적용
+                      return ListView.builder(
+                        itemCount: value.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 5.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: CheckboxListTile(
+                              checkColor: Colors.white,
+                              activeColor: Color.fromARGB(255, 255, 138, 128),
+                              title: Text(
+                                value[index].schedule,
+                              ),
+                              subtitle: Text(
+                                value[index].place,
+                              ),
+                              secondary: Text(
+                                "${value[index].hour.toString().padLeft(2, "0")}" +
+                                    " : " +
+                                    "${value[index].minute.toString().padLeft(2, "0")}",
+                              ),
+                              value: (value[index].isDone == 0) ? false : true,
+                              // value: false,
+                              onChanged: (bool? val) {
+                                setState(() {
+                                  if (val == true) {
+                                    value[index].isDone = 1;
+                                  } else {
+                                    value[index].isDone = 0;
+                                  }
+                                  // 체크박스 체크하면 0, 1 (isDone? false/true) 값 업데이트
+                                  handler.scheduleIsDone(value[index].isDone,
+                                      value[index].sId.toString());
+                                  // 완료 여부 업데이트한 뒤 이벤트리스트 다시 가져와야 함!!!!!!
+                                  calendarBloc.getEventLists();
+                                });
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

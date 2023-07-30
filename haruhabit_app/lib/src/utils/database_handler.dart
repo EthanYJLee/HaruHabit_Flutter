@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:haruhabit_app/src/models/habit_model.dart';
 import 'package:haruhabit_app/src/models/schedule_model.dart';
+import 'package:haruhabit_app/src/models/streak_model.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -22,7 +23,19 @@ class DatabaseHandler {
           ),
           onCreate: (database, version) async {
             await database.execute(
-                'CREATE TABLE IF NOT EXISTS habits (hId INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, habit TEXT, spending INTEGER, currency TEXT, startDate TEXT, endDate TEXT)');
+                'CREATE TABLE IF NOT EXISTS habits (hId INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, habit TEXT, spending INTEGER, startDate TEXT, endDate TEXT)');
+          },
+          version: 1,
+        );
+      case 'streaks':
+        return openDatabase(
+          join(
+            path,
+            'streaks.db',
+          ),
+          onCreate: (database, version) async {
+            await database.execute(
+                'CREATE TABLE IF NOT EXISTS streaks (stId INTEGER PRIMARY KEY AUTOINCREMENT, hId INTEGER, date TEXT)');
           },
           version: 1,
         );
@@ -154,9 +167,17 @@ class DatabaseHandler {
   Future<List<HabitModel>> queryAllHabits() async {
     final Database db = await initializeDB('habits');
     final List<Map<String, Object?>> queryResult =
-        await db.rawQuery('SELECT * FROM habits');
+        await db.rawQuery('SELECT * FROM habits WHERE endDate IS NULL');
     return queryResult.map((e) => HabitModel.fromMap(e)).toList();
   }
+
+  // Future<List<HabitModel>> queryHabitsOnProgress(String today) async {
+  //   final Database db = await initializeDB('habits');
+  //   final List<Map<String, Object?>> queryResult = await db
+  //       .rawQuery('SELECT * FROM habits WHERE Date(startDate) <= Date($today)');
+  //   print(queryResult);
+  //   return queryResult.map((e) => HabitModel.fromMap(e)).toList();
+  // }
 
   // insert new habit into DB
   Future insertHabit(HabitModel habitModel) async {
@@ -183,6 +204,67 @@ class DatabaseHandler {
       where: "hId = ?",
       whereArgs: [hId],
     );
+  }
+
+  Future<int> checkForTodaysGoal(String hId, String date) async {
+    final db = await initializeDB('streaks');
+    List<Map> length =
+        await db.rawQuery('SELECT * FROM streaks WHERE hId = ? AND date = ?', [
+      hId,
+      date,
+    ]);
+    int result = length.length;
+    print(result);
+    return result;
+  }
+
+  Future achievedTodaysGoal(String hId, String date) async {
+    //-
+    final db = await initializeDB('streaks');
+    int result = await checkForTodaysGoal(hId, date);
+    if (result == 0) {
+      db.rawInsert('INSERT INTO streaks (hId, date) VALUES ?,?', [hId, date]);
+    } else {
+      db.rawDelete(
+          'DELETE FROM streaks WHERE hId = ? AND date = ?', [hId, date]);
+    }
+  }
+
+  /// Desc : Event (Habit 진행상황) 달력에 보여주도록 형식 변경
+  /// Date : 2023.07.26
+  Future<Map<DateTime, dynamic>> streakLists(String hId) async {
+    final Database db = await initializeDB('streaks');
+
+    // Habit List
+    final List<Map<String, Object?>> streakResult = await db
+        .rawQuery("SELECT * FROM streaks where hId = $hId ORDER BY hId, date");
+    List<StreakModel> models =
+        streakResult.map((e) => StreakModel.fromMap(e)).toList();
+
+    // date 중복 없애기
+    var uniqueDate = Set<String>();
+    models.where((models) => uniqueDate.add(models.date!)).toList();
+
+    // 빈 배열 생성 (Event=>Streak으로 변경할 것!!!!!)
+    final Map<DateTime, List<HabitStatus>> eventSource =
+        Map<DateTime, List<HabitStatus>>();
+
+    // uniqueDate를 key로 지정 (추가)
+    for (String date in uniqueDate) {
+      eventSource.addAll({DateTime.parse(date): []});
+    }
+
+    // 각 uniqueDate에 해당하는 일정 할당
+    for (int i = 0; i < eventSource.length; i++) {
+      for (StreakModel model in models) {
+        if (DateTime.parse(model.date.toString()) ==
+            eventSource.keys.toList()[i]) {
+          eventSource.values.toList()[i].add(
+              HabitStatus(model.stId.toString(), hId, model.date.toString()));
+        }
+      }
+    }
+    return eventSource;
   }
 
   // --------------------------------------------------------------------------------------------------

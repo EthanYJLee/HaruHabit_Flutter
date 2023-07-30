@@ -1,7 +1,11 @@
 {
-    "today":"오늘",
-    "schedule":"일정",
-    "todo":"오늘 할 일",
-    "plan":"진행중인 계획",
-    "habit": "진행중인 습관"
+    "today": "오늘",
+    "schedule": "일정",
+    "todo": "오늘 할 일",
+    "plan": "진행중인 계획",
+    "habit": "진행중인 습관",
+    "stepCount": "걸음 수",
+    "heartRate": "심박",
+    "bloodPressure": "혈압",
+    "energyBurned": "칼로리 소모"
 }

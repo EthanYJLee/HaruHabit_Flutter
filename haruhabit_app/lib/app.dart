@@ -17,10 +17,11 @@ class App extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       theme: ThemeData(
-        primaryColor: const Color.fromARGB(255, 255, 249, 244),
-        canvasColor: const Color.fromARGB(255, 255, 249, 244),
+        // primaryColor: const Color.fromARGB(255, 255, 249, 244),
+        // canvasColor: const Color.fromARGB(255, 255, 249, 244),
         appBarTheme: AppBarTheme(
-          color: const Color.fromARGB(255, 255, 249, 244),
+          // color: const Color.fromARGB(255, 255, 249, 244),
+          color: Colors.transparent,
           actionsIconTheme: IconThemeData(color: Colors.redAccent[100]),
           foregroundColor: Colors.redAccent[100],
         ),
