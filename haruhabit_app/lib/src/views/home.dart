@@ -42,15 +42,25 @@ class _HomeState extends State<Home> {
     'custom': Icons.add_task
   }.entries;
 
+  /// DB에서 받아온 Habit category에 해당하는 Icon return
   IconData getCategoryIcons(String feature) {
-    print(_categoryLists
-        .firstWhere((key) => key.toString().contains(feature))
-        .value
-        .runtimeType);
+    // print(_categoryLists
+    //     .firstWhere((key) => key.toString().contains(feature))
+    //     .value
+    //     .runtimeType);
     return _categoryLists
         .firstWhere((key) => key.toString().contains(feature))
         .value;
   }
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   setState(() {
+  //     habitBloc.fetchAllHabits();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +68,9 @@ class _HomeState extends State<Home> {
     scheduleBloc
         .fetchSelectedSchedules(_selectedDate.toString().substring(0, 10));
     // 진행중인 습관 fetch
+    // 각 습관별 최고 기록 fetch
     habitBloc.fetchAllHabits();
+
     return SafeArea(
       child: Container(
         child: Scaffold(
@@ -71,7 +83,9 @@ class _HomeState extends State<Home> {
                   Container(
                     child: Column(
                       children: [
+                        // 보여줄 스케쥴, 습관을 결정하는 타임라인 위젯
                         _timeline(),
+                        // today (오늘) 버튼 누르면 타임라인 오늘 날짜로 이동
                         TextButton(
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
@@ -192,6 +206,7 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
+                  // 선택한 날짜의 할 일 목록 정보 보여주기
                   StreamBuilder(
                     stream: scheduleBloc.selectedSchedule,
                     builder: (context, snapshot) {
@@ -252,6 +267,7 @@ class _HomeState extends State<Home> {
                                                           shape:
                                                               BoxShape.circle,
                                                         ),
+                                                        // 체크박스 버튼 Tap하면 일정 완료/미완 여부 DB에 기록
                                                         child: (snapshot
                                                                     .data![
                                                                         index]
@@ -374,7 +390,7 @@ class _HomeState extends State<Home> {
                               width: 20,
                             ),
                             StreamBuilder(
-                                stream: habitBloc.habitOnProgress,
+                                stream: habitBloc.allHabit,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     if (snapshot.data!.isNotEmpty) {
@@ -392,8 +408,9 @@ class _HomeState extends State<Home> {
                                                 MaterialStateProperty.all(
                                                     Colors.redAccent[100]),
                                           ),
-                                          child:
-                                              Text("${snapshot.data!.length}"),
+                                          // 현재 진행중인 (시작일이 오늘 날짜 이전인) 습관의 개수만 보여주기
+                                          child: Text(
+                                              "${snapshot.data!.where((element) => DateTime.parse(element.startDate).isBefore(DateTime.now())).length}"),
                                         ),
                                       );
                                     }
@@ -416,16 +433,6 @@ class _HomeState extends State<Home> {
                                             builder: (context) =>
                                                 const AddHabit()))
                                         .whenComplete(() {
-                                      // habitBloc.fetchHabitsOnProgress(
-                                      //     (_selectedDate.year.toString() +
-                                      //         '-' +
-                                      //         _selectedDate.month
-                                      //             .toString()
-                                      //             .padLeft(2, "0") +
-                                      //         '-' +
-                                      //         _selectedDate.day
-                                      //             .toString()
-                                      //             .padLeft(2, "0")));
                                       habitBloc.fetchAllHabits();
                                     });
                                   },
@@ -441,10 +448,6 @@ class _HomeState extends State<Home> {
                                                 const HistoryTabbar(
                                                     initialView: 1)))
                                         .whenComplete(() {
-                                      // scheduleBloc.fetchSelectedSchedules(
-                                      //     DateTime.now()
-                                      //         .toString()
-                                      //         .substring(0, 10));
                                       setState(() {});
                                     });
                                   },
@@ -458,7 +461,9 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
-                  // 진행중인 습관 보여주기
+
+                  /// 진행중인 습관 보여주기
+                  /// 카테고리 아이콘, 습관 내용 (제목), 진행중인 기간
                   StreamBuilder(
                       stream: habitBloc.allHabit,
                       builder: (context, snapshot) {
@@ -481,12 +486,15 @@ class _HomeState extends State<Home> {
                                       children: [
                                         InkWell(
                                             onTap: () {
+                                              // 일자별 달성 (완료)할 수 있는 bottom sheet
                                               return showHabitsBottomSheet(
                                                   context,
-                                                  snapshot.data![index].hId
-                                                      .toString());
+                                                  snapshot.data![index].hId!,
+                                                  snapshot
+                                                      .data![index].startDate);
                                             },
                                             child:
+                                                // 아직 시작하지 않은 습관은 안 보여줌
                                                 (_selectedDate
                                                             .difference(DateTime
                                                                 .parse(snapshot
@@ -548,8 +556,57 @@ class _HomeState extends State<Home> {
                                                                               16),
                                                                     ),
                                                                   ),
+                                                                  // StreamBuilder(
+                                                                  //     stream: habitBloc
+                                                                  //         .longestStreak,
+                                                                  //     builder:
+                                                                  //         (context,
+                                                                  //             snapshot) {
+                                                                  //       if (snapshot
+                                                                  //           .hasData) {
+                                                                  //         if (snapshot
+                                                                  //             .data!
+                                                                  //             .isNotEmpty) {
+                                                                  //           return Text(snapshot.data![index].toString());
+                                                                  //         }
+                                                                  //         return Text(
+                                                                  //             '');
+                                                                  //       } else if (snapshot
+                                                                  //           .hasError) {
+                                                                  //         return Text(snapshot
+                                                                  //             .error
+                                                                  //             .toString());
+                                                                  //       }
+                                                                  //       return Text(
+                                                                  //           '');
+                                                                  //     }),
                                                                 ],
                                                               ),
+                                                              // StreamBuilder(
+                                                              //     stream: habitBloc
+                                                              //         .longestStreak,
+                                                              //     builder: (context,
+                                                              //         snapshot) {
+                                                              //       if (snapshot
+                                                              //           .hasData) {
+                                                              //         if (snapshot
+                                                              //             .data!
+                                                              //             .isNotEmpty) {
+                                                              //           return Text(snapshot
+                                                              //               .data![index]
+                                                              //               .toString());
+                                                              //         }
+                                                              //         return Text(
+                                                              //             '');
+                                                              //       } else if (snapshot
+                                                              //           .hasError) {
+                                                              //         return Text(snapshot
+                                                              //             .error
+                                                              //             .toString());
+                                                              //       }
+                                                              //       return Text(
+                                                              //           '');
+                                                              //     }),
                                                               Stack(
                                                                 children: [
                                                                   Container(
@@ -604,31 +661,6 @@ class _HomeState extends State<Home> {
                           child: CircularProgressIndicator(),
                         );
                       }),
-
-                  // InkWell(
-                  //   onTap: () {
-                  //     Navigator.of(context)
-                  //         .push(CardDialog(
-                  //             builder: (context) => const AddHabit()))
-                  //         .whenComplete(() {
-                  //       habitBloc.fetchAllHabits();
-                  //     });
-                  //   },
-                  //   child: GridcardUtil(
-                  //       content: Column(
-                  //     mainAxisAlignment: MainAxisAlignment.center,
-                  //     children: [
-                  //       Row(
-                  //           mainAxisAlignment: MainAxisAlignment.center,
-                  //           children: const [
-                  //             Icon(
-                  //               CupertinoIcons.add_circled,
-                  //               size: 30,
-                  //             ),
-                  //           ]),
-                  //     ],
-                  //   )),
-                  // ),
                 ],
               ),
             ),
@@ -698,11 +730,13 @@ class _HomeState extends State<Home> {
     );
   }
 
+  // today (오늘) button 눌렀을 때 타임라인 오늘 날짜로 이동
   void resetSelectedDate() {
     // _selectedDate = DateTime.now().add(const Duration(days: 2));
     _selectedDate = DateTime.now();
   }
 
+  // 일정과 습관을 보여주기 위한 타임라인 위젯
   Widget _timeline() {
     return Container(
       // color: Colors.transparent,
@@ -736,7 +770,7 @@ class _HomeState extends State<Home> {
   }
 
   // void showSizeBottomSheet(BuildContext context, Map<String, int> sizes) {
-  void showHabitsBottomSheet(BuildContext context, String hId) {
+  void showHabitsBottomSheet(BuildContext context, int hId, String startDate) {
     showModalBottomSheet(
       enableDrag: false,
       backgroundColor: Colors.transparent,
@@ -757,7 +791,10 @@ class _HomeState extends State<Home> {
             controller: scrollController,
             child: Container(
               color: Colors.white,
-              child: Streak(hId: hId, day: DateTime.now()),
+              child: Streak(
+                hId: hId,
+                startDate: startDate,
+              ),
             ),
           );
         },

@@ -206,7 +206,7 @@ class DatabaseHandler {
     );
   }
 
-  Future<int> checkForTodaysGoal(String hId, String date) async {
+  Future<int> checkForTodaysGoal(int hId, String date) async {
     final db = await initializeDB('streaks');
     List<Map> length =
         await db.rawQuery('SELECT * FROM streaks WHERE hId = ? AND date = ?', [
@@ -218,12 +218,12 @@ class DatabaseHandler {
     return result;
   }
 
-  Future achievedTodaysGoal(String hId, String date) async {
+  Future achievedTodaysGoal(int hId, String date) async {
     //-
     final db = await initializeDB('streaks');
     int result = await checkForTodaysGoal(hId, date);
     if (result == 0) {
-      db.rawInsert('INSERT INTO streaks (hId, date) VALUES ?,?', [hId, date]);
+      db.rawInsert('INSERT INTO streaks (hId, date) VALUES (?,?)', [hId, date]);
     } else {
       db.rawDelete(
           'DELETE FROM streaks WHERE hId = ? AND date = ?', [hId, date]);
@@ -232,7 +232,7 @@ class DatabaseHandler {
 
   /// Desc : Event (Habit 진행상황) 달력에 보여주도록 형식 변경
   /// Date : 2023.07.26
-  Future<Map<DateTime, dynamic>> streakLists(String hId) async {
+  Future<Map<DateTime, dynamic>> streakLists(int hId) async {
     final Database db = await initializeDB('streaks');
 
     // Habit List
@@ -265,6 +265,23 @@ class DatabaseHandler {
       }
     }
     return eventSource;
+  }
+
+  Future<int> findLongestStreak(int hId) async {
+    final db = await initializeDB('streaks');
+    final List<Map<String, Object?>> queryResult = await db.rawQuery(
+        "SELECT MAX(date) as date, COUNT(*) as streak FROM (SELECT t1.date, DATE(t1.date, -(SELECT COUNT(*) FROM streaks t2 WHERE t2.date <= t1.date AND hId == $hId) || ' day') AS grp FROM streaks t1 WHERE hId == $hId) streaks GROUP BY grp");
+    if (queryResult.isNotEmpty) {
+      var max = queryResult[0];
+      queryResult.forEach((val) {
+        if ((val['streak'] as int) > (max['streak'] as int)) max = val;
+      });
+      // print(max['streak']);
+      // print(max['streak'].runtimeType);
+      return max['streak'] as int;
+    } else {
+      return 0;
+    }
   }
 
   // --------------------------------------------------------------------------------------------------

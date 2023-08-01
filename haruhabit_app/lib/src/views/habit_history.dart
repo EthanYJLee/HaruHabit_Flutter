@@ -59,6 +59,12 @@ class _HabitHistoryState extends State<HabitHistory> {
                     // );
                   },
                   child: Card(
+                    color: (DateTime.now()
+                            .difference(
+                                DateTime.parse(snapshot.data![index].startDate))
+                            .isNegative)
+                        ? Color.fromARGB(255, 203, 203, 203)
+                        : Color.fromARGB(255, 255, 238, 225),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     elevation: 5,
@@ -68,8 +74,12 @@ class _HabitHistoryState extends State<HabitHistory> {
                         Text('Category : ${snapshot.data?[index].category}'),
                         Text('Habit : ${snapshot.data?[index].habit}'),
                         Text('Start Date : ${snapshot.data?[index].startDate}'),
-                        // Text(
-                        //     'date : ${snapshot.data?[index].startDate} ~ ${snapshot.data?[index].endDate}')
+                        // (DateTime.now()
+                        //         .difference(DateTime.parse(
+                        //             snapshot.data![index].startDate))
+                        //         .isNegative)
+                        //     ? Text('not yet')
+                        //     : Text('on progress')
                       ],
                     ),
                   ),

@@ -1,6 +1,6 @@
 class StreakModel {
   final int? stId;
-  final String? hId;
+  final int? hId;
   final String? date;
   StreakModel({this.stId, this.hId, this.date});
 

@@ -27,7 +27,7 @@ class Event {
 
 class HabitStatus {
   String stId;
-  String hId;
+  int hId;
   String date;
 
   HabitStatus(this.stId, this.hId, this.date);

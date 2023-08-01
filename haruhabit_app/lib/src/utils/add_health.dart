@@ -23,67 +23,74 @@ class _AddHealthState extends State<AddHealth> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(30),
-              child: Hero(
-                tag: "addHabit",
-                createRectTween: (begin, end) {
-                  return RectTween(begin: begin, end: end);
-                },
-                child: Material(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    width: MediaQuery.of(context).size.width / 1.1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: Text(
-                              "Add Workout",
-                              style: TextStyle(fontSize: 20),
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Center(
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: (MediaQuery.of(context).viewInsets.bottom == 0)
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(30),
+                child: Hero(
+                  tag: "addHabit",
+                  createRectTween: (begin, end) {
+                    return RectTween(begin: begin, end: end);
+                  },
+                  child: Material(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 2,
+                      width: MediaQuery.of(context).size.width / 1.1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: Text(
+                                "Add Workout",
+                                style: TextStyle(fontSize: 20),
+                              ),
                             ),
-                          ),
-                          _dropdownArea(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          // const Padding(
-                          //   padding: EdgeInsets.only(left: 20, right: 20),
-                          //   child: TextField(
-                          //     decoration: InputDecoration(hintText: "내용"),
-                          //   ),
-                          // ),
-                          _timeRangePicker(),
+                            _dropdownArea(),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            // const Padding(
+                            //   padding: EdgeInsets.only(left: 20, right: 20),
+                            //   child: TextField(
+                            //     decoration: InputDecoration(hintText: "내용"),
+                            //   ),
+                            // ),
+                            _timeRangePicker(),
 
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                // print(_workoutLists);
-                              },
-                              child: const Text("추가"))
-                        ],
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  // print(_workoutLists);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent[100]),
+                                child: const Text("Add"))
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -101,6 +108,8 @@ class _AddHealthState extends State<AddHealth> {
     return Container(
       height: MediaQuery.of(context).size.height / 14,
       width: MediaQuery.of(context).size.width / 1.1,
+      // decoration: BoxDecoration(
+      //     color: Colors.white, borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           Expanded(
@@ -116,7 +125,16 @@ class _AddHealthState extends State<AddHealth> {
                   color: Colors.black,
                 ),
               ),
-              inputDecorationTheme: const InputDecorationTheme(filled: true),
+              inputDecorationTheme: InputDecorationTheme(
+                filled: true,
+                enabledBorder: OutlineInputBorder(),
+                disabledBorder: OutlineInputBorder(),
+                // border: OutlineInputBorder(
+                //   borderSide: BorderSide(
+                //     color: Color.fromARGB(255, 255, 138, 128),
+                //   ),
+                // ),
+              ),
               dropdownMenuEntries: workoutEntries,
               onSelected: (value) {
                 //-

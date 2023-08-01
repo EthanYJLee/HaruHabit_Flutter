@@ -16,241 +16,305 @@ import 'package:path/path.dart';
 
 import 'history_tabbar.dart';
 
-class Health extends StatelessWidget {
+class Health extends StatefulWidget {
   const Health({super.key});
 
+  @override
+  State<Health> createState() => _HealthState();
+}
+
+class _HealthState extends State<Health> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Divider(thickness: 2, color: Colors.white),
-              Container(
-                padding: const EdgeInsets.only(left: 30, right: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Health',
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          // Navigator.of(context)
-                          //     .push(MaterialPageRoute(
-                          //         builder: (context) =>
-                          //             const HistoryTabbar(initialView: 1)))
-                          //     .whenComplete(() {
-                          //   scheduleBloc.fetchSelectedSchedules(
-                          //       DateTime.now().toString().substring(0, 10));
-                          // });
-                        },
-                        icon: const Icon(CupertinoIcons.right_chevron))
-                  ],
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Divider(thickness: 2, color: Colors.white),
+                Container(
+                  padding: const EdgeInsets.only(left: 30, right: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Health',
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            // Navigator.of(context)
+                            //     .push(MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             const HistoryTabbar(initialView: 1)))
+                            //     .whenComplete(() {
+                            //   scheduleBloc.fetchSelectedSchedules(
+                            //       DateTime.now().toString().substring(0, 10));
+                            // });
+                          },
+                          icon: const Icon(CupertinoIcons.right_chevron))
+                    ],
+                  ),
                 ),
-              ),
-              BlocProvider(
-                // 새로운 BLoC을 만들고 Fetch Event를 add 해준다.
-                create: (_) => HealthBloc()..add(HealthFetched()),
-                child: BlocBuilder<HealthBloc, HealthState>(
-                  // buildWhen: (previous, current) =>
-                  //     (previous != current) &&
-                  //     current.status == HealthStatus.success,
-                  //     /// return true/false to determine whether or not
-                  //     /// to rebuild the widget with state
+                BlocProvider(
+                  // 새로운 BLoC을 만들고 Fetch Event를 add 해준다.
+                  create: (_) => HealthBloc()..add(HealthFetched()),
+                  child: BlocBuilder<HealthBloc, HealthState>(
+                    // buildWhen: (previous, current) =>
+                    //     (previous != current) &&
+                    //     current.status == HealthStatus.success,
+                    //     /// return true/false to determine whether or not
+                    //     /// to rebuild the widget with state
 
-                  builder: (context, state) {
-                    // 오류 발생 시
-                    switch (state.status) {
-                      case HealthStatus.failure:
-                        return const Center(
-                          child: Text(
-                            'Failed to fetch Health Data',
-                          ),
-                        );
-
-                      case HealthStatus.authorized:
-                        // return const Center(
-                        //   child: Text(
-                        //     'Authorized',
-                        //   ),
-                        // );
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-
-                      /// 걸음 수 데이터 접근 권한 없을 경우
-                      case HealthStatus.unauthorized:
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width / 1.5,
-                                padding:
-                                    const EdgeInsets.only(top: 50, bottom: 50),
-                                child: const Text(
-                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                  maxLines: 5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      case HealthStatus.noData:
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width / 1.5,
-                                padding:
-                                    const EdgeInsets.only(top: 50, bottom: 50),
-                                child: const Text(
-                                  "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                  maxLines: 5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-
-                      case HealthStatus.success:
-                        return const Center(child: Text("success"));
-
-                      /// 걸음 수 데이터 접근 권한 허용 후
-                      case HealthStatus.dataReady:
-                        if (state.props.isEmpty) {
+                    builder: (context, state) {
+                      // 오류 발생 시
+                      switch (state.status) {
+                        case HealthStatus.failure:
                           return const Center(
                             child: Text(
-                              'no data',
+                              'Failed to fetch Health Data',
                             ),
                           );
-                        }
-                        return Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width / 1.1,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        child: healthCard(context,
-                                            title: 'stepCount'.tr(),
-                                            data: state.model.steps
-                                                    .toString()
-                                                    .split('.')[0] +
-                                                " Steps",
-                                            image:
-                                                "assets/images/footprint.png")),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                        child: healthCard(context,
-                                            title: 'heartRate'.tr(),
-                                            data: state.model.heartRate
-                                                    .toString()
-                                                    .split('.')[0] +
-                                                " BPM",
-                                            image:
-                                                "assets/images/heart-attack.png")),
-                                  ],
+
+                        case HealthStatus.authorized:
+                          // return const Center(
+                          //   child: Text(
+                          //     'Authorized',
+                          //   ),
+                          // );
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+
+                        /// 걸음 수 데이터 접근 권한 없을 경우
+                        case HealthStatus.unauthorized:
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.5,
+                                  padding: const EdgeInsets.only(
+                                      top: 50, bottom: 50),
+                                  child: const Text(
+                                    "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                    maxLines: 5,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 1.1,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        child: healthCard(context,
-                                            title: 'bloodPressure'.tr(),
-                                            data: state.model.bp.toString(),
-                                            image:
-                                                "assets/images/blood-pressure.png")),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                        child: healthCard(context,
-                                            title: 'energyBurned'.tr(),
-                                            data: state.model.energyBurned
-                                                    .toString() +
-                                                " cal",
-                                            image:
-                                                "assets/images/calories.png")),
-                                  ],
+                              ],
+                            ),
+                          );
+                        case HealthStatus.noData:
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.5,
+                                  padding: const EdgeInsets.only(
+                                      top: 50, bottom: 50),
+                                  child: const Text(
+                                    "Go to Settings > Health > Data Access & Devices > Haru Habit > turn access on to get your health data",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                    maxLines: 5,
+                                  ),
                                 ),
+                              ],
+                            ),
+                          );
+
+                        case HealthStatus.success:
+                          return const Center(child: Text("success"));
+
+                        /// 걸음 수 데이터 접근 권한 허용 후
+                        case HealthStatus.dataReady:
+                          if (state.props.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                'no data',
                               ),
-                            ],
-                          ),
-                        );
-                      case HealthStatus.initial:
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.white,
-                          ),
-                        );
-                    }
-                  },
+                            );
+                          }
+                          return Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.1,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          child: healthCard(context,
+                                              title: 'stepCount'.tr(),
+                                              data: state.model.steps
+                                                      .toString()
+                                                      .split('.')[0] +
+                                                  " Steps",
+                                              image:
+                                                  "assets/images/footprint.png")),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                          child: healthCard(context,
+                                              title: 'heartRate'.tr(),
+                                              data: state.model.heartRate
+                                                      .toString()
+                                                      .split('.')[0] +
+                                                  " BPM",
+                                              image:
+                                                  "assets/images/heart-attack.png")),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.1,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          child: healthCard(context,
+                                              title: 'bloodPressure'.tr(),
+                                              data: state.model.bp.toString(),
+                                              image:
+                                                  "assets/images/blood-pressure.png")),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                          child: healthCard(context,
+                                              title: 'energyBurned'.tr(),
+                                              data: state.model.energyBurned
+                                                      .toString() +
+                                                  " cal",
+                                              image:
+                                                  "assets/images/calories.png")),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        case HealthStatus.initial:
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.white,
+                            ),
+                          );
+                      }
+                    },
+                  ),
                 ),
-              ),
-              const Divider(thickness: 2, color: Colors.white),
-              Container(
-                padding: const EdgeInsets.only(left: 30, right: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Workout',
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(CupertinoIcons.right_chevron))
-                  ],
+                const Divider(thickness: 2, color: Colors.white),
+                Container(
+                  padding: const EdgeInsets.only(left: 30, right: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: Row(
+                          children: [
+                            const Text(
+                              'Workout',
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            IconButton(
+                                onPressed: () {},
+                                icon: const Icon(CupertinoIcons.right_chevron))
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  // Navigator.of(context)
+                                  //     .push(MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             Calendar(day: DateTime.now())))
+                                  //     .whenComplete(() {
+                                  //   scheduleBloc.fetchSelectedSchedules(
+                                  //       DateTime.now()
+                                  //           .toString()
+                                  //           .substring(0, 10));
+                                  // });
+                                  Navigator.of(context).push(CardDialog(
+                                      builder: (context) => const AddHealth()));
+                                },
+                                icon: const Icon(
+                                  CupertinoIcons.add,
+                                  color: Colors.white,
+                                )),
+                            IconButton(
+                                onPressed: () {
+                                  // Navigator.of(context)
+                                  //     .push(MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             const HistoryTabbar(
+                                  //                 initialView: 0)))
+                                  //     .whenComplete(() {
+                                  //   scheduleBloc.fetchSelectedSchedules(
+                                  //       DateTime.now()
+                                  //           .toString()
+                                  //           .substring(0, 10));
+                                  // });
+                                },
+                                icon: const Icon(
+                                  CupertinoIcons.right_chevron,
+                                  color: Colors.white,
+                                )),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              InkWell(
-                onTap: () {},
-                child: GridcardUtil(
-                    content: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            CupertinoIcons.add_circled,
-                            size: 30,
-                          ),
-                        ]),
-                  ],
-                )),
-              ),
-            ],
+                // InkWell(
+                //   onTap: () {
+                //     Navigator.of(context)
+                //         .push(CardDialog(builder: (context) => AddHealth()));
+                //   },
+                //   child: GridcardUtil(
+                //       content: Column(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Row(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           children: const [
+                //             Icon(
+                //               CupertinoIcons.add_circled,
+                //               size: 30,
+                //             ),
+                //           ]),
+                //     ],
+                //   )),
+                // ),
+              ],
+            ),
           ),
         ),
         // floatingActionButton: SpeedDial(

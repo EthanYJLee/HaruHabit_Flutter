@@ -16,8 +16,9 @@ class StreakBloc {
   Observable<LinkedHashMap<DateTime, dynamic>> get streakList =>
       _streakFetcher.stream;
 
-  getStreakLists(String hId, String date) async {
-    // Event들을 날짜별로 묶은 모델 생성
+  /// hId (추가한 습관) 별 달성한 일자 받아오기
+  getStreakLists(int hId, String date) async {
+    // Streak들을 날짜별로 묶은 모델 생성
     eventSource = await _handler.streakLists(hId);
     kStreaks = LinkedHashMap(
       equals: isSameDay,
@@ -26,10 +27,13 @@ class StreakBloc {
     _streakFetcher.sink.add(kStreaks);
   }
 
-  Future<int> achievedTodaysGoal(String hId, String date) async {
+  /// 선택한 습관, 날짜의 달성 기록 DB에 추가/제거
+  Future<int> achievedTodaysGoal(int hId, String date) async {
     int result = await _handler.achievedTodaysGoal(hId, date);
     return result;
   }
+
+  
 
   // getStreakLists() async {
   //   // Event들을 날짜별로 묶은 모델 생성
