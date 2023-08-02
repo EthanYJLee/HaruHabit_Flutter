@@ -63,7 +63,7 @@ class Streak extends StatefulWidget {
 
 class _StreakState extends State<Streak> {
   late final ValueNotifier<List<HabitStatus>> _habitStatus;
-  CalendarFormat _calendarFormat = CalendarFormat.week;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   late ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
   // final ValueNotifier<DateTime> _focusedDay = ValueNotifier(DateTime.now());
   DateTime? _selectedDay;
@@ -73,6 +73,7 @@ class _StreakState extends State<Streak> {
     hashCode: getHashCode,
   );
   late int longestStreak = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -111,6 +112,7 @@ class _StreakState extends State<Streak> {
 
   @override
   Widget build(BuildContext context) {
+    streakBloc.findLongestStreak(widget.hId);
     return SingleChildScrollView(
       child: Container(
         decoration: const BoxDecoration(
@@ -119,7 +121,7 @@ class _StreakState extends State<Streak> {
             image: AssetImage('assets/images/wallpaper.jpg'), // 배경 이미지
           ),
         ),
-        height: MediaQuery.of(context).size.height / 2,
+        height: MediaQuery.of(context).size.height / 1.1,
         width: MediaQuery.of(context).size.width,
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -238,6 +240,8 @@ class _StreakState extends State<Streak> {
                   ),
                 ),
                 ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent[100]),
                     onPressed: () {
                       //-
                       // print(_selectedDay);
@@ -252,17 +256,40 @@ class _StreakState extends State<Streak> {
                       });
                     },
                     child: const Text("Achieved Today's Goal!")),
-                ElevatedButton(
-                    onPressed: () async {
-                      longestStreak =
-                          await handler.findLongestStreak(widget.hId);
-                      print(longestStreak);
-                      setState(() {});
-                    },
-                    child: const Text('end this habit')),
-                Text(
-                  '$longestStreak',
-                  style: TextStyle(color: Colors.white),
+                Container(
+                  height: MediaQuery.of(context).size.height / 10,
+                  width: MediaQuery.of(context).size.width / 1.04,
+                  // padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Card(
+                    color: Colors.white,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15))),
+                    elevation: 3,
+                    child: Row(
+                      children: [
+                        StreamBuilder(
+                            stream: streakBloc.longestStreak,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                print(snapshot.data);
+                                return (snapshot.data == 0 ||
+                                        snapshot.data == 1)
+                                    ? Text(
+                                        'Streaks : ${snapshot.data.toString()} day',
+                                        // style: TextStyle(color: Colors.white),
+                                      )
+                                    : Text(
+                                        'Streaks : ${snapshot.data.toString()} days',
+                                        // style: TextStyle(color: Colors.white),
+                                      );
+                              } else if (snapshot.hasError) {
+                                return Text(snapshot.error.toString());
+                              }
+                              return Text('??');
+                            }),
+                      ],
+                    ),
+                  ),
                 )
               ],
             ),

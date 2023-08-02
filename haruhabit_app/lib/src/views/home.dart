@@ -62,6 +62,13 @@ class _HomeState extends State<Home> {
   //   });
   // }
 
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   setState(() {});
+  // }
+
   @override
   Widget build(BuildContext context) {
     // 선택되어있는 날짜의 일정 fetch
@@ -70,7 +77,6 @@ class _HomeState extends State<Home> {
     // 진행중인 습관 fetch
     // 각 습관별 최고 기록 fetch
     habitBloc.fetchAllHabits();
-
     return SafeArea(
       child: Container(
         child: Scaffold(
@@ -556,89 +562,19 @@ class _HomeState extends State<Home> {
                                                                               16),
                                                                     ),
                                                                   ),
-                                                                  // StreamBuilder(
-                                                                  //     stream: habitBloc
-                                                                  //         .longestStreak,
-                                                                  //     builder:
-                                                                  //         (context,
-                                                                  //             snapshot) {
-                                                                  //       if (snapshot
-                                                                  //           .hasData) {
-                                                                  //         if (snapshot
-                                                                  //             .data!
-                                                                  //             .isNotEmpty) {
-                                                                  //           return Text(snapshot.data![index].toString());
-                                                                  //         }
-                                                                  //         return Text(
-                                                                  //             '');
-                                                                  //       } else if (snapshot
-                                                                  //           .hasError) {
-                                                                  //         return Text(snapshot
-                                                                  //             .error
-                                                                  //             .toString());
-                                                                  //       }
-                                                                  //       return Text(
-                                                                  //           '');
-                                                                  //     }),
                                                                 ],
                                                               ),
-                                                              // StreamBuilder(
-                                                              //     stream: habitBloc
-                                                              //         .longestStreak,
-                                                              //     builder: (context,
-                                                              //         snapshot) {
-                                                              //       if (snapshot
-                                                              //           .hasData) {
-                                                              //         if (snapshot
-                                                              //             .data!
-                                                              //             .isNotEmpty) {
-                                                              //           return Text(snapshot
-                                                              //               .data![index]
-                                                              //               .toString());
-                                                              //         }
-                                                              //         return Text(
-                                                              //             '');
-                                                              //       } else if (snapshot
-                                                              //           .hasError) {
-                                                              //         return Text(snapshot
-                                                              //             .error
-                                                              //             .toString());
-                                                              //       }
-                                                              //       return Text(
-                                                              //           '');
-                                                              //     }),
-                                                              Stack(
+                                                              Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
                                                                 children: [
-                                                                  Container(
-                                                                    margin: const EdgeInsets
-                                                                            .only(
-                                                                        left:
-                                                                            10),
-                                                                    padding:
-                                                                        const EdgeInsets.all(
-                                                                            15),
-                                                                    decoration: BoxDecoration(
-                                                                        border: Border.all(
-                                                                          color:
-                                                                              Colors.black,
-                                                                          width:
-                                                                              1,
-                                                                        ),
-                                                                        color: Colors.white,
-                                                                        shape: BoxShape.circle),
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        (DateTime.now().difference(DateTime.parse(snapshot.data![index].startDate)).isNegative)
-                                                                            ? Container()
-                                                                            : Text(
-                                                                                "+${_selectedDate.difference(DateTime.parse(snapshot.data![index].startDate)).inDays + 1}",
-                                                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                                                              ),
-                                                                      ],
-                                                                    ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .all(
+                                                                        15.0),
+                                                                    child: Text(
+                                                                        "${_selectedDate.difference(DateTime.parse(snapshot.data![index].startDate)).inDays + 1} days"),
                                                                   ),
                                                                 ],
                                                               ),
@@ -782,10 +718,11 @@ class _HomeState extends State<Home> {
       clipBehavior: Clip.antiAliasWithSaveLayer,
       isDismissible: true,
       builder: (context) => DraggableScrollableSheet(
+        snap: true,
         expand: false,
-        initialChildSize: 0.46,
-        minChildSize: 0.45,
-        maxChildSize: 0.46,
+        initialChildSize: 0.7,
+        minChildSize: 0.69,
+        maxChildSize: 0.9,
         builder: (context, scrollController) {
           return SingleChildScrollView(
             controller: scrollController,
@@ -801,6 +738,22 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+  // Widget getAllStreaks() {
+  //   return StreamBuilder(
+  //     stream: habitBloc.longestStreak,
+  //     builder: (context, snapshot){
+  // if(snapshot.hasData){
+  //   if(snapshot.data!.isNotEmpty){
+  //     return Text(snapshot.data![])
+
+  //   }
+  // }else if (snapshot.hasError){
+  //   return Text(snapshot.error.toString());
+  // }
+  // return Text("wait");
+  // });
+  // }
 }
 
 Route _createRoute(DateTime selectedDate) {

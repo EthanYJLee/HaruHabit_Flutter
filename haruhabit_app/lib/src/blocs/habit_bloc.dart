@@ -9,31 +9,26 @@ class HabitBloc {
   final _allHabitFetcher = PublishSubject<List<HabitModel>>();
   final _habitOnProgressFetcher = PublishSubject<List<HabitModel>>();
   // fetch한 습관들의 각 longest consecutive streaks를 구독할 fetcher
-  final _streakFetcher = PublishSubject<List<int>>();
+  // final _streakFetcher = PublishSubject<List<int>>();
 
   Observable<List<HabitModel>> get allHabit => _allHabitFetcher.stream;
+  // Observable<List<int>> get longestStreak => _streakFetcher.stream;
   Observable<List<HabitModel>> get habitOnProgress =>
       _habitOnProgressFetcher.stream;
-  Observable<List<int>> get longestStreak => _streakFetcher.stream;
 
   fetchAllHabits() async {
     List<HabitModel> habitModel = await _handler.queryAllHabits();
-    List<int> streakLists = [];
-    int s;
-    for (HabitModel h in habitModel) {
-      // print(h.category.toString());
-      // print(h.hId);
-      s = await _handler.findLongestStreak(h.hId!);
-      streakLists.add(s);
-    }
-    _streakFetcher.sink.add(streakLists);
+    // List<int> streakLists = [];
+    // int streak;
+    // for (HabitModel h in habitModel) {
+    //   // print(h.category.toString());
+    //   // print(h.hId);
+    //   streak = await _handler.findLongestStreak(h.hId!);
+    //   streakLists.add(streak);
+    // }
+    // _streakFetcher.sink.add(streakLists);
     _allHabitFetcher.sink.add(habitModel);
   }
-
-  // fetchHabitsOnProgress(String today) async {
-  //   List<HabitModel> _model = await _handler.queryHabitsOnProgress(today);
-  //   _habitOnProgressFetcher.sink.add(_model);
-  // }
 
   Future<int> addHabit(String category, String habit, int? spending,
       String? currency, String startDate) async {

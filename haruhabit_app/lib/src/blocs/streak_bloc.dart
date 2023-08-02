@@ -16,6 +16,9 @@ class StreakBloc {
   Observable<LinkedHashMap<DateTime, dynamic>> get streakList =>
       _streakFetcher.stream;
 
+  final _longestStreak = PublishSubject<int>();
+  Observable<int> get longestStreak => _longestStreak.stream;
+
   /// hId (추가한 습관) 별 달성한 일자 받아오기
   getStreakLists(int hId, String date) async {
     // Streak들을 날짜별로 묶은 모델 생성
@@ -31,6 +34,11 @@ class StreakBloc {
   Future<int> achievedTodaysGoal(int hId, String date) async {
     int result = await _handler.achievedTodaysGoal(hId, date);
     return result;
+  }
+
+  Future findLongestStreak(int hId) async{
+    int streak = await _handler.findLongestStreak(hId);
+    _longestStreak.sink.add(streak);
   }
 
   
