@@ -30,68 +30,78 @@ class _HabitHistoryState extends State<HabitHistory> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: FutureBuilder(
-        future:
-            handler.queryAllHabits(), // handler가 queryAllHabits 실행하면서 view 생성
-        builder:
-            (BuildContext context, AsyncSnapshot<List<HabitModel>> snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: snapshot.data?.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () async {
-                    HabitModel habitModel = HabitModel(
-                      hId: snapshot.data?[index].hId,
-                      category: "${snapshot.data?[index].category}",
-                      habit: "${snapshot.data?[index].habit}",
-                      spending: snapshot.data?[index].spending as int,
-                      currency: "${snapshot.data?[index].currency}",
-                      startDate: "${snapshot.data?[index].startDate}",
-                      endDate: "${snapshot.data?[index].endDate}",
-                    );
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: ((context) => UpdateStudent()),
-                    //   ),
-                    // );
-                  },
-                  child: Card(
-                    color: (DateTime.now()
-                            .difference(
-                                DateTime.parse(snapshot.data![index].startDate))
-                            .isNegative)
-                        ? Color.fromARGB(255, 203, 203, 203)
-                        : Color.fromARGB(255, 255, 238, 225),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    elevation: 5,
-                    child: Column(
-                      children: [
-                        // Text('id : ${snapshot.data?[index].hId}'),
-                        Text('Category : ${snapshot.data?[index].category}'),
-                        Text('Habit : ${snapshot.data?[index].habit}'),
-                        Text('Start Date : ${snapshot.data?[index].startDate}'),
-                        // (DateTime.now()
-                        //         .difference(DateTime.parse(
-                        //             snapshot.data![index].startDate))
-                        //         .isNegative)
-                        //     ? Text('not yet')
-                        //     : Text('on progress')
-                      ],
-                    ),
-                  ),
-                );
+      body: Center(
+        child: Column(
+          children: [
+            ExpansionTile(title: const Text('Done')),
+            ExpansionTile(title: const Text('On progress')),
+            FutureBuilder(
+              future: handler
+                  .queryAllHabits(), // handler가 queryAllHabits 실행하면서 view 생성
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<HabitModel>> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () async {
+                          HabitModel habitModel = HabitModel(
+                            hId: snapshot.data?[index].hId,
+                            category: "${snapshot.data?[index].category}",
+                            habit: "${snapshot.data?[index].habit}",
+                            spending: snapshot.data?[index].spending as int,
+                            currency: "${snapshot.data?[index].currency}",
+                            startDate: "${snapshot.data?[index].startDate}",
+                            endDate: "${snapshot.data?[index].endDate}",
+                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: ((context) => UpdateStudent()),
+                          //   ),
+                          // );
+                        },
+                        child: Card(
+                          color: (DateTime.now()
+                                  .difference(DateTime.parse(
+                                      snapshot.data![index].startDate))
+                                  .isNegative)
+                              ? Color.fromARGB(255, 203, 203, 203)
+                              : Color.fromARGB(255, 255, 238, 225),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          elevation: 5,
+                          child: Column(
+                            children: [
+                              // Text('id : ${snapshot.data?[index].hId}'),
+                              Text(
+                                  'Category : ${snapshot.data?[index].category}'),
+                              Text('Habit : ${snapshot.data?[index].habit}'),
+                              Text(
+                                  'Start Date : ${snapshot.data?[index].startDate}'),
+                              // (DateTime.now()
+                              //         .difference(DateTime.parse(
+                              //             snapshot.data![index].startDate))
+                              //         .isNegative)
+                              //     ? Text('not yet')
+                              //     : Text('on progress')
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
               },
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+            ),
+          ],
+        ),
       ),
     ));
   }

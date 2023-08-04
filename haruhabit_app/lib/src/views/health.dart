@@ -83,14 +83,14 @@ class _HealthState extends State<Health> {
                           );
 
                         case HealthStatus.authorized:
-                          // return const Center(
-                          //   child: Text(
-                          //     'Authorized',
-                          //   ),
-                          // );
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: Text(
+                              'Authorized',
+                            ),
                           );
+                        // return const Center(
+                        //   child: CircularProgressIndicator(),
+                        // );
 
                         /// 걸음 수 데이터 접근 권한 없을 경우
                         case HealthStatus.unauthorized:

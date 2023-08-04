@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:haruhabit_app/src/views/home.dart';
+import 'package:haruhabit_app/src/views/splash_screen.dart';
 import 'package:haruhabit_app/src/views/tabbar.dart';
 
 class App extends StatelessWidget {
@@ -32,7 +33,7 @@ class App extends StatelessWidget {
         fontFamily: 'text',
       ),
       debugShowCheckedModeBanner: false,
-      home: const Tabbar(),
+      home: const SplashScreen(),
     );
   }
 }

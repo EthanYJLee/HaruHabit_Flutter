@@ -19,6 +19,10 @@ class StreakBloc {
   final _longestStreak = PublishSubject<int>();
   Observable<int> get longestStreak => _longestStreak.stream;
 
+  final _completedFetcher = PublishSubject<int>();
+  Map<DateTime,dynamic> completedLists = <DateTime, dynamic>{};
+  Observable<int> get totalCompleted => _completedFetcher.stream;
+
   /// hId (추가한 습관) 별 달성한 일자 받아오기
   getStreakLists(int hId, String date) async {
     // Streak들을 날짜별로 묶은 모델 생성
@@ -27,6 +31,7 @@ class StreakBloc {
       equals: isSameDay,
       hashCode: getHashCode,
     )..addAll(eventSource);
+    // print('length:${eventSource.length}');
     _streakFetcher.sink.add(kStreaks);
   }
 
@@ -36,12 +41,15 @@ class StreakBloc {
     return result;
   }
 
-  Future findLongestStreak(int hId) async{
+  Future findLongestStreak(int hId) async {
     int streak = await _handler.findLongestStreak(hId);
     _longestStreak.sink.add(streak);
   }
 
-  
+  getCompletedLists(int hId) async{
+    completedLists = await _handler.streakLists(hId);
+    _completedFetcher.sink.add(completedLists.length);
+  }
 
   // getStreakLists() async {
   //   // Event들을 날짜별로 묶은 모델 생성

@@ -179,6 +179,13 @@ class DatabaseHandler {
   //   return queryResult.map((e) => HabitModel.fromMap(e)).toList();
   // }
 
+  Future<List<HabitModel>> querySelectedHabit(int hId) async {
+    final Database db = await initializeDB('habits');
+    final List<Map<String, Object?>> _queryResult = await db
+        .rawQuery('SELECT * FROM habits WHERE hId = $hId AND endDate IS NULL');
+    return _queryResult.map((e) => HabitModel.fromMap(e)).toList();
+  }
+
   // insert new habit into DB
   Future insertHabit(HabitModel habitModel) async {
     int result = 0;

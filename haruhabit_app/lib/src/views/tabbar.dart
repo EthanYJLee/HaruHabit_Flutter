@@ -73,6 +73,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 0,
           backgroundColor: Colors.transparent,
           actions: [

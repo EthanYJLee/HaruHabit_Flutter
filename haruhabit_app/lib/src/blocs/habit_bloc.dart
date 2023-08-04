@@ -16,6 +16,13 @@ class HabitBloc {
   Observable<List<HabitModel>> get habitOnProgress =>
       _habitOnProgressFetcher.stream;
 
+  final _totalDatesFetcher = PublishSubject<int>();
+  Observable<int> get totalDates => _totalDatesFetcher.stream;
+
+  final _percentageFetcher = PublishSubject<double>();
+  Observable<double> get percentage => _percentageFetcher.stream;
+
+
   fetchAllHabits() async {
     List<HabitModel> habitModel = await _handler.queryAllHabits();
     // List<int> streakLists = [];
@@ -28,6 +35,30 @@ class HabitBloc {
     // }
     // _streakFetcher.sink.add(streakLists);
     _allHabitFetcher.sink.add(habitModel);
+  }
+
+  fetchSelectedHabit(int hId) async {
+    List<HabitModel> model = await _handler.querySelectedHabit(hId);
+    // print(model.first.startDate);
+    // print(DateTime.now()
+    //         .difference(DateTime.parse(model.first.startDate))
+    //         .inDays +
+    //     1);
+    _totalDatesFetcher.sink.add(DateTime.now()
+            .difference(DateTime.parse(model.first.startDate))
+            .inDays +
+        1);
+  }
+
+  fetchPercentage(int hId) async {
+    Map<DateTime, dynamic> _completed = await _handler.streakLists(hId);
+    // print(_completed.length);
+    List<HabitModel> _model = await _handler.querySelectedHabit(hId);
+    // print(DateTime.now()
+    //         .difference(DateTime.parse(_model.first.startDate))
+    //         .inDays +
+    //     1);
+    _percentageFetcher.sink.add(_completed.length/(DateTime.now().difference(DateTime.parse(_model.first.startDate)).inDays+1));
   }
 
   Future<int> addHabit(String category, String habit, int? spending,

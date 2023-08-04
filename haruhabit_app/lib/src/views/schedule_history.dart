@@ -31,7 +31,7 @@ class ScheduleHistory extends StatelessWidget {
                       textColor: Colors.black,
                       iconColor: Colors.black,
                       collapsedBackgroundColor:
-                          Color.fromARGB(255, 255, 238, 225),
+                          const Color.fromARGB(255, 255, 238, 225),
 
                       /// Desc : Schedule이 있는 날짜를 중복 제거한 뒤 ExpansionTile의 대분류로 지정
                       /// Date : 2023.06.27
@@ -63,7 +63,7 @@ class ScheduleHistory extends StatelessWidget {
                                   flex: 2,
                                   foregroundColor: Colors.black,
                                   backgroundColor:
-                                      Color.fromARGB(255, 255, 238, 225),
+                                      const Color.fromRGBO(17, 92, 255, 1),
                                   icon: Icons.edit,
                                   label: 'Edit',
                                 ),
@@ -79,14 +79,14 @@ class ScheduleHistory extends StatelessWidget {
                                   },
                                   foregroundColor: Colors.black,
                                   backgroundColor:
-                                      Color.fromARGB(255, 255, 238, 225),
+                                      const Color.fromARGB(255, 255, 48, 48),
                                   icon: Icons.delete,
                                   label: 'Delete',
                                 ),
                               ],
                             ),
                             child: Card(
-                              color: Color.fromARGB(255, 255, 238, 225),
+                              color: const Color.fromARGB(255, 255, 238, 225),
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 5),
                               child: ListTile(

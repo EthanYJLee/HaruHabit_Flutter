@@ -48,15 +48,14 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   # RxDart
   rxdart: ^0.18.0
-
   device_info_plus: ^8.2.2
   # Localization
   intl: ^0.17.0
   flutter_localizations:
     sdk: flutter
   easy_localization: ^3.0.2
-  # rename
-  rename: ^2.1.1
+  # # rename
+  # rename: ^2.1.1
   # Timeline
   calendar_timeline: ^1.1.2
   # Calendar with Events
@@ -67,6 +66,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   # Restart app easily
   flutter_phoenix: ^1.1.1
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:
