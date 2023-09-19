@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:haruhabit_app/src/blocs/calendar_bloc.dart';
 import 'package:haruhabit_app/src/blocs/schedule_bloc.dart';
 import 'package:haruhabit_app/src/views/calendar.dart';
 import 'package:haruhabit_app/src/views/health.dart';
 import 'package:haruhabit_app/src/views/home.dart';
-import 'package:haruhabit_app/src/views/mypage.dart';
 
 class Tabbar extends StatefulWidget {
   const Tabbar({super.key});
@@ -33,6 +33,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     WidgetsBinding.instance.addObserver(this);
     currentIndex = 0;
     onSelected = [true, false];
@@ -64,7 +65,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     debugPrint('Locale : ${context.locale}');
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
           image: AssetImage('assets/images/wallpaper.jpg'), // 배경 이미지
@@ -101,6 +102,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
                         await context.setLocale(const Locale("en", "US"));
                         await EasyLocalization.ensureInitialized();
                         Phoenix.rebirth(context);
+                        // setState(() {});
                       },
                       child: const Text(
                         "English",
@@ -113,6 +115,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
                           await context.setLocale(const Locale("ko", "KR"));
                           await EasyLocalization.ensureInitialized();
                           Phoenix.rebirth(context);
+                          // setState(() {});
                         },
                         child: const Text(
                           "한국어",
@@ -136,21 +139,17 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
             setState(() {
               currentIndex = value;
             });
-            _changeOnselected(value);
+            _changeOnSelected(value);
           },
           items: [
             BottomNavigationBarItem(
               icon: onSelected[0]
-                  // ? const Icon(CupertinoIcons.heart_circle_fill)
-                  // : const Icon(CupertinoIcons.heart_circle),
                   ? const Icon(CupertinoIcons.square_list_fill)
                   : const Icon(CupertinoIcons.square_list),
-              label: "To do",
+              label: "Planner",
             ),
             BottomNavigationBarItem(
               icon: onSelected[1]
-                  // ? const Icon(CupertinoIcons.house_fill)
-                  // : const Icon(CupertinoIcons.house),
                   ? const Icon(CupertinoIcons.heart_circle_fill)
                   : const Icon(CupertinoIcons.heart_circle),
               label: "Health",
@@ -167,7 +166,7 @@ class _TabbarState extends State<Tabbar> with WidgetsBindingObserver {
     );
   }
 
-  _changeOnselected(int index) {
+  _changeOnSelected(int index) {
     for (var i = 0; i < tabbarItems.length; i++) {
       if (i == index) {
         onSelected[i] = true;

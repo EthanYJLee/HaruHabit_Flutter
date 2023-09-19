@@ -6,9 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:haruhabit_app/src/blocs/habit_bloc.dart';
+import 'package:haruhabit_app/src/models/habit_model.dart';
 import 'package:haruhabit_app/src/utils/calendar_utils.dart';
+import 'package:haruhabit_app/src/utils/constant_widgets.dart';
 import 'package:haruhabit_app/src/utils/database_handler.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
 import 'package:haruhabit_app/src/utils/home_drawer.dart';
@@ -42,6 +45,15 @@ class _HomeState extends State<Home> {
     'custom': Icons.add_task
   }.entries;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      habitBloc.fetchAllHabits();
+    });
+  }
+
   /// DB에서 받아온 Habit category에 해당하는 Icon return
   IconData getCategoryIcons(String feature) {
     // print(_categoryLists
@@ -52,22 +64,6 @@ class _HomeState extends State<Home> {
         .firstWhere((key) => key.toString().contains(feature))
         .value;
   }
-
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   setState(() {
-  //     habitBloc.fetchAllHabits();
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   setState(() {});
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -149,11 +145,8 @@ class _HomeState extends State<Home> {
                                                 8,
                                         child: ElevatedButton(
                                           onPressed: () {},
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.redAccent[100]),
-                                          ),
+                                          style: ConstantWidgets
+                                              .dailyCountButtonStyle(),
                                           child:
                                               Text("${snapshot.data!.length}"),
                                         ),
@@ -168,7 +161,7 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                         Container(
-                          width: 100,
+                          width: ScreenUtil().setWidth(90),
                           child: Row(
                             children: [
                               IconButton(
@@ -409,11 +402,8 @@ class _HomeState extends State<Home> {
                                                 8,
                                         child: ElevatedButton(
                                           onPressed: () {},
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.redAccent[100]),
-                                          ),
+                                          style: ConstantWidgets
+                                              .dailyCountButtonStyle(),
                                           // 현재 진행중인 (시작일이 오늘 날짜 이전인) 습관의 개수만 보여주기
                                           child: Text(
                                               "${snapshot.data!.where((element) => DateTime.parse(element.startDate).isBefore(DateTime.now())).length}"),
@@ -470,200 +460,152 @@ class _HomeState extends State<Home> {
 
                   /// 진행중인 습관 보여주기
                   /// 카테고리 아이콘, 습관 내용 (제목), 진행중인 기간
-                  StreamBuilder(
-                      stream: habitBloc.allHabit,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isNotEmpty) {
-                            return Container(
-                              height: (snapshot.data!.length < 4)
-                                  ? MediaQuery.of(context).size.height /
-                                      (12 / snapshot.data!.length)
-                                  : MediaQuery.of(context).size.height / 4,
-                              width: MediaQuery.of(context).size.width / 1.1,
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.length,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Flex(
-                                      direction: Axis.vertical,
-                                      children: [
-                                        InkWell(
-                                            onTap: () {
-                                              // 일자별 달성 (완료)할 수 있는 bottom sheet
-                                              return showHabitsBottomSheet(
-                                                  context,
-                                                  snapshot.data![index].hId!,
-                                                  snapshot
-                                                      .data![index].startDate);
-                                            },
-                                            child:
-                                                // 아직 시작하지 않은 습관은 안 보여줌
-                                                (_selectedDate
-                                                            .difference(DateTime
-                                                                .parse(snapshot
-                                                                    .data![
-                                                                        index]
-                                                                    .startDate))
-                                                            .inDays >=
-                                                        0)
-                                                    ? Container(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height /
-                                                            12,
-                                                        child: Card(
-                                                          color: Colors.white,
-                                                          shape: const RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius
-                                                                  .all(Radius
-                                                                      .circular(
-                                                                          15))),
-                                                          elevation: 3,
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Container(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(5),
-                                                                    decoration: BoxDecoration(
-                                                                        shape: BoxShape
-                                                                            .circle,
-                                                                        border: Border.all(
-                                                                            color: Colors
-                                                                                .white),
-                                                                        color: Colors
-                                                                            .red[100]),
-                                                                    child: Icon(getCategoryIcons(snapshot
-                                                                        .data![
-                                                                            index]
-                                                                        .category
-                                                                        .toString())),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(5),
-                                                                    child: Text(
-                                                                      '${snapshot.data?[index].habit}',
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              16),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .all(
-                                                                        15.0),
-                                                                    child: Text(
-                                                                        "${_selectedDate.difference(DateTime.parse(snapshot.data![index].startDate)).inDays + 1} days"),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : Container()),
-                                      ],
-                                    );
-                                  }),
-                            );
-                          } else {
-                            return Container();
-                          }
-                        } else if (snapshot.hasError) {
-                          return Text(snapshot.error.toString());
-                        }
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }),
+                  showHabit(),
                 ],
               ),
             ),
           ),
-
-          /// Desc : 습관 및 일정을 추가하고 조회하는 Floating Action Button
-          /// Date : 2023.06.01
-          // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          // floatingActionButton: SpeedDial(
-          //   backgroundColor: Colors.redAccent[100],
-          //   overlayColor: Colors.black,
-          //   icon: Icons.add,
-          //   activeIcon: Icons.close,
-          //   direction: SpeedDialDirection.up,
-          //   childPadding: const EdgeInsets.all(5),
-          //   spaceBetweenChildren: 4,
-          //   spacing: 3,
-          //   useRotationAnimation: true,
-          //   animationCurve: Curves.easeInOutQuart,
-          //   children: [
-          //     SpeedDialChild(
-          //       child: const Icon(CupertinoIcons.calendar),
-          //       label: "Add Habit",
-          //       labelBackgroundColor: Colors.redAccent[100],
-          //       labelStyle: const TextStyle(color: Colors.white),
-          //       backgroundColor: Colors.redAccent[100],
-          //       foregroundColor: Colors.white,
-          //       // onTap: () => showSearchView(),
-          //       onTap: () {
-          //         Navigator.of(context).push(
-          //             MaterialPageRoute(builder: (context) => const Planner()));
-          //         // .whenComplete(() => scheduleBloc.fetchAllSchedules());
-          //       },
-          //     ),
-          //     SpeedDialChild(
-          //         child: const Icon(CupertinoIcons.clock),
-          //         label: "Add To-Do",
-          //         labelBackgroundColor: Colors.redAccent[100],
-          //         labelStyle: const TextStyle(color: Colors.white),
-          //         backgroundColor: Colors.redAccent[100],
-          //         foregroundColor: Colors.white,
-          //         // onTap: () => showSortDialog(),
-          //         onTap: () {
-          //           Navigator.of(context)
-          //               .push(MaterialPageRoute(
-          //                   builder: (context) => const Calendar()))
-          //               .whenComplete(() => scheduleBloc.fetchAllSchedules());
-          //         }),
-          //     SpeedDialChild(
-          //       child: const Icon(CupertinoIcons.list_bullet),
-          //       label: "View History",
-          //       labelBackgroundColor: Colors.redAccent[100],
-          //       labelStyle: const TextStyle(color: Colors.white),
-          //       backgroundColor: Colors.redAccent[100],
-          //       foregroundColor: Colors.white,
-          //       onTap: () {
-          //         Navigator.of(context).push(MaterialPageRoute(
-          //             builder: (context) => const HistoryTabbar(
-          //                   initialView: 0,
-          //                 )));
-          //       },
-          //     ),
-          //   ],
-          // ),
         ),
       ),
     );
+  }
+
+  StreamBuilder<List<HabitModel>> showHabit() {
+    return StreamBuilder(
+        stream: habitBloc.allHabit,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.isNotEmpty) {
+              return Container(
+                height: (snapshot.data!.length < 4)
+                    ? MediaQuery.of(context).size.height /
+                        (12 / snapshot.data!.length)
+                    : MediaQuery.of(context).size.height / 4,
+                width: MediaQuery.of(context).size.width / 1.1,
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Flex(
+                        direction: Axis.vertical,
+                        children: [
+                          InkWell(
+                              onTap: () {
+                                // 일자별 달성 (완료)할 수 있는 bottom sheet
+                                return showHabitsBottomSheet(
+                                    context,
+                                    snapshot.data![index].hId!,
+                                    snapshot.data![index].startDate);
+                              },
+                              child:
+                                  // 아직 시작하지 않은 습관은 안 보여줌
+                                  (_selectedDate
+                                              .difference(DateTime.parse(
+                                                  snapshot
+                                                      .data![index].startDate))
+                                              .inDays >=
+                                          0)
+                                      ? Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              12,
+                                          child: Card(
+                                            color: Colors.white,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(
+                                                  15,
+                                                ),
+                                              ),
+                                            ),
+                                            elevation: 3,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      1.2,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 5,
+                                                                    bottom: 5,
+                                                                    left: 15,
+                                                                    right: 15),
+                                                            decoration: BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border: Border.all(
+                                                                    color: Colors
+                                                                        .white),
+                                                                color: Colors
+                                                                    .red[100]),
+                                                            child: Icon(
+                                                                getCategoryIcons(
+                                                                    snapshot
+                                                                        .data![
+                                                                            index]
+                                                                        .category
+                                                                        .toString())),
+                                                          ),
+                                                          Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                '${snapshot.data?[index].habit}',
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            16),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                              "${_selectedDate.difference(DateTime.parse(snapshot.data![index].startDate)).inDays + 1} days"),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : Container()),
+                        ],
+                      );
+                    }),
+              );
+            } else {
+              return Container();
+            }
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 
   // today (오늘) button 눌렀을 때 타임라인 오늘 날짜로 이동
@@ -705,55 +647,49 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // void showSizeBottomSheet(BuildContext context, Map<String, int> sizes) {
   void showHabitsBottomSheet(BuildContext context, int hId, String startDate) {
     showModalBottomSheet(
-      enableDrag: false,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14.0),
-      ),
-      context: context,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      isDismissible: true,
-      builder: (context) => DraggableScrollableSheet(
-        snap: true,
-        expand: false,
-        initialChildSize: 0.7,
-        minChildSize: 0.69,
-        maxChildSize: 0.9,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: Container(
-              color: Colors.white,
-              child: Streak(
-                hId: hId,
-                startDate: startDate,
-              ),
-            ),
+        enableDrag: true,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14.0),
+        ),
+        context: context,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        isDismissible: true,
+        builder: (context) {
+          return DraggableScrollableSheet(
+            snap: true,
+            expand: false,
+            initialChildSize: 0.8,
+            minChildSize: 0.75,
+            maxChildSize: 0.9,
+            builder: (context, scrollController) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: Container(
+                  color: Colors.white,
+                  child: Streak(
+                    hId: hId,
+                    startDate: startDate,
+                  ),
+                ),
+              );
+            },
           );
-        },
-      ),
-    );
+        });
   }
 
-  // Widget getAllStreaks() {
-  //   return StreamBuilder(
-  //     stream: habitBloc.longestStreak,
-  //     builder: (context, snapshot){
-  // if(snapshot.hasData){
-  //   if(snapshot.data!.isNotEmpty){
-  //     return Text(snapshot.data![])
-
-  //   }
-  // }else if (snapshot.hasError){
-  //   return Text(snapshot.error.toString());
-  // }
-  // return Text("wait");
-  // });
-  // }
+  _showHabitsDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('finish/remove'),
+          );
+        });
+  }
 }
 
 Route _createRoute(DateTime selectedDate) {

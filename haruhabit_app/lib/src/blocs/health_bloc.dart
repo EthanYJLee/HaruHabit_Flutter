@@ -67,13 +67,13 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
           print("3. Authorized");
           final healthData = await _fetchHealthData();
           if (state.status == HealthStatus.dataReady) {
-            // Step Data 권한 허용했을 경우 (Fetch 성공 시)
-            return emit(state.copyWith(
-                status: HealthStatus.dataReady, model: healthData));
-            // Step Data 권한 허용 안 했을 경우 (Fetch 실패 시)
+            /// Health Data Fetch 성공 시
+            print("4-1. Health Data is Ready");
+            return emit(state.copyWith(status: HealthStatus.dataReady));
           } else {
-            print("4. Health Data is empty");
-            // return emit(state.copyWith(status: HealthStatus.unauthorized));
+            /// Health Data 전부 비어있을 경우
+            print("4-2. Health Data is empty");
+            return emit(state.copyWith(status: HealthStatus.noData));
           }
         }
       }
@@ -99,19 +99,23 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
       try {
         authorized = await health.requestAuthorization(dataTypes,
             permissions: permissions);
-        authorized
-            ? emit(state.copyWith(status: HealthStatus.authorized))
-            : emit(state.copyWith(status: HealthStatus.unauthorized));
+        // authorized
+        //     ? emit(state.copyWith(status: HealthStatus.authorized))
+        //     : emit(state.copyWith(status: HealthStatus.unauthorized));
       } catch (error) {
         print("Exception in authorize: $error");
       }
     }
+    authorized
+        ? emit(state.copyWith(status: HealthStatus.authorized))
+        : emit(state.copyWith(status: HealthStatus.unauthorized));
     return authorized;
   }
 
   /// Fetch data points from the health plugin and show them in the app.
   Future<HealthModel> _fetchHealthData() async {
-    // define the types to get
+    /// define the types to get
+    /// 접근할 데이터 타입
     final types = [
       HealthDataType.STEPS,
       HealthDataType.HEART_RATE,
@@ -125,6 +129,7 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     late String heartRate = "0";
     late String bloodPreSys = "0";
     late String bloodPreDia = "0";
+    // Total Energy Burned 계산 위해 double 사용
     late double activeEnergyBurned = 0;
     late double basalEnergyBurned = 0;
     late double totalEnergyBurned = 0;
@@ -175,52 +180,51 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
         Map basalEnergyBurnedSourceName = {
           for (String item in sources) '$item': ""
         };
-        // */
-        if (healthData.isNotEmpty) {
-          for (HealthDataPoint h in healthData) {
-            if (h.type == HealthDataType.STEPS) {
-              stepsKnown[h.sourceId] = true;
-              stepCount[h.sourceId] =
-                  stepCount[h.sourceId] + double.parse("${h.value}");
-              stepsSourceName[h.sourceId] = h.sourceName;
-              steps = stepCount[h.sourceId];
-            } else if (h.type == HealthDataType.HEART_RATE) {
-              heartRate = "${h.value}";
-            } else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
-              bloodPreSys = "${h.value}";
-            } else if (h.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC) {
-              bloodPreDia = "${h.value}";
-            } else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
-              activeEnergyBurnedKnown[h.sourceId] = true;
-              activeEnergyBurnedCount[h.sourceId] =
-                  activeEnergyBurnedCount[h.sourceId] +
-                      double.parse("${h.value}");
-              activeEnergyBurnedSourceName[h.sourceId] = h.sourceName;
-              // platform = h.platform.name;
-              activeEnergyBurned = activeEnergyBurnedCount[h.sourceId];
-            } else if (h.type == HealthDataType.BASAL_ENERGY_BURNED) {
-              basalEnergyBurnedKnown[h.sourceId] = true;
-              basalEnergyBurnedCount[h.sourceId] =
-                  basalEnergyBurnedCount[h.sourceId] +
-                      double.parse("${h.value}");
-              basalEnergyBurnedSourceName[h.sourceId] = h.sourceName;
-              // platform = h.platform.name;
-              basalEnergyBurned = basalEnergyBurnedCount[h.sourceId];
-            }
-            totalEnergyBurned = activeEnergyBurned + basalEnergyBurned;
+        for (HealthDataPoint h in healthData) {
+          if (h.type == HealthDataType.STEPS) {
+            stepsKnown[h.sourceId] = true;
+            stepCount[h.sourceId] =
+                stepCount[h.sourceId] + double.parse("${h.value}");
+            stepsSourceName[h.sourceId] = h.sourceName;
+            steps = stepCount[h.sourceId];
+          } else if (h.type == HealthDataType.HEART_RATE) {
+            heartRate = "${h.value}";
+          } else if (h.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC) {
+            bloodPreSys = "${h.value}".split(".")[0];
+          } else if (h.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC) {
+            bloodPreDia = "${h.value}".split(".")[0];
+          } else if (h.type == HealthDataType.ACTIVE_ENERGY_BURNED) {
+            activeEnergyBurnedKnown[h.sourceId] = true;
+            activeEnergyBurnedCount[h.sourceId] =
+                activeEnergyBurnedCount[h.sourceId] +
+                    double.parse("${h.value}");
+            activeEnergyBurnedSourceName[h.sourceId] = h.sourceName;
+            // platform = h.platform.name;
+            activeEnergyBurned = activeEnergyBurnedCount[h.sourceId];
+          } else if (h.type == HealthDataType.BASAL_ENERGY_BURNED) {
+            basalEnergyBurnedKnown[h.sourceId] = true;
+            basalEnergyBurnedCount[h.sourceId] =
+                basalEnergyBurnedCount[h.sourceId] + double.parse("${h.value}");
+            basalEnergyBurnedSourceName[h.sourceId] = h.sourceName;
+            // platform = h.platform.name;
+            basalEnergyBurned = basalEnergyBurnedCount[h.sourceId];
           }
-          if (bloodPreSys != "null" && bloodPreDia != "null") {
-            bp = "$bloodPreSys / $bloodPreDia mmHg";
-          }
+          totalEnergyBurned = activeEnergyBurned + basalEnergyBurned;
         }
+        if (bloodPreSys != "0" && bloodPreDia != "0") {
+          bp = "$bloodPreSys / $bloodPreDia mmHg";
+        }
+        print(bp);
         healthModel = HealthModel(
             steps: steps.toString(),
             heartRate: heartRate,
             bloodPreSys: bloodPreSys,
             bloodPreDia: bloodPreDia,
-            energyBurned: totalEnergyBurned.toStringAsFixed(2).toString(),
+            energyBurned: totalEnergyBurned.toInt().toString(),
             bp: bp);
-        emit(state.copyWith(status: HealthStatus.dataReady));
+        print(healthModel.bp);
+        emit(
+            state.copyWith(status: HealthStatus.dataReady, model: healthModel));
       } catch (error) {
         print("Exception in getHealthDataFromTypes: $error");
       }
@@ -233,41 +237,9 @@ class HealthBloc extends Bloc<HealthEvent, HealthState> {
     return healthModel;
   }
 
-  // // Fetch today's step count from the health plugin
-  // Future<StepModel> _fetchStepData() async {
-  //   // today's data since midnight
-  //   final now = DateTime.now();
-  //   final midnight = DateTime(now.year, now.month, now.day);
-  //   late StepModel stepModel;
-  //   int _noOfSteps;
-
-  //   bool requested = await health.requestAuthorization([HealthDataType.STEPS]);
-  //   // bool requested = await health.requestAuthorization([HealthDataType.STEPS, HealthDataType.HEART_RATE, HealthDataType.WORKOUT, HealthDataType.BLOOD_PRESSURE_SYSTOLIC, HealthDataType.BLOOD_PRESSURE_DIASTOLIC, HealthDataType.ACTIVE_ENERGY_BURNED]);
-
-  //   if (requested) {
-  //     print("4. Accessed to Step Data");
-  //     try {
-  //       stepModel = StepModel(
-  //           steps: await health.getTotalStepsInInterval(midnight, now) as int);
-  //     } catch (error) {
-  //       print("Caught exception in getTotalStepsInInterval: $error");
-  //     }
-  //     print('5. Total number of steps: ${stepModel.steps}');
-  //     _noOfSteps = (stepModel.steps == null) ? 0 : stepModel.steps;
-  //     (stepModel.steps == null)
-  //         ? emit(state.copyWith(status: HealthStatus.noData))
-  //         : emit(state.copyWith(status: HealthStatus.dataReady));
-  //   } else {
-  //     emit(state.copyWith(status: HealthStatus.unauthorized));
-  //   }
-  //   // return (stepModel.steps == null) ? const StepModel(steps: 0) : stepModel;
-  //   // stepModel.steps == null
-  //   //     ? emit(state.copyWith(status: HealthStatus.unauthorized))
-  //   //     : emit(state.copyWith(status: HealthStatus.stepsReady));
-  //   return stepModel;
-  // }
-
-  // write new workout data to Apple Health
+  /// write new workout data to Apple Health
+  /// 저장할 위치 (Health or 기기 내 (SQlite)) 결정할 것
+  /// 2023.08.07
   Future _addWorkoutData(
       HealthWorkoutActivityType type, DateTime start, DateTime end) async {
     bool success = true;

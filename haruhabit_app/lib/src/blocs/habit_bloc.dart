@@ -22,7 +22,6 @@ class HabitBloc {
   final _percentageFetcher = PublishSubject<double>();
   Observable<double> get percentage => _percentageFetcher.stream;
 
-
   fetchAllHabits() async {
     List<HabitModel> habitModel = await _handler.queryAllHabits();
     // List<int> streakLists = [];
@@ -50,6 +49,7 @@ class HabitBloc {
         1);
   }
 
+  /// 습관 시작일 ~ 오늘 중 몇 퍼센트 달성했는지 계산
   fetchPercentage(int hId) async {
     Map<DateTime, dynamic> _completed = await _handler.streakLists(hId);
     // print(_completed.length);
@@ -58,9 +58,14 @@ class HabitBloc {
     //         .difference(DateTime.parse(_model.first.startDate))
     //         .inDays +
     //     1);
-    _percentageFetcher.sink.add(_completed.length/(DateTime.now().difference(DateTime.parse(_model.first.startDate)).inDays+1));
+    _percentageFetcher.sink.add(_completed.length /
+        (DateTime.now()
+                .difference(DateTime.parse(_model.first.startDate))
+                .inDays +
+            1));
   }
 
+  /// 새로운 습관 추가
   Future<int> addHabit(String category, String habit, int? spending,
       String? currency, String startDate) async {
     HabitModel habitModel = HabitModel(
@@ -74,8 +79,14 @@ class HabitBloc {
     return 0;
   }
 
+
+
   dispose() {
     _allHabitFetcher.close();
+    _totalDatesFetcher.close();
+    _habitOnProgressFetcher.close();
+    _percentageFetcher.close();
+    
   }
 }
 

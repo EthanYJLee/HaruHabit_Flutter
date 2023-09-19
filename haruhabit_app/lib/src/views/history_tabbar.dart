@@ -38,54 +38,66 @@ class _HistoryTabbarState extends State<HistoryTabbar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("History"),
-        elevation: 0,
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage('assets/images/wallpaper.jpg'), // 배경 이미지
+        ),
       ),
-      body: tabbarItems[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedLabelStyle:
-            TextStyle(color: Colors.redAccent[100], fontSize: 14),
-        // backgroundColor: const Color(0xFF084A76),
-        fixedColor: Colors.redAccent[100],
-        unselectedItemColor: Colors.redAccent[100],
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentIndex,
-        onTap: (value) {
-          setState(() {
-            currentIndex = value;
-          });
-          changeOnselected(value);
-        },
-        items: [
-          BottomNavigationBarItem(
-            // icon: onSelected[0]
-            icon: currentIndex == 0
-                ? Icon(
-                    CupertinoIcons.calendar_circle_fill,
-                    color: Colors.redAccent[100],
-                  )
-                : Icon(
-                    CupertinoIcons.calendar_circle,
-                    color: Colors.redAccent[100],
-                  ),
-            label: "Habit",
-          ),
-          BottomNavigationBarItem(
-            // icon: onSelected[1]
-            icon: currentIndex == 1
-                ? Icon(
-                    CupertinoIcons.clock_fill,
-                    color: Colors.redAccent[100],
-                  )
-                : Icon(
-                    CupertinoIcons.clock,
-                    color: Colors.redAccent[100],
-                  ),
-            label: "To-Do",
-          ),
-        ],
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text("History"),
+          elevation: 0,
+        ),
+        body: tabbarItems[currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          unselectedLabelStyle:
+              TextStyle(color: Colors.redAccent[100], fontSize: 14),
+          backgroundColor: Colors.transparent,
+          fixedColor: Colors.redAccent[100],
+          unselectedItemColor: Colors.redAccent[100],
+          type: BottomNavigationBarType.fixed,
+          currentIndex: currentIndex,
+          onTap: (value) {
+            setState(() {
+              currentIndex = value;
+            });
+            changeOnselected(value);
+          },
+          items: [
+            BottomNavigationBarItem(
+              backgroundColor: Colors.transparent,
+              // icon: onSelected[0]
+              icon: currentIndex == 0
+                  ? Icon(
+                      CupertinoIcons.calendar_circle_fill,
+                      color: Colors.redAccent[100],
+                    )
+                  : Icon(
+                      CupertinoIcons.calendar_circle,
+                      color: Colors.redAccent[100],
+                    ),
+              label: "To do",
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Colors.transparent,
+              // icon: onSelected[1]
+              icon: currentIndex == 1
+                  ? Icon(
+                      CupertinoIcons.clock_fill,
+                      color: Colors.redAccent[100],
+                    )
+                  : Icon(
+                      CupertinoIcons.clock,
+                      color: Colors.redAccent[100],
+                    ),
+              label: "Habit",
+            ),
+          ],
+        ),
       ),
     );
   }

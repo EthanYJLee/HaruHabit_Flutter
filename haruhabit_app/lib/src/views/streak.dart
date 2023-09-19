@@ -8,11 +8,13 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:haruhabit_app/src/blocs/habit_bloc.dart';
 import 'package:haruhabit_app/src/blocs/streak_bloc.dart';
 import 'package:haruhabit_app/src/models/streak_model.dart';
+import 'package:haruhabit_app/src/utils/constant_widgets.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../blocs/calendar_bloc.dart';
 import '../utils/calendar_utils.dart';
+import '../utils/database_handler.dart';
 
 class Streak extends StatefulWidget {
   const Streak({super.key, required this.hId, required this.startDate});
@@ -76,6 +78,7 @@ class _StreakState extends State<Streak> {
     hashCode: getHashCode,
   );
   late int longestStreak = 0;
+  DatabaseHandler handler = DatabaseHandler();
 
   @override
   void initState() {
@@ -148,6 +151,58 @@ class _StreakState extends State<Streak> {
                 ),
               ),
             ),
+            actions: [
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 10),
+              //   child: PopupMenuButton(
+              //     color: Colors.redAccent[100],
+              //     shape: const RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.all(
+              //         Radius.circular(20.0),
+              //       ),
+              //     ),
+              //     icon: const Icon(
+              //       Icons.remove_circle_outline,
+              //       size: 30,
+              //     ),
+              //     onSelected: (value) {
+              //       print(value);
+              //       _endHabitDialog(context);
+              //     },
+              //     itemBuilder: (context) {
+              //       return [
+              //         PopupMenuItem(
+              //           onTap: () {
+              //             /// --
+              //             /// 1. alert dialog
+              //             /// 2. update habits (endDate <= DateTime.now())
+              //             ///
+              //             // setState(() {
+              //             print("dsdf");
+              //             _endHabitDialog(context);
+              //             // });
+              //           },
+              //           child: const Text(
+              //             "End this habit",
+              //             style: TextStyle(
+              //                 color: Colors.white, fontWeight: FontWeight.w500),
+              //           ),
+              //         ),
+              //       ];
+              //     },
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 10),
+              //   child: TextButton(
+              //       onPressed: () {
+              //         _endHabitDialog(context);
+              //       },
+              //       style: TextButton.styleFrom(
+              //           foregroundColor: Colors.redAccent[100]),
+              //       child: const Text('Finish!')),
+              // )
+            ],
             elevation: 0,
           ),
           body: Center(
@@ -235,7 +290,7 @@ class _StreakState extends State<Streak> {
                   ),
                 ),
                 Container(
-                  // height: MediaQuery.of(context).size.height / 10,
+                  height: MediaQuery.of(context).size.height / 5.5,
                   // width: MediaQuery.of(context).size.width / 1.04,
                   padding: const EdgeInsets.only(left: 7, right: 7),
                   child: Card(
@@ -243,188 +298,80 @@ class _StreakState extends State<Streak> {
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(15))),
                     elevation: 3,
-                    child: Row(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        /// Longest Streak 보여주는 Stream Builder
-                        Container(
-                          child: StreamBuilder(
-                              stream: streakBloc.longestStreak,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  print(snapshot.data);
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text('streaks'.tr()),
-                                      Stack(
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            /// Longest Streak 보여주는 StreamBuilder
+                            _showLongestStreaks(),
+                            const SizedBox(
+                              width: 28,
+                            ),
+
+                            /// 전체 달성 일수 보여주는 StreamBuilder
+                            _showAchievedDays(),
+                            const SizedBox(
+                              width: 28,
+                            ),
+
+                            /// 전체 진행 일수 보여주는 StreamBuilder
+                            _showTotalDays(),
+                            const SizedBox(
+                              width: 28,
+                            ),
+
+                            /// 현재 진행상황 퍼센트로 보여주기
+                            StreamBuilder(
+                                stream: habitBloc.percentage,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Container(
+                                      // padding: const EdgeInsets.all(10),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Container(
-                                            height: 50,
-                                            width: 50,
-                                            padding: const EdgeInsets.all(15),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 1,
-                                                ),
-                                                color: Colors.white,
-                                                shape: BoxShape.circle),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(snapshot.data.toString())
-                                              ],
+                                          Text('status'.tr()),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8, right: 8),
+                                            child: CircularPercentIndicator(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 188, 188, 188),
+                                              radius: 25.0,
+                                              lineWidth: 3.0,
+                                              percent: snapshot.data as double,
+                                              center: Text(
+                                                '${((snapshot.data as double) * 100).toStringAsFixed(2)}',
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              progressColor:
+                                                  Colors.redAccent[100],
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                      (snapshot.data == 0 || snapshot.data == 1)
-                                          ? Text('day'.tr())
-                                          : Text('days'.tr())
-                                    ],
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                return const Text('');
-                              }),
-                        ),
-                        const SizedBox(
-                          width: 30,
-                        ),
-                        Container(
-                          child: StreamBuilder(
-                              stream: streakBloc.totalCompleted,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  print(snapshot.data);
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text('completed'.tr()),
-                                      Stack(
-                                        children: [
-                                          Container(
-                                            height: 50,
-                                            width: 50,
-                                            padding: const EdgeInsets.all(15),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 1,
-                                                ),
-                                                color: Colors.white,
-                                                shape: BoxShape.circle),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(snapshot.data.toString())
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      (snapshot.data == 0 || snapshot.data == 1)
-                                          ? Text('day'.tr())
-                                          : Text('days'.tr())
-                                    ],
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                return const Text('');
-                              }),
-                        ),
-                        const SizedBox(
-                          width: 30,
-                        ),
-                        Container(
-                          child: StreamBuilder(
-                              stream: habitBloc.totalDates,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  print(snapshot.data);
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text('total'.tr()),
-                                      Stack(
-                                        children: [
-                                          Container(
-                                            height: 50,
-                                            width: 50,
-                                            padding: const EdgeInsets.all(15),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 1,
-                                                ),
-                                                color: Colors.white,
-                                                shape: BoxShape.circle),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(snapshot.data.toString())
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      (snapshot.data == 0 || snapshot.data == 1)
-                                          ? Text('day'.tr())
-                                          : Text('days'.tr())
-                                    ],
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                return const Text('');
-                              }),
-                        ),
-                        const SizedBox(
-                          width: 30,
-                        ),
-                        // 현재 진행상황 퍼센트로 보여주기
-                        Container(
-                          child: StreamBuilder(
-                              stream: habitBloc.percentage,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Container(
-                                    // padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text('status'.tr()),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 8, right: 8),
-                                          child: CircularPercentIndicator(
-                                            // backgroundColor: Colors.black,
-                                            radius: 25.0,
-                                            lineWidth: 2.0,
-                                            percent: snapshot.data as double,
-                                            center: Text(
-                                                '${((snapshot.data as double) * 100).toStringAsFixed(2)}'),
-                                            progressColor:
-                                                Colors.redAccent[100],
                                           ),
-                                        ),
-                                        const Text('%')
-                                      ],
-                                    ),
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Text(snapshot.error.toString());
-                                }
-                                return const Text('');
-                              }),
-                        )
+                                          const Text('%')
+                                        ],
+                                      ),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Text(snapshot.error.toString());
+                                  }
+                                  return const Text('');
+                                })
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
                       ],
                     ),
                   ),
@@ -442,8 +389,8 @@ class _StreakState extends State<Streak> {
                               _selectedDay.toString().substring(0, 10)));
                     });
                   },
-                  child: const Text(
-                    "Achieved Today's Goal!",
+                  child: Text(
+                    "achievementButton".tr(),
                   ),
                 ),
               ],
@@ -452,5 +399,168 @@ class _StreakState extends State<Streak> {
         ),
       ),
     );
+  }
+
+  _endHabitDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('End habit'),
+            content: Text('Are you sure to finish this habit?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  //-
+                  // handler
+                  // .endHabit(DateTime.now().toString().substring(0, 10),
+                  //     widget.hId.toString())
+                  //     .whenComplete(() {
+                  //   Navigator.pop(context);
+                  //   Navigator.pop(context);
+                  // });
+
+                  /// 1. home까지 navigator.pop
+                  /// 2. handler.endHabit(): update endDate
+                  /// 3. home setstate? / fetch habit
+                  // Navigator.pop(context);
+                  // Navigator.pop(context);
+                  // habitBloc.dispose();
+                  // handler
+                  //     .endHabit(DateTime.now().toString().substring(0, 10),
+                  //         widget.hId.toString())
+                  //     .whenComplete(() => setState(() {}));
+                },
+                child: Text(
+                  'finish',
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  //-
+                  Navigator.of(context).pop();
+                },
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: Text(
+                  'back',
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
+  StreamBuilder _showTotalDays() {
+    return StreamBuilder(
+        stream: habitBloc.totalDates,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // print(snapshot.data);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('total'.tr()),
+                Stack(
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      padding: const EdgeInsets.all(15),
+                      decoration: ConstantWidgets.circularLineDecoration(),
+                      child: Text(
+                        snapshot.data.toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+                (snapshot.data == 0 || snapshot.data == 1)
+                    ? Text('day'.tr())
+                    : Text('days'.tr())
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          return const Text('');
+        });
+  }
+
+  StreamBuilder _showAchievedDays() {
+    return StreamBuilder(
+        stream: streakBloc.totalCompleted,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // print(snapshot.data);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('completed'.tr()),
+                Stack(
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      padding: const EdgeInsets.all(15),
+                      decoration: ConstantWidgets.circularLineDecoration(),
+                      child: Text(
+                        snapshot.data.toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+                (snapshot.data == 0 || snapshot.data == 1)
+                    ? Text('day'.tr())
+                    : Text('days'.tr())
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          return const Text('');
+        });
+  }
+
+  StreamBuilder _showLongestStreaks() {
+    return StreamBuilder(
+        stream: streakBloc.longestStreak,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // print(snapshot.data);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('streaks'.tr()),
+                Stack(
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      padding: const EdgeInsets.all(15),
+                      decoration: ConstantWidgets.circularLineDecoration(),
+                      child: Text(
+                        snapshot.data.toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+                (snapshot.data == 0 || snapshot.data == 1)
+                    ? Text('day'.tr())
+                    : Text('days'.tr())
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          return const Text('');
+        });
   }
 }

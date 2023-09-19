@@ -11,6 +11,7 @@ import 'package:haruhabit_app/src/blocs/health_state.dart';
 import 'package:haruhabit_app/src/utils/add_health.dart';
 import 'package:haruhabit_app/src/utils/card_dialog.dart';
 import 'package:haruhabit_app/src/utils/gridcard_util.dart';
+import 'package:haruhabit_app/src/views/sports_categories.dart';
 import 'package:intl/date_time_patterns.dart';
 import 'package:path/path.dart';
 
@@ -75,22 +76,22 @@ class _HealthState extends State<Health> {
                     builder: (context, state) {
                       // 오류 발생 시
                       switch (state.status) {
-                        case HealthStatus.failure:
+                        case HealthStatus.initial:
                           return const Center(
-                            child: Text(
-                              'Failed to fetch Health Data',
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.white,
                             ),
                           );
 
                         case HealthStatus.authorized:
+                          // return const Center(
+                          //   child: Text(
+                          //     'Authorized',
+                          //   ),
+                          // );
                           return const Center(
-                            child: Text(
-                              'Authorized',
-                            ),
+                            child: CircularProgressIndicator(),
                           );
-                        // return const Center(
-                        //   child: CircularProgressIndicator(),
-                        // );
 
                         /// 걸음 수 데이터 접근 권한 없을 경우
                         case HealthStatus.unauthorized:
@@ -150,6 +151,7 @@ class _HealthState extends State<Health> {
                               ),
                             );
                           }
+
                           return Container(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -162,10 +164,8 @@ class _HealthState extends State<Health> {
                                       Expanded(
                                           child: healthCard(context,
                                               title: 'stepCount'.tr(),
-                                              data: state.model.steps
-                                                      .toString()
-                                                      .split('.')[0] +
-                                                  " Steps",
+                                              data:
+                                                  "${state.model.steps.toString().split('.')[0]} steps",
                                               image:
                                                   "assets/images/footprint.png")),
                                       const SizedBox(
@@ -174,10 +174,8 @@ class _HealthState extends State<Health> {
                                       Expanded(
                                           child: healthCard(context,
                                               title: 'heartRate'.tr(),
-                                              data: state.model.heartRate
-                                                      .toString()
-                                                      .split('.')[0] +
-                                                  " BPM",
+                                              data:
+                                                  "${state.model.heartRate.toString().split('.')[0]} bpm",
                                               image:
                                                   "assets/images/heart-attack.png")),
                                     ],
@@ -203,9 +201,8 @@ class _HealthState extends State<Health> {
                                       Expanded(
                                           child: healthCard(context,
                                               title: 'energyBurned'.tr(),
-                                              data: state.model.energyBurned
-                                                      .toString() +
-                                                  " cal",
+                                              data:
+                                                  "${state.model.energyBurned} kcal",
                                               image:
                                                   "assets/images/calories.png")),
                                     ],
@@ -214,10 +211,11 @@ class _HealthState extends State<Health> {
                               ],
                             ),
                           );
-                        case HealthStatus.initial:
+
+                        case HealthStatus.failure:
                           return const Center(
-                            child: CircularProgressIndicator(
-                              backgroundColor: Colors.white,
+                            child: Text(
+                              'Failed to fetch Health Data',
                             ),
                           );
                       }
@@ -262,8 +260,9 @@ class _HealthState extends State<Health> {
                                   //           .toString()
                                   //           .substring(0, 10));
                                   // });
-                                  Navigator.of(context).push(CardDialog(
-                                      builder: (context) => const AddHealth()));
+                                  // Navigator.of(context).push(CardDialog(
+                                  //     builder: (context) => const AddHealth()));
+                                  return showWorkoutBottomSheet(context);
                                 },
                                 icon: const Icon(
                                   CupertinoIcons.add,
@@ -384,6 +383,41 @@ class _HealthState extends State<Health> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 운동 기록을 위해 카테고리를 선택하는 modal bottom sheet
+  void showWorkoutBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14.0),
+      ),
+      context: context,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      isDismissible: true,
+      builder: (context) => DraggableScrollableSheet(
+        snap: true,
+        expand: false,
+        initialChildSize: 0.7,
+        minChildSize: 0.69,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) {
+          return SingleChildScrollView(
+            controller: scrollController,
+            child: Container(
+              color: Colors.white,
+              // child: Streak(
+              //   hId: hId,
+              //   startDate: startDate,
+              // ),
+              child: SportsCategories(),
+            ),
+          );
+        },
       ),
     );
   }

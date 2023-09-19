@@ -6,6 +6,52 @@ import 'package:health/health.dart';
 
 import 'date_picker_item.dart';
 
+enum SprotsType {
+  ARCHERY,
+  BADMINTON,
+  BASEBALL,
+  BASKETBALL,
+  BIKING, // This also entails the iOS version where it is called CYCLING
+  BOXING,
+  CRICKET,
+  CURLING,
+  ELLIPTICAL,
+  FENCING,
+  AMERICAN_FOOTBALL,
+  AUSTRALIAN_FOOTBALL,
+  SOCCER,
+  GOLF,
+  GYMNASTICS,
+  HANDBALL,
+  HIGH_INTENSITY_INTERVAL_TRAINING,
+  HIKING,
+  HOCKEY,
+  SKATING,
+  JUMP_ROPE,
+  KICKBOXING,
+  MARTIAL_ARTS,
+  PILATES,
+  RACQUETBALL,
+  ROWING,
+  RUGBY,
+  RUNNING,
+  SAILING,
+  CROSS_COUNTRY_SKIING,
+  DOWNHILL_SKIING,
+  SNOWBOARDING,
+  SOFTBALL,
+  SQUASH,
+  STAIR_CLIMBING,
+  SWIMMING,
+  TABLE_TENNIS,
+  TENNIS,
+  VOLLEYBALL,
+  WALKING,
+  WATER_POLO,
+  YOGA,
+  OTHER
+}
+
 class AddHealth extends StatefulWidget {
   const AddHealth({super.key});
 
@@ -14,8 +60,10 @@ class AddHealth extends StatefulWidget {
 }
 
 class _AddHealthState extends State<AddHealth> {
-  late List<String> _workoutLists =
-      HealthWorkoutActivityType.values.map((e) => e.name).toList();
+  // late List<String> _workoutLists =
+  //     HealthWorkoutActivityType.values.map((e) => e.name).toList();
+  late List<String> _sportsLists =
+      SprotsType.values.map((e) => e.name).toList();
   late int startHour = 12;
   late int startMinute = 30;
   late int endHour = 12;
@@ -98,11 +146,19 @@ class _AddHealthState extends State<AddHealth> {
 
   Widget _dropdownArea() {
     // 요청사항 dropdown list
-    final List<DropdownMenuEntry<String>> workoutEntries =
+    // final List<DropdownMenuEntry<String>> workoutEntries =
+    //     <DropdownMenuEntry<String>>[];
+    // for (final _workout in _workoutLists) {
+    //   // print(_workout);
+    //   workoutEntries
+    //       .add(DropdownMenuEntry<String>(value: _workout, label: _workout));
+    // }
+    // print(workoutEntries.length);
+    final List<DropdownMenuEntry<String>> sportsEntries =
         <DropdownMenuEntry<String>>[];
-    for (final _workout in _workoutLists) {
-      workoutEntries
-          .add(DropdownMenuEntry<String>(value: _workout, label: _workout));
+    for (final _sports in _sportsLists) {
+      sportsEntries
+          .add(DropdownMenuEntry<String>(value: _sports, label: _sports));
     }
 
     return Container(
@@ -135,7 +191,8 @@ class _AddHealthState extends State<AddHealth> {
                 //   ),
                 // ),
               ),
-              dropdownMenuEntries: workoutEntries,
+              // dropdownMenuEntries: workoutEntries,
+              dropdownMenuEntries: sportsEntries,
               onSelected: (value) {
                 //-
               },

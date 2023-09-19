@@ -16,6 +16,7 @@ class ScheduleHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     calendarBloc.getEventLists();
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: StreamBuilder(
         stream: calendarBloc.eventList,
         builder: (context, snapshot) {
@@ -27,11 +28,13 @@ class ScheduleHistory extends StatelessWidget {
                   return Container(
                     decoration: BoxDecoration(border: Border.all(width: 0.1)),
                     child: ExpansionTile(
+                      collapsedBackgroundColor: Colors.white,
+                      backgroundColor: Colors.white,
                       // collapsedBackgroundColor: Colors.teal[100],
                       textColor: Colors.black,
                       iconColor: Colors.black,
-                      collapsedBackgroundColor:
-                          const Color.fromARGB(255, 255, 238, 225),
+                      // collapsedBackgroundColor:
+                      //     const Color.fromARGB(255, 255, 238, 225),
 
                       /// Desc : Schedule이 있는 날짜를 중복 제거한 뒤 ExpansionTile의 대분류로 지정
                       /// Date : 2023.06.27
@@ -63,7 +66,7 @@ class ScheduleHistory extends StatelessWidget {
                                   flex: 2,
                                   foregroundColor: Colors.black,
                                   backgroundColor:
-                                      const Color.fromRGBO(17, 92, 255, 1),
+                                      Color.fromARGB(255, 53, 117, 255),
                                   icon: Icons.edit,
                                   label: 'Edit',
                                 ),

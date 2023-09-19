@@ -13,5 +13,6 @@
     "total":"Total",
     "status":"Status",
     "days":"days",
-    "day":"day"
+    "day":"day",
+    "achievementButton":"Achieved today's Goal!"
 }

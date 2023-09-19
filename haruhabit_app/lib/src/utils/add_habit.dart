@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:haruhabit_app/src/blocs/habit_bloc.dart';
+import 'package:haruhabit_app/src/utils/database_handler.dart';
 import 'package:haruhabit_app/src/utils/date_picker_item.dart';
 import 'package:intl/intl.dart';
 
@@ -238,7 +239,7 @@ class _AddHabitState extends State<AddHabit> {
           children: [
             DatePickerItem(
               children: <Widget>[
-                Text("Start Date"),
+                const Text("Start Date"),
                 CupertinoButton(
                   // disabledColor: Color.fromARGB(255, 164, 158, 255),
                   // color: Color.fromARGB(255, 164, 158, 255),
@@ -364,7 +365,7 @@ class _AddHabitState extends State<AddHabit> {
       required String category}) {
     return Padding(
       // padding: const EdgeInsets.all(10.0),
-      padding: EdgeInsets.only(left: 15, right: 15),
+      padding: const EdgeInsets.only(left: 15, right: 15),
       child: InkResponse(
         child: Column(
           mainAxisSize: MainAxisSize.min,

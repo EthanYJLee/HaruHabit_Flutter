@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:haruhabit_app/src/utils/constant_widgets.dart';
 import 'package:haruhabit_app/src/views/tabbar.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,11 +15,11 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-/// 로딩 중 보여주는 Splash Screen
+/// 로딩 화면 보여주는 Splash Screen
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Timer(const Duration(milliseconds: 1500), () {
+    Timer(const Duration(milliseconds: 1200), () {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Tabbar()));
     });
@@ -25,10 +27,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String imageLogoName = 'assets/images/logo.png';
-
+    const String imageLogoName = 'assets/images/logo.png';
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
+
+    initializeScreenSize(context);
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -37,8 +40,6 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Scaffold(
           backgroundColor: Colors.redAccent[100],
           body: Container(
-            //height : MediaQuery.of(context).size.height,
-            //color: kPrimaryColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -52,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 Expanded(child: SizedBox()),
                 Align(
-                  child: Text("© Copyright 2023, 하루습관 (Haru Habit)",
+                  child: Text("© Copyright 2023, Haru Habit",
                       style: TextStyle(
                         fontSize: screenWidth * (14 / 360),
                         color: Color.fromRGBO(255, 255, 255, 0.77),

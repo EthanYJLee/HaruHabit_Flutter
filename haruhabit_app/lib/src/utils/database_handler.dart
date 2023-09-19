@@ -166,9 +166,16 @@ class DatabaseHandler {
   // read all habits
   Future<List<HabitModel>> queryAllHabits() async {
     final Database db = await initializeDB('habits');
-    final List<Map<String, Object?>> queryResult =
+    final List<Map<String, Object?>> _queryResult =
         await db.rawQuery('SELECT * FROM habits WHERE endDate IS NULL');
-    return queryResult.map((e) => HabitModel.fromMap(e)).toList();
+    return _queryResult.map((e) => HabitModel.fromMap(e)).toList();
+  }
+
+  Future<List<HabitModel>> queryHabitsDone() async {
+    final Database db = await initializeDB('habits');
+    final List<Map<String, Object?>> _queryResult =
+        await db.rawQuery('SELECT * FROM habits WHERE endDate IS NOT NULL');
+    return _queryResult.map((e) => HabitModel.fromMap(e)).toList();
   }
 
   // Future<List<HabitModel>> queryHabitsOnProgress(String today) async {
@@ -211,6 +218,12 @@ class DatabaseHandler {
       where: "hId = ?",
       whereArgs: [hId],
     );
+  }
+
+  Future endHabit(String endDate, String hId) async {
+    final db = await initializeDB('habits');
+    await db.rawUpdate(
+        'UPDATE habits SET endDate = ? WHERE hId = ?', [endDate, hId]);
   }
 
   Future<int> checkForTodaysGoal(int hId, String date) async {
@@ -274,6 +287,7 @@ class DatabaseHandler {
     return eventSource;
   }
 
+  /// 습관 기간 중 가장 긴 달성 일 수 계산
   Future<int> findLongestStreak(int hId) async {
     final db = await initializeDB('streaks');
     final List<Map<String, Object?>> queryResult = await db.rawQuery(

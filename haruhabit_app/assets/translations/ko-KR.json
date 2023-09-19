@@ -13,5 +13,6 @@
     "total": "전체",
     "status": "진행 상황",
     "days": "일",
-    "day": "일"
+    "day": "일",
+    "achievementButton": "오늘의 목표 완료!"
 }
