@@ -301,9 +301,6 @@ class _StreakState extends State<Streak> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          height: 10,
-                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -326,51 +323,8 @@ class _StreakState extends State<Streak> {
                             ),
 
                             /// 현재 진행상황 퍼센트로 보여주기
-                            StreamBuilder(
-                                stream: habitBloc.percentage,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    return Container(
-                                      // padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text('status'.tr()),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8, right: 8),
-                                            child: CircularPercentIndicator(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 188, 188, 188),
-                                              radius: 25.0,
-                                              lineWidth: 3.0,
-                                              percent: snapshot.data as double,
-                                              center: Text(
-                                                '${((snapshot.data as double) * 100).toStringAsFixed(2)}',
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              progressColor:
-                                                  Colors.redAccent[100],
-                                            ),
-                                          ),
-                                          const Text('%')
-                                        ],
-                                      ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Text(snapshot.error.toString());
-                                  }
-                                  return const Text('');
-                                })
+                            _showPercentage(),
                           ],
-                        ),
-                        SizedBox(
-                          height: 10,
                         ),
                       ],
                     ),
@@ -401,52 +355,90 @@ class _StreakState extends State<Streak> {
     );
   }
 
-  _endHabitDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('End habit'),
-            content: Text('Are you sure to finish this habit?'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  //-
-                  // handler
-                  // .endHabit(DateTime.now().toString().substring(0, 10),
-                  //     widget.hId.toString())
-                  //     .whenComplete(() {
-                  //   Navigator.pop(context);
-                  //   Navigator.pop(context);
-                  // });
+  // _endHabitDialog(BuildContext context) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: Text('End habit'),
+  //           content: Text('Are you sure to finish this habit?'),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 //-
+  //                 // handler
+  //                 // .endHabit(DateTime.now().toString().substring(0, 10),
+  //                 //     widget.hId.toString())
+  //                 //     .whenComplete(() {
+  //                 //   Navigator.pop(context);
+  //                 //   Navigator.pop(context);
+  //                 // });
 
-                  /// 1. home까지 navigator.pop
-                  /// 2. handler.endHabit(): update endDate
-                  /// 3. home setstate? / fetch habit
-                  // Navigator.pop(context);
-                  // Navigator.pop(context);
-                  // habitBloc.dispose();
-                  // handler
-                  //     .endHabit(DateTime.now().toString().substring(0, 10),
-                  //         widget.hId.toString())
-                  //     .whenComplete(() => setState(() {}));
-                },
-                child: Text(
-                  'finish',
-                ),
+  //                 /// 1. home까지 navigator.pop
+  //                 /// 2. handler.endHabit(): update endDate
+  //                 /// 3. home setstate? / fetch habit
+  //                 // Navigator.pop(context);
+  //                 // Navigator.pop(context);
+  //                 // habitBloc.dispose();
+  //                 // handler
+  //                 //     .endHabit(DateTime.now().toString().substring(0, 10),
+  //                 //         widget.hId.toString())
+  //                 //     .whenComplete(() => setState(() {}));
+  //               },
+  //               child: Text(
+  //                 'finish',
+  //               ),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 //-
+  //                 Navigator.of(context).pop();
+  //               },
+  //               style: TextButton.styleFrom(foregroundColor: Colors.red),
+  //               child: Text(
+  //                 'back',
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       });
+  // }
+
+  StreamBuilder _showPercentage() {
+    return StreamBuilder(
+        stream: habitBloc.percentage,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+              // padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('status'.tr()),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5, bottom: 5),
+                    child: CircularPercentIndicator(
+                      backgroundColor: const Color.fromARGB(255, 188, 188, 188),
+                      radius: 30.0,
+                      lineWidth: 3.0,
+                      percent: snapshot.data as double,
+                      center: Text(
+                        '${((snapshot.data as double) * 100).toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                      progressColor: Colors.redAccent[100],
+                    ),
+                  ),
+                  const Text('%')
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                  //-
-                  Navigator.of(context).pop();
-                },
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: Text(
-                  'back',
-                ),
-              ),
-            ],
-          );
+            );
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          return const Text('');
         });
   }
 
@@ -460,21 +452,19 @@ class _StreakState extends State<Streak> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('total'.tr()),
-                Stack(
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      padding: const EdgeInsets.all(15),
-                      decoration: ConstantWidgets.circularLineDecoration(),
-                      child: Text(
-                        snapshot.data.toString(),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 60,
+                        width: 60,
+                        padding: const EdgeInsets.all(15),
+                        decoration: ConstantWidgets.circularLineDecoration(),
+                        child: _streakStatusText(snapshot.data.toString()),
+                      )
+                    ],
+                  ),
                 ),
                 (snapshot.data == 0 || snapshot.data == 1)
                     ? Text('day'.tr())
@@ -498,21 +488,19 @@ class _StreakState extends State<Streak> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('completed'.tr()),
-                Stack(
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      padding: const EdgeInsets.all(15),
-                      decoration: ConstantWidgets.circularLineDecoration(),
-                      child: Text(
-                        snapshot.data.toString(),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 60,
+                        width: 60,
+                        padding: const EdgeInsets.all(15),
+                        decoration: ConstantWidgets.circularLineDecoration(),
+                        child: _streakStatusText(snapshot.data.toString()),
+                      )
+                    ],
+                  ),
                 ),
                 (snapshot.data == 0 || snapshot.data == 1)
                     ? Text('day'.tr())
@@ -536,21 +524,19 @@ class _StreakState extends State<Streak> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('streaks'.tr()),
-                Stack(
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      padding: const EdgeInsets.all(15),
-                      decoration: ConstantWidgets.circularLineDecoration(),
-                      child: Text(
-                        snapshot.data.toString(),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 60,
+                        width: 60,
+                        padding: const EdgeInsets.all(15),
+                        decoration: ConstantWidgets.circularLineDecoration(),
+                        child: _streakStatusText(snapshot.data.toString()),
+                      )
+                    ],
+                  ),
                 ),
                 (snapshot.data == 0 || snapshot.data == 1)
                     ? Text('day'.tr())
@@ -562,5 +548,18 @@ class _StreakState extends State<Streak> {
           }
           return const Text('');
         });
+  }
+
+  Widget _streakStatusText(String data) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          data,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
   }
 }
