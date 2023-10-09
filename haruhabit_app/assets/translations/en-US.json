@@ -1,0 +1,18 @@
+{
+    "today": "Today",
+    "schedule": "Schedule",
+    "todo": "To Do",
+    "plan": "Plan on Progress",
+    "habit": "Habits",
+    "stepCount": "Step Count",
+    "heartRate": "Heart Rate",
+    "bloodPressure": "Blood Pressure",
+    "energyBurned": "Energy Burned",
+    "streaks": "Streaks",
+    "completed":"Completed",
+    "total":"Total",
+    "status":"Status",
+    "days":"days",
+    "day":"day",
+    "achievementButton":"Achieved today's Goal!"
+}

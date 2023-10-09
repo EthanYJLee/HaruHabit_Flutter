@@ -3,8 +3,10 @@ class ScheduleModel {
   final String? date;
   final String? schedule;
   final String? place;
-  final String? hour;
-  final String? minute;
+  // final String? hour;
+  // final String? minute;
+  final int? hour;
+  final int? minute;
   int isDone;
 
   ScheduleModel(

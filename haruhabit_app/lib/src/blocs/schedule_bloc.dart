@@ -21,6 +21,30 @@ class ScheduleBloc {
         await _handler.querySelectedSchedules(selectedDate);
     _selectedScheduleFetcher.sink.add(scheduleModel);
   }
+
+  Future<int> addSchedule(String date, String schedule, String place, int hour,
+      int minute, int isDone) async {
+    ScheduleModel scheduleModel = ScheduleModel(
+      date: date,
+      schedule: schedule,
+      place: place,
+      hour: hour,
+      minute: minute,
+      isDone: isDone,
+    );
+    await _handler.insertSchedule(scheduleModel);
+    return 0;
+  }
+
+  Future<int> scheduleIsDone(int isChecked, String sId) async{
+    int result = await _handler.scheduleIsDone(isChecked, sId);
+    return result;
+  }
+
+  dispose() {
+    _allScheduleFetcher.close();
+    _selectedScheduleFetcher.close();
+  }
 }
 
 final ScheduleBloc scheduleBloc = ScheduleBloc();
