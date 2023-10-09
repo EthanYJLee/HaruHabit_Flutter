@@ -17,7 +17,6 @@ import 'package:haruhabit_app/src/utils/gridcard_util.dart';
 import 'package:haruhabit_app/src/utils/home_drawer.dart';
 import 'package:haruhabit_app/src/views/calendar.dart';
 import 'package:haruhabit_app/src/views/habit_status.dart';
-import 'package:haruhabit_app/src/views/planner.dart';
 import 'package:haruhabit_app/src/views/streak.dart';
 
 import '../blocs/calendar_bloc.dart';

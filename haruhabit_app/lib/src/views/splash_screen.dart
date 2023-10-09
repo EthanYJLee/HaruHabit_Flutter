@@ -8,6 +8,8 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:haruhabit_app/src/utils/constant_widgets.dart';
 import 'package:haruhabit_app/src/views/tabbar.dart';
 
+import '../utils/color_category.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -19,9 +21,10 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
+    super.initState();
     Timer(const Duration(milliseconds: 1200), () {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Tabbar()));
+          context, MaterialPageRoute(builder: (context) => const Tabbar()));
     });
   }
 
@@ -39,31 +42,27 @@ class _SplashScreenState extends State<SplashScreen> {
         data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         child: Scaffold(
           backgroundColor: Colors.redAccent[100],
-          body: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: screenHeight * 0.3),
-                Container(
-                  child: Image.asset(
-                    imageLogoName,
-                    width: screenWidth * 0.8,
-                    height: screenHeight * 0.3,
-                  ),
-                ),
-                Expanded(child: SizedBox()),
-                Align(
-                  child: Text("© Copyright 2023, Haru Habit",
-                      style: TextStyle(
-                        fontSize: screenWidth * (14 / 360),
-                        color: Color.fromRGBO(255, 255, 255, 0.77),
-                      )),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.0625,
-                ),
-              ],
-            ),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: screenHeight * 0.3),
+              Image.asset(
+                imageLogoName,
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.3,
+              ),
+              const Expanded(child: SizedBox()),
+              Align(
+                child: Text("© Copyright 2023, Haru Habit",
+                    style: TextStyle(
+                      fontSize: screenWidth * (14 / 360),
+                      color: splashTxtColor,
+                    )),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.0625,
+              ),
+            ],
           ),
         ),
       ),
